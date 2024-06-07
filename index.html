@@ -7,17 +7,27 @@
       const name = document.getElementById("name").value;
       const date = document.getElementById("date").value;
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbwfND_00FdrxIzSqi9pxT3V327OtFV__Ck3zis185I9/dev', {
-        method: 'POST',
-        body: JSON.stringify({ name: name, date: date }),
-        headers: { 'Content-Type': 'application/json' }
-      });
+      console.log("Name: " + name);
+      console.log("Date: " + date);
 
-      const result = await response.json();
-      if (result.status === 'duplicate') {
-        alert("Booking already exists!");
-      } else {
-        alert("Booking successful!");
+      try {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbywl2LbGzdKKsJqYOMhR5Hke651UnwaaFkbY2Xm72HsCMlm9ObcHLDFb9lBT0sS2-Ys9g/exec', {
+          method: 'POST',
+          body: JSON.stringify({ name: name, date: date }),
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const result = await response.json();
+        console.log("Response: ", result);
+
+        if (result.status === 'duplicate') {
+          alert("Booking already exists!");
+        } else {
+          alert("Booking successful!");
+        }
+      } catch (error) {
+        console.error("Error: ", error);
+        alert("Failed to book interpreter. Please try again.");
       }
     }
   </script>
