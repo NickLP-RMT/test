@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Booking Interpreter</title>
+  <script>
+    async function bookInterpreter() {
+      const name = document.getElementById("name").value;
+      const date = document.getElementById("date").value;
+
+      const response = await fetch('https://script.google.com/macros/s/AKfycbwfND_00FdrxIzSqi9pxT3V327OtFV__Ck3zis185I9/dev', {
+        method: 'POST',
+        body: JSON.stringify({ name: name, date: date }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const result = await response.json();
+      if (result.status === 'duplicate') {
+        alert("Booking already exists!");
+      } else {
+        alert("Booking successful!");
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Book an Interpreter</h1>
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name"><br><br>
+  <label for="date">Date:</label>
+  <input type="date" id="date" name="date"><br><br>
+  <button onclick="bookInterpreter()">Book</button>
+</body>
+</html>
