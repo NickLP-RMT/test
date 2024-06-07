@@ -1,43 +1,281 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Booking Interpreter</title>
-  <script>
-    async function bookInterpreter() {
-      const name = document.getElementById("name").value;
-      const date = document.getElementById("date").value;
-
-      console.log("Name: " + name);
-      console.log("Date: " + date);
-
-      try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbywl2LbGzdKKsJqYOMhR5Hke651UnwaaFkbY2Xm72HsCMlm9ObcHLDFb9lBT0sS2-Ys9g/exec', {
-          method: 'POST',
-          body: JSON.stringify({ name: name, date: date }),
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        const result = await response.json();
-        console.log("Response: ", result);
-
-        if (result.status === 'duplicate') {
-          alert("Booking already exists!");
-        } else {
-          alert("Booking successful!");
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <title>ระบบจองล่าม Demo</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f0f2f5;
+            color: #333;
         }
-      } catch (error) {
-        console.error("Error: ", error);
-        alert("Failed to book interpreter. Please try again.");
-      }
-    }
-  </script>
+        .sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            background-color: #343a40;
+            padding-top: 20px;
+            color: white;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar a {
+            color: white;
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            background: white;
+            margin-top: 20px;
+            margin-right: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .content h1, .content h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            padding: 20px;
+            color: white;
+            background: linear-gradient(45deg, #343a40, #495057);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            font-weight: bold;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+            border-color: #545b62;
+        }
+        .form-control {
+            border-color: #ced4da;
+            font-weight: bold;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .table thead th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-  <h1>Booking Interpreter</h1>
-  <label for="name">Nameชื่อ:</label>
-  <input type="text" id="name" name="name"><br><br>
-  <label for="date">Dateวันที่:</label>
-  <input type="date" id="date" name="date"><br><br>
-  <button onclick="bookInterpreter()">Book</button>
+    <div class="sidebar">
+        <a href="#" onclick="showBookingForm()"><i class="fas fa-calendar-plus"></i> จองล่าม</a>
+        <a href="#" onclick="showSearchForm()"><i class="fas fa-search"></i> ค้นหา</a>
+    </div>
+    <div class="content">
+        <div id="bookingSection">
+            <h1>ระบบจองล่าม Demo</h1>
+            <form method="post" id="bookingForm" class="mb-5">
+                <div class="form-group">
+                    <label for="employee_name">ชื่อพนักงาน</label>
+                    <input type="text" class="form-control" id="employee_name" name="employee_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="interpreter">เลือกล่าม</label>
+                    <select class="form-control" id="interpreter" name="interpreter" required>
+                        <option value="" disabled selected>โปรดเลือกล่าม</option>
+                        {% for intrp in interpreters %}
+                            <option value="{{ intrp }}">{{ intrp }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="date">วันที่</label>
+                        <input type="date" class="form-control" id="date" name="date">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="start_time_hour">เวลาเริ่มต้น</label>
+                        <div class="input-group">
+                            <select class="form-control" id="start_time_hour" name="start_time_hour" required>
+                                {% for hour in range(24) %}
+                                    <option value="{{ "%02d" % hour }}">{{ "%02d" % hour }}</option>
+                                {% endfor %}
+                            </select>
+                            <select class="form-control" id="start_time_minute" name="start_time_minute" required>
+                                {% for minute in range(0, 60, 10) %}
+                                    <option value="{{ "%02d" % minute }}">{{ "%02d" % minute }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="end_time_hour">เวลาสิ้นสุด</label>
+                        <div class="input-group">
+                            <select class="form-control" id="end_time_hour" name="end_time_hour" required>
+                                {% for hour in range(24) %}
+                                    <option value="{{ "%02d" % hour }}">{{ "%02d" % hour }}</option>
+                                {% endfor %}
+                            </select>
+                            <select class="form-control" id="end_time_minute" name="end_time_minute" required>
+                                {% for minute in range(0, 60, 10) %}
+                                    <option value="{{ "%02d" % minute }}">{{ "%02d" % minute }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">จองล่าม</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button>
+            </form>
+        </div>
+        
+        <div id="searchSection" style="display: none;">
+            <h2>ค้นหารายการจอง</h2>
+            <form method="get" id="searchForm" class="mb-4">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="searchInterpreter">ล่ามทั้งหมด</label>
+                        <select class="form-control" id="searchInterpreter" name="interpreter">
+                            <option value="">ล่ามทั้งหมด</option>
+                            {% for intrp in interpreters %}
+                                <option value="{{ intrp }}">{{ intrp }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="searchDate">วันที่</label>
+                        <input type="date" class="form-control" id="searchDate" name="date">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="searchBookings()">ค้นหา</button>
+                <button type="button" class="btn btn-secondary" onclick="showAllBookings()">ดูทั้งหมด</button>
+            </form>
+
+            <table class="table table-bordered" id="bookingTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ผู้จอง</th>
+                        <th>ล่าม</th>
+                        <th>วันที่</th>
+                        <th>เวลา</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.employee_name }}</td>
+                            <td>{{ booking.interpreter }}</td>
+                            <td>{{ booking.date }}</td>
+                            <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('bookingForm').onsubmit = function(event) {
+            event.preventDefault();
+
+            var formData = new FormData(event.target);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/", true);
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            };
+
+            xhr.send(formData);
+        };
+
+        function searchBookings() {
+            var interpreter = document.getElementById("searchInterpreter").value;
+            var date = document.getElementById("searchDate").value;
+
+            var xhr = new XMLHttpRequest();
+            var url = "/search";
+            var params = "interpreter=" + encodeURIComponent(interpreter) + "&date=" + encodeURIComponent(date);
+            xhr.open("GET", url + "?" + params, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    displaySearchResults(response);
+                }
+            };
+            xhr.send();
+        }
+
+        function showAllBookings() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/search", true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    displaySearchResults(response);
+                }
+            };
+            xhr.send();
+        }
+
+        function displaySearchResults(results) {
+            var table = document.getElementById("bookingTable");
+            var tbody = table.getElementsByTagName("tbody")[0];
+            tbody.innerHTML = "";
+
+            for (var i = 0; i < results.length; i++) {
+                var row = tbody.insertRow(i);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+                cell1.innerHTML = results[i].employee_name;
+                cell2.innerHTML = results[i].interpreter;
+                cell3.innerHTML = results[i].date;
+                cell4.innerHTML = results[i].start_time + ' - ' + results[i].end_time;
+            }
+        }
+
+        function clearForm() {
+            document.getElementById("bookingForm").reset();
+        }
+
+        function showBookingForm() {
+            document.getElementById("bookingSection").style.display = "block";
+            document.getElementById("searchSection").style.display = "none";
+        }
+
+        function showSearchForm() {
+            document.getElementById("bookingSection").style.display = "none";
+            document.getElementById("searchSection").style.display = "block";
+        }
+    </script>
 </body>
 </html>
