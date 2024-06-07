@@ -20,6 +20,7 @@
             color: white;
             position: fixed;
             height: 100%;
+            overflow: auto;
         }
         .sidebar a {
             color: white;
@@ -38,6 +39,19 @@
             margin-right: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                min-width: 100%;
+                max-width: 100%;
+                position: relative;
+                height: auto;
+            }
+            .content {
+                margin-left: 0;
+                margin-top: 20px;
+                margin-right: 0;
+            }
         }
         .content h1, .content h2 {
             text-align: center;
