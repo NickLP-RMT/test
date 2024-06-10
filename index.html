@@ -132,9 +132,8 @@
                                 {% endfor %}
                             </select>
                             <select class="form-control" id="start_time_minute" name="start_time_minute" required>
-                                {% for minute in range(0, 60, 30) %}
-                                    <option value="{{ "%02d" % minute }}">{{ "%02d" % minute }}</option>
-                                {% endfor %}
+                                <option value="00">00</option>
+                                <option value="30">30</option>
                             </select>
                         </div>
                     </div>
@@ -147,9 +146,8 @@
                                 {% endfor %}
                             </select>
                             <select class="form-control" id="end_time_minute" name="end_time_minute" required>
-                                {% for minute in range(0, 60, 30) %}
-                                    <option value="{{ "%02d" % minute }}">{{ "%02d" % minute }}</option>
-                                {% endfor %}
+                                <option value="00">00</option>
+                                <option value="30">30</option>
                             </select>
                         </div>
                     </div>
