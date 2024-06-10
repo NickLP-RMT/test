@@ -78,8 +78,10 @@
             endTime: form.endTimeHour.value + ':' + form.endTimeMinute.value
         };
 
+        console.log("Data being sent:", data);  // Debugging line to log the data being sent
+
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://script.google.com/macros/s/AKfycbzhG-kwIXOr5BqyXBs0Wh-GvmJoGQST78TJtYDpIjU18vXZkOq-K8dw0EykebQYWfWu0g/exec", true);
+        xhr.open("POST", "AKfycbws52DgfviRt3AsMfXyDrHXYIVXB-lQp4coNxXVMADrrYxvcE_sndUPs-DeViDBzqoQhw", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4) {
@@ -87,9 +89,14 @@
                     alert("จองล่ามสำเร็จ");
                     clearForm();
                 } else {
+                    console.error("Error response from server:", xhr.responseText);  // Debugging line to log server response
                     alert("มีข้อผิดพลาด: " + xhr.responseText);
                 }
             }
+        };
+        xhr.onerror = function () {
+            console.error("Request failed");  // Debugging line to log request failure
+            alert("มีข้อผิดพลาด: Request failed");
         };
         xhr.send(JSON.stringify(data));
     }
