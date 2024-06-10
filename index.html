@@ -9,6 +9,11 @@
         display: block;
         margin-bottom: 5px;
     }
+    
+    .datetime-input {
+        display: inline-block;
+        vertical-align: top;
+    }
 </style>
 </head>
 <body>
@@ -31,30 +36,36 @@
         <option value="NOEY SAN">NOEY SAN</option>
     </select><br>
 
-    <label for="date">วันที่:</label>
-    <input type="date" id="date" required>
+    <div class="datetime-input">
+        <label for="date">วันที่:</label>
+        <input type="date" id="date" required>
+    </div>
 
-    <label for="startTime">เวลาเริ่มต้น:</label>
-    <select id="startTimeHour" required>
-        <option value="">ชั่วโมง</option>
-        <!-- Add hour options from 00 to 23 -->
-    </select>
-    :
-    <select id="startTimeMinute" required>
-        <option value="00">00</option>
-        <option value="30">30</option>
-    </select><br>
+    <div class="datetime-input">
+        <label for="startTime">เวลาเริ่มต้น:</label>
+        <select id="startTimeHour" required>
+            <option value="">ชั่วโมง</option>
+            <!-- Add hour options from 00 to 23 -->
+        </select>
+        :
+        <select id="startTimeMinute" required>
+            <option value="00">00</option>
+            <option value="30">30</option>
+        </select><br>
+    </div>
 
-    <label for="endTime">เวลาสิ้นสุด:</label>
-    <select id="endTimeHour" required>
-        <option value="">ชั่วโมง</option>
-        <!-- Add hour options from 00 to 23 -->
-    </select>
-    :
-    <select id="endTimeMinute" required>
-        <option value="00">00</option>
-        <option value="30">30</option>
-    </select><br>
+    <div class="datetime-input">
+        <label for="endTime">เวลาสิ้นสุด:</label>
+        <select id="endTimeHour" required>
+            <option value="">ชั่วโมง</option>
+            <!-- Add hour options from 00 to 23 -->
+        </select>
+        :
+        <select id="endTimeMinute" required>
+            <option value="00">00</option>
+            <option value="30">30</option>
+        </select><br>
+    </div>
 
     <button type="submit">จองล่าม</button>
     <button type="button" onclick="clearForm()">Clear</button>
