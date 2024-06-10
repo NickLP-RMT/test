@@ -4,36 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ระบบจองล่าม</title>
-<style>
-    body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-    }
-    
-    form {
-        width: 300px;
-    }
-    
-    label {
-        display: block;
-        margin-bottom: 5px;
-    }
-    
-    .datetime-input {
-        display: inline-block;
-        vertical-align: top;
-    }
-    
-    .button-container {
-        text-align: center;
-    }
-</style>
 </head>
 <body>
-<h2 style="text-align: center;">ระบบจองล่าม</h2>
+
+<h2>ระบบจองล่าม</h2>
 
 <form id="bookingForm">
     <label for="employeeName">ชื่อพนักงาน:</label>
@@ -51,41 +25,33 @@
         <option value="NOEY SAN">NOEY SAN</option>
     </select><br>
 
-    <div class="datetime-input">
-        <label for="date">วันที่:</label>
-        <input type="date" id="date" required>
-    </div>
+    <label for="date">วันที่:</label>
+    <input type="date" id="date" required>
 
-    <div class="datetime-input">
-        <label for="startTime">เวลาเริ่มต้น:</label>
-        <select id="startTimeHour" required>
-            <option value="">ชั่วโมง</option>
-            <!-- Add hour options from 00 to 23 -->
-        </select>
-        :
-        <select id="startTimeMinute" required>
-            <option value="00">00</option>
-            <option value="30">30</option>
-        </select><br>
-    </div>
+    <label for="startTime">เวลาเริ่มต้น:</label>
+    <select id="startTimeHour" required>
+        <option value="">ชั่วโมง</option>
+        <!-- Add hour options from 00 to 23 -->
+    </select>
+    :
+    <select id="startTimeMinute" required>
+        <option value="00">00</option>
+        <option value="30">30</option>
+    </select><br>
 
-    <div class="datetime-input">
-        <label for="endTime">เวลาสิ้นสุด:</label>
-        <select id="endTimeHour" required>
-            <option value="">ชั่วโมง</option>
-            <!-- Add hour options from 00 to 23 -->
-        </select>
-        :
-        <select id="endTimeMinute" required>
-            <option value="00">00</option>
-            <option value="30">30</option>
-        </select><br>
-    </div>
+    <label for="endTime">เวลาสิ้นสุด:</label>
+    <select id="endTimeHour" required>
+        <option value="">ชั่วโมง</option>
+        <!-- Add hour options from 00 to 23 -->
+    </select>
+    :
+    <select id="endTimeMinute" required>
+        <option value="00">00</option>
+        <option value="30">30</option>
+    </select><br>
 
-    <div class="button-container">
-        <button type="submit">จองล่าม</button>
-        <button type="button" onclick="clearForm()">Clear</button>
-    </div>
+    <button type="submit">จองล่าม</button>
+    <button type="button" onclick="clearForm()">Clear</button>
 </form>
 
 <script>
