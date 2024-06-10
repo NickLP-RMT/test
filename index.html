@@ -9,15 +9,15 @@
 
 <h2>ระบบจองล่าม</h2>
 
-<form id="bookingForm" action="https://script.google.com/macros/s/AKfycbzvNLxN-QWr1YoyVVrR9trrOt5i1DFjnHhvvtCm2me85VG2CWR70LP5H9BEsJRk9Vp0lg/exec" method="post">
+<form id="bookingForm">
     <label for="employeeName">ชื่อพนักงาน:</label>
-    <input type="text" id="employeeName" name="employeeName" required><br>
+    <input type="text" id="employeeName" required><br>
 
     <label for="jobDetails">รายละเอียดงาน:</label>
-    <textarea id="jobDetails" name="jobDetails" rows="4" required></textarea><br>
+    <textarea id="jobDetails" rows="4" required></textarea><br>
 
     <label for="interpreter">เลือกล่าม:</label>
-    <select id="interpreter" name="interpreter" required>
+    <select id="interpreter" required>
         <option value="">โปรดเลือก</option>
         <option value="SOM SAN">SOM SAN</option>
         <option value="GOOK SAN">GOOK SAN</option>
@@ -26,31 +26,31 @@
     </select><br>
 
     <label for="date">วันที่:</label>
-    <input type="date" id="date" name="date" required><br>
+    <input type="date" id="date" required><br>
 
     <label for="startTime">เวลาเริ่มต้น:</label>
-    <select id="startTimeHour" name="startTimeHour" required>
+    <select id="startTimeHour" required>
         <option value="">ชั่วโมง</option>
         <!-- Add hour options from 00 to 23 -->
     </select>
     :
-    <select id="startTimeMinute" name="startTimeMinute" required>
+    <select id="startTimeMinute" required>
         <option value="00">00</option>
         <option value="30">30</option>
     </select><br>
 
     <label for="endTime">เวลาสิ้นสุด:</label>
-    <select id="endTimeHour" name="endTimeHour" required>
+    <select id="endTimeHour" required>
         <option value="">ชั่วโมง</option>
         <!-- Add hour options from 00 to 23 -->
     </select>
     :
-    <select id="endTimeMinute" name="endTimeMinute" required>
+    <select id="endTimeMinute" required>
         <option value="00">00</option>
         <option value="30">30</option>
     </select><br>
 
-    <button type="submit">จองล่าม</button>
+    <button type="button" onclick="submitForm()">จองล่าม</button>
     <button type="button" onclick="clearForm()">Clear</button>
 </form>
 
@@ -63,9 +63,31 @@
     document.getElementById('startTimeHour').innerHTML = hourOptions;
     document.getElementById('endTimeHour').innerHTML = hourOptions;
 
-    // Function to clear the form
     function clearForm() {
         document.getElementById('bookingForm').reset();
+    }
+
+    function submitForm() {
+        var form = document.getElementById('bookingForm');
+        var data = {
+            employeeName: form.employeeName.value,
+            jobDetails: form.jobDetails.value,
+            interpreter: form.interpreter.value,
+            date: form.date.value,
+            startTime: form.startTimeHour.value + ':' + form.startTimeMinute.value,
+            endTime: form.endTimeHour.value + ':' + form.endTimeMinute.value
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://script.google.com/macros/s/AKfycbyC1Kv25BqZ7H3menZ8tQgdK__CHw4FTjfouda_EZVmIW4LCJKvHRky3isAYT2qaXZJjg/exec", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                alert("จองล่ามสำเร็จ");
+                clearForm();
+            }
+        };
+        xhr.send(JSON.stringify(data));
     }
 </script>
 
