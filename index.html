@@ -9,15 +9,15 @@
 
 <h2>ระบบจองล่าม</h2>
 
-<form id="bookingForm">
+<form id="bookingForm" action="https://script.google.com/macros/s/AKfycbzvNLxN-QWr1YoyVVrR9trrOt5i1DFjnHhvvtCm2me85VG2CWR70LP5H9BEsJRk9Vp0lg/exec" method="post">
     <label for="employeeName">ชื่อพนักงาน:</label>
-    <input type="text" id="employeeName" required><br>
+    <input type="text" id="employeeName" name="employeeName" required><br>
 
     <label for="jobDetails">รายละเอียดงาน:</label>
-    <textarea id="jobDetails" rows="4" required></textarea><br>
+    <textarea id="jobDetails" name="jobDetails" rows="4" required></textarea><br>
 
     <label for="interpreter">เลือกล่าม:</label>
-    <select id="interpreter" required>
+    <select id="interpreter" name="interpreter" required>
         <option value="">โปรดเลือก</option>
         <option value="SOM SAN">SOM SAN</option>
         <option value="GOOK SAN">GOOK SAN</option>
@@ -26,26 +26,26 @@
     </select><br>
 
     <label for="date">วันที่:</label>
-    <input type="date" id="date" required>
+    <input type="date" id="date" name="date" required><br>
 
     <label for="startTime">เวลาเริ่มต้น:</label>
-    <select id="startTimeHour" required>
+    <select id="startTimeHour" name="startTimeHour" required>
         <option value="">ชั่วโมง</option>
         <!-- Add hour options from 00 to 23 -->
     </select>
     :
-    <select id="startTimeMinute" required>
+    <select id="startTimeMinute" name="startTimeMinute" required>
         <option value="00">00</option>
         <option value="30">30</option>
     </select><br>
 
     <label for="endTime">เวลาสิ้นสุด:</label>
-    <select id="endTimeHour" required>
+    <select id="endTimeHour" name="endTimeHour" required>
         <option value="">ชั่วโมง</option>
         <!-- Add hour options from 00 to 23 -->
     </select>
     :
-    <select id="endTimeMinute" required>
+    <select id="endTimeMinute" name="endTimeMinute" required>
         <option value="00">00</option>
         <option value="30">30</option>
     </select><br>
