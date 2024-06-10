@@ -1,111 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ระบบจองล่ามV2</title>
-
-<script>
-    function submitForm() {
-        var form = document.getElementById('bookingForm');
-        var data = {
-            employeeName: form.employeeName.value,
-            jobDetails: form.jobDetails.value,
-            interpreter: form.interpreter.value,
-            date: form.date.value,
-            startTime: form.startTimeHour.value + ':' + form.startTimeMinute.value,
-            endTime: form.endTimeHour.value + ':' + form.endTimeMinute.value
-        };
-
-        console.log("Data being sent:", data);  // Debugging line to log the data being sent
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://script.google.com/macros/s/AKfycbzmZAv1AIt8KaeQfYxdG07pKLyxg4N2vuqhWKSQ7GFaUz9YTxIyGyUVyiDvu2NC-74LAw/exec", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    alert("จองล่ามสำเร็จ");
-                    clearForm();
-                } else {
-                    console.error("Error response from server:", xhr.responseText);  // Debugging line to log server response
-                    alert("มีข้อผิดพลาด: " + xhr.responseText);
-                }
-            }
-        };
-        xhr.onerror = function () {
-            console.error("Request failed");  // Debugging line to log request failure
-            alert("มีข้อผิดพลาด: Request failed");
-        };
-        xhr.send(JSON.stringify(data));
-    }
-
-    function clearForm() {
-        document.getElementById('bookingForm').reset();
-    }
-
-    function populateHours() {
-        var hourOptions = '';
-        for (var i = 0; i <= 23; i++) {
-            hourOptions += '<option value="' + ('0' + i).slice(-2) + '">' + ('0' + i).slice(-2) + '</option>';
-        }
-        document.getElementById('startTimeHour').innerHTML = hourOptions;
-        document.getElementById('endTimeHour').innerHTML = hourOptions;
-    }
-
-    // Populate hour options when the page loads
-    window.onload = populateHours;
-</script>
-
+    <title>Input Form</title>
 </head>
 <body>
+    <h2>Input Form</h2>
+    <form id="inputForm">
+        <label for="a">a:</label>
+        <input type="number" id="a" name="a" required><br><br>
+        <label for="b">b:</label>
+        <input type="number" id="b" name="b" required><br><br>
+        <button type="submit">Submit</button>
+    </form>
 
-<h2>ระบบจองล่ามV2</h2>
+    <script>
+        document.getElementById("inputForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // ป้องกันการส่งฟอร์มแบบธรรมดา
 
-<form id="bookingForm">
-    <label for="employeeName">ชื่อพนักงาน:</label>
-    <input type="text" id="employeeName" name="employeeName" required><br>
+            var formData = new FormData(this); // เก็บข้อมูลจากฟอร์ม
+            var jsonData = {};
 
-    <label for="jobDetails">รายละเอียดงาน:</label>
-    <textarea id="jobDetails" name="jobDetails" rows="4" required></textarea><br>
+            formData.forEach(function(value, key) {
+                jsonData[key] = value; // แปลงข้อมูลเป็น JSON
+            });
 
-    <label for="interpreter">เลือกล่าม:</label>
-    <select id="interpreter" name="interpreter" required>
-        <option value="">โปรดเลือก</option>
-        <option value="SOM SAN">SOM SAN</option>
-        <option value="GOOK SAN">GOOK SAN</option>
-        <option value="POOKY SAN">POOKY SAN</option>
-        <option value="NOEY SAN">NOEY SAN</option>
-    </select><br>
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "YOUR_WEB_APP_URL_HERE", true); // ใส่ URL ของ Web App ที่รับข้อมูล
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify(jsonData)); // ส่งข้อมูลในรูปแบบ JSON
 
-    <label for="date">วันที่:</label>
-    <input type="date" id="date" name="date" required><br>
-
-    <label for="startTime">เวลาเริ่มต้น:</label>
-    <select id="startTimeHour" name="startTimeHour" required>
-        <option value="">ชั่วโมง</option>
-        <!-- Add hour options from 00 to 23 -->
-    </select>
-    :
-    <select id="startTimeMinute" name="startTimeMinute" required>
-        <option value="00">00</option>
-        <option value="30">30</option>
-    </select><br>
-
-    <label for="endTime">เวลาสิ้นสุด:</label>
-    <select id="endTimeHour" name="endTimeHour" required>
-        <option value="">ชั่วโมง</option>
-        <!-- Add hour options from 00 to 23 -->
-    </select>
-    :
-    <select id="endTimeMinute" name="endTimeMinute" required>
-        <option value="00">00</option>
-        <option value="30">30</option>
-    </select><br>
-
-    <button type="button" onclick="submitForm()">จองล่าม</button>
-    <button type="button" onclick="clearForm()">Clear</button>
-</form>
-
+            // เคลียร์ฟอร์มหลังจากส่งข้อมูลแล้ว
+            document.getElementById("inputForm").reset();
+        });
+    </script>
 </body>
 </html>
