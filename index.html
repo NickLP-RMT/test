@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <title>ระบบจองล่าม</title>
+    <title>ระบบจองล่าม Demo</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -102,7 +102,7 @@
     </div>
     <div class="content">
         <div id="bookingSection">
-            <h1>ระบบจองล่าม</h1>
+            <h1>ระบบจองล่าม Demo</h1>
             <form method="post" id="bookingForm" class="mb-5">
                 <div class="form-group">
                     <label for="employee_name">ชื่อพนักงาน</label>
@@ -112,9 +112,10 @@
                     <label for="interpreter">เลือกล่าม</label>
                     <select class="form-control" id="interpreter" name="interpreter" required>
                         <option value="" disabled selected>โปรดเลือกล่าม</option>
-                        {% for intrp in interpreters %}
-                            <option value="{{ intrp }}">{{ intrp }}</option>
-                        {% endfor %}
+                        <option value="SOM SAN">SOM SAN</option>
+                        <option value="GOOK SAN">GOOK SAN</option>
+                        <option value="POOKY SAN">POOKY SAN</option>
+                        <option value="NOEY SAN">NOEY SAN</option>
                     </select>
                 </div>
                 <div class="form-row">
@@ -126,12 +127,12 @@
                         <label for="start_time_hour">เวลาเริ่มต้น</label>
                         <div class="input-group">
                             <select class="form-control" id="start_time_hour" name="start_time_hour" required>
-                                {% for hour in range(24) %}
+                                {% for hour in range(0, 24) %}
                                     <option value="{{ "%02d" % hour }}">{{ "%02d" % hour }}</option>
                                 {% endfor %}
                             </select>
                             <select class="form-control" id="start_time_minute" name="start_time_minute" required>
-                                {% for minute in range(0, 60, 10) %}
+                                {% for minute in range(0, 60, 30) %}
                                     <option value="{{ "%02d" % minute }}">{{ "%02d" % minute }}</option>
                                 {% endfor %}
                             </select>
@@ -141,12 +142,12 @@
                         <label for="end_time_hour">เวลาสิ้นสุด</label>
                         <div class="input-group">
                             <select class="form-control" id="end_time_hour" name="end_time_hour" required>
-                                {% for hour in range(24) %}
+                                {% for hour in range(0, 24) %}
                                     <option value="{{ "%02d" % hour }}">{{ "%02d" % hour }}</option>
                                 {% endfor %}
                             </select>
                             <select class="form-control" id="end_time_minute" name="end_time_minute" required>
-                                {% for minute in range(0, 60, 10) %}
+                                {% for minute in range(0, 60, 30) %}
                                     <option value="{{ "%02d" % minute }}">{{ "%02d" % minute }}</option>
                                 {% endfor %}
                             </select>
@@ -166,9 +167,10 @@
                         <label for="searchInterpreter">ล่ามทั้งหมด</label>
                         <select class="form-control" id="searchInterpreter" name="interpreter">
                             <option value="">ล่ามทั้งหมด</option>
-                            {% for intrp in interpreters %}
-                                <option value="{{ intrp }}">{{ intrp }}</option>
-                            {% endfor %}
+                            <option value="SOM SAN">SOM SAN</option>
+                            <option value="GOOK SAN">GOOK SAN</option>
+                            <option value="POOKY SAN">POOKY SAN</option>
+                            <option value="NOEY SAN">NOEY SAN</option>
                         </select>
                     </div>
                     <div class="form-group col-md-6">
