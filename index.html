@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ระบบจองล่าม</title>
 <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    
+    form {
+        width: 300px;
+    }
+    
     label {
         display: block;
         margin-bottom: 5px;
@@ -13,6 +25,10 @@
     .datetime-input {
         display: inline-block;
         vertical-align: top;
+    }
+    
+    .button-container {
+        text-align: center;
     }
 </style>
 </head>
@@ -67,8 +83,10 @@
         </select><br>
     </div>
 
-    <button type="submit">จองล่าม</button>
-    <button type="button" onclick="clearForm()">Clear</button>
+    <div class="button-container">
+        <button type="submit">จองล่าม</button>
+        <button type="button" onclick="clearForm()">Clear</button>
+    </div>
 </form>
 
 <script>
