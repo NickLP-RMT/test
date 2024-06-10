@@ -4,6 +4,59 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ระบบจองล่ามV2</title>
+
+<script>
+    function submitForm() {
+        var form = document.getElementById('bookingForm');
+        var data = {
+            employeeName: form.employeeName.value,
+            jobDetails: form.jobDetails.value,
+            interpreter: form.interpreter.value,
+            date: form.date.value,
+            startTime: form.startTimeHour.value + ':' + form.startTimeMinute.value,
+            endTime: form.endTimeHour.value + ':' + form.endTimeMinute.value
+        };
+
+        console.log("Data being sent:", data);  // Debugging line to log the data being sent
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://script.google.com/macros/s/AKfycbzmZAv1AIt8KaeQfYxdG07pKLyxg4N2vuqhWKSQ7GFaUz9YTxIyGyUVyiDvu2NC-74LAw/exec", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    alert("จองล่ามสำเร็จ");
+                    clearForm();
+                } else {
+                    console.error("Error response from server:", xhr.responseText);  // Debugging line to log server response
+                    alert("มีข้อผิดพลาด: " + xhr.responseText);
+                }
+            }
+        };
+        xhr.onerror = function () {
+            console.error("Request failed");  // Debugging line to log request failure
+            alert("มีข้อผิดพลาด: Request failed");
+        };
+        xhr.send(JSON.stringify(data));
+    }
+
+    function clearForm() {
+        document.getElementById('bookingForm').reset();
+    }
+
+    function populateHours() {
+        var hourOptions = '';
+        for (var i = 0; i <= 23; i++) {
+            hourOptions += '<option value="' + ('0' + i).slice(-2) + '">' + ('0' + i).slice(-2) + '</option>';
+        }
+        document.getElementById('startTimeHour').innerHTML = hourOptions;
+        document.getElementById('endTimeHour').innerHTML = hourOptions;
+    }
+
+    // Populate hour options when the page loads
+    window.onload = populateHours;
+</script>
+
 </head>
 <body>
 
@@ -53,54 +106,6 @@
     <button type="button" onclick="submitForm()">จองล่าม</button>
     <button type="button" onclick="clearForm()">Clear</button>
 </form>
-
-<script>
-    // Populate hour options
-    var hourOptions = '';
-    for (var i = 0; i <= 23; i++) {
-        hourOptions += '<option value="' + ('0' + i).slice(-2) + '">' + ('0' + i).slice(-2) + '</option>';
-    }
-    document.getElementById('startTimeHour').innerHTML = hourOptions;
-    document.getElementById('endTimeHour').innerHTML = hourOptions;
-
-    function clearForm() {
-        document.getElementById('bookingForm').reset();
-    }
-
-    function submitForm() {
-        var form = document.getElementById('bookingForm');
-        var data = {
-            employeeName: form.employeeName.value,
-            jobDetails: form.jobDetails.value,
-            interpreter: form.interpreter.value,
-            date: form.date.value,
-            startTime: form.startTimeHour.value + ':' + form.startTimeMinute.value,
-            endTime: form.endTimeHour.value + ':' + form.endTimeMinute.value
-        };
-
-        console.log("Data being sent:", data);  // Debugging line to log the data being sent
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://script.google.com/macros/s/AKfycbzmZAv1AIt8KaeQfYxdG07pKLyxg4N2vuqhWKSQ7GFaUz9YTxIyGyUVyiDvu2NC-74LAw/exec", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    alert("จองล่ามสำเร็จ");
-                    clearForm();
-                } else {
-                    console.error("Error response from server:", xhr.responseText);  // Debugging line to log server response
-                    alert("มีข้อผิดพลาด: " + xhr.responseText);
-                }
-            }
-        };
-        xhr.onerror = function () {
-            console.error("Request failed");  // Debugging line to log request failure
-            alert("มีข้อผิดพลาด: Request failed");
-        };
-        xhr.send(JSON.stringify(data));
-    }
-</script>
 
 </body>
 </html>
