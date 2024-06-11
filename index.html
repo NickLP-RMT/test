@@ -1,37 +1,160 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Input Form5</title>
+    <title>บันทึกข้อมูลลงใน Google Sheet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            width: 400px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            color: #555;
+            font-size: 1em;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        input[type="button"] {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1em;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        input[type="button"]:hover {
+            background-color: #218838;
+        }
+
+        #message {
+            margin-top: 20px;
+            color: #ff0000;
+            text-align: center;
+            font-size: 1em;
+        }
+
+        /* Loading overlay styles */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #000;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <h2>Input Form5</h2>
-    <form id="inputForm">
-        <label for="a">a:</label>
-        <input type="number" id="a" name="a" required><br><br>
-        <label for="b">b:</label>
-        <input type="number" id="b" name="b" required><br><br>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <h1>กรอกข้อมูลเพื่อบันทึกลงใน Google Sheet</h1>
+        <form id="dataForm">
+            <label for="columnA">ข้อมูล Column A:</label>
+            <input type="text" id="columnA" name="columnA">
+            <label for="columnB">ข้อมูล Column B:</label>
+            <input type="text" id="columnB" name="columnB">
+            <input type="button" value="Submit" onclick="submitData()">
+            <p id="message"></p>
+        </form>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
 
     <script>
-        document.getElementById("inputForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // ป้องกันการส่งฟอร์มแบบธรรมดา
+        function submitData() {
+            // Show loading overlay
+            document.getElementById("loadingOverlay").classList.add("active");
 
-            var formData = new FormData(this); // เก็บข้อมูลจากฟอร์ม
-            var jsonData = {};
+            var formData = new FormData(document.getElementById("dataForm"));
+            fetch("https://script.google.com/macros/s/AKfycbxtkzUIoDH85vnmXfjtjOlTHqo7Z-PZRTNtEzmnaANweA57ybI5Qa9ai41pbK8JFnxb/exec", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading overlay
+                document.getElementById("loadingOverlay").classList.remove("active");
 
-            formData.forEach(function(value, key) {
-                jsonData[key] = value; // แปลงข้อมูลเป็น JSON
+                if (data.success) {
+                    alert("ข้อมูลถูกบันทึกเรียบร้อยแล้ว!");
+                    document.getElementById("dataForm").reset();
+                    document.getElementById("message").innerHTML = "";
+                } else {
+                    document.getElementById("message").innerHTML = data.message; // แสดงข้อความที่ได้จากการตรวจสอบข้อมูลใน Google Sheets
+                }
+            })
+            .catch(error => {
+                // Hide loading overlay
+                document.getElementById("loadingOverlay").classList.remove("active");
+
+                console.error("เกิดข้อผิดพลาด:", error);
             });
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "https://script.google.com/macros/s/AKfycbyxlw_XlYPoM7xwaMH3TK8dVdHp-efWWuAE3V890305gMuwbZd0aXJv-xBxlMOx7GZ8rQ/exec", true); // ใส่ URL ของ Web App ที่รับข้อมูล
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.send(JSON.stringify(jsonData)); // ส่งข้อมูลในรูปแบบ JSON
-
-            // เคลียร์ฟอร์มหลังจากส่งข้อมูลแล้ว
-            document.getElementById("inputForm").reset();
-        });
+        }
     </script>
 </body>
 </html>
