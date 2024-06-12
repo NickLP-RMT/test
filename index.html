@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>บันทึกข้อมูลลงใน Google Sheet</title>
+    <title>Translator Booking</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -39,7 +39,7 @@
             font-size: 1em;
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="date"], select {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 10px;
@@ -48,9 +48,21 @@
             font-size: 1em;
         }
 
-        input[type="button"] {
-            background-color: #28a745;
-            color: white;
+        .time-select {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .time-select select {
+            width: 48%;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="button"], input[type="reset"] {
             border: none;
             padding: 10px;
             text-align: center;
@@ -60,11 +72,25 @@
             margin: 4px 2px;
             cursor: pointer;
             border-radius: 4px;
-            width: 100%;
+            width: 48%;
+        }
+
+        input[type="button"] {
+            background-color: #28a745;
+            color: white;
         }
 
         input[type="button"]:hover {
             background-color: #218838;
+        }
+
+        input[type="reset"] {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        input[type="reset"]:hover {
+            background-color: #c82333;
         }
 
         #message {
@@ -109,13 +135,51 @@
 </head>
 <body>
     <div class="container">
-        <h1>กรอกข้อมูลเพื่อบันทึกลงใน Google Sheet</h1>
+        <h1>Translator Booking</h1>
         <form id="dataForm">
-            <label for="columnA">ข้อมูล Column A:</label>
-            <input type="text" id="columnA" name="columnA">
-            <label for="columnB">ข้อมูล Column B:</label>
-            <input type="text" id="columnB" name="columnB">
-            <input type="button" value="Submit" onclick="submitData()">
+            <label for="bookingBy">Booking By:</label>
+            <input type="text" id="bookingBy" name="bookingBy">
+
+            <label for="translatorForWork">Translator for work:</label>
+            <input type="text" id="translatorForWork" name="translatorForWork">
+
+            <label for="translatorName">Translator Name:</label>
+            <select id="translatorName" name="translatorName">
+                <option value="" disabled selected>Select Translator</option>
+                <option value="SOM SAN">SOM SAN</option>
+                <option value="GOOK SAN">GOOK SAN</option>
+                <option value="POOKY SAN">POOKY SAN</option>
+                <option value="NOEY SAN">NOEY SAN</option>
+            </select>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date">
+
+            <label for="timeFrom">Time From:</label>
+            <div class="time-select">
+                <select id="timeFromHour" name="timeFromHour">
+                    ${generateTimeOptions('hour')}
+                </select>
+                <select id="timeFromMinute" name="timeFromMinute">
+                    ${generateTimeOptions('minute')}
+                </select>
+            </div>
+
+            <label for="timeTo">Time To:</label>
+            <div class="time-select">
+                <select id="timeToHour" name="timeToHour">
+                    ${generateTimeOptions('hour')}
+                </select>
+                <select id="timeToMinute" name="timeToMinute">
+                    ${generateTimeOptions('minute')}
+                </select>
+            </div>
+
+            <div class="buttons">
+                <input type="button" value="Submit" onclick="submitData()">
+                <input type="reset" value="Clear">
+            </div>
+            
             <p id="message"></p>
         </form>
     </div>
@@ -126,12 +190,34 @@
     </div>
 
     <script>
+        function generateTimeOptions(type) {
+            let options = "";
+            if (type === 'hour') {
+                for (let i = 0; i <= 23; i++) {
+                    let value = i.toString().padStart(2, '0');
+                    options += `<option value="${value}">${value}</option>`;
+                }
+            } else if (type === 'minute') {
+                options += `<option value="00">00</option>`;
+                options += `<option value="30">30</option>`;
+            }
+            return options;
+        }
+
         function submitData() {
             // Show loading overlay
             document.getElementById("loadingOverlay").classList.add("active");
 
             var formData = new FormData(document.getElementById("dataForm"));
-            fetch("https://script.google.com/macros/s/AKfycbxtkzUIoDH85vnmXfjtjOlTHqo7Z-PZRTNtEzmnaANweA57ybI5Qa9ai41pbK8JFnxb/exec", {
+            var timeFrom = formData.get("timeFromHour") + ":" + formData.get("timeFromMinute");
+            var timeTo = formData.get("timeToHour") + ":" + formData.get("timeToMinute");
+
+            formData.set("columnA", new Date().toISOString()); // Adding timestamp
+            formData.set("date", formData.get("date").split("-").reverse().join("/")); // Formatting date to dd/mm/yyyy
+            formData.set("columnE", timeFrom);
+            formData.set("columnF", timeTo);
+
+            fetch("https://script.google.com/macros/s/AKfycbyyq1cgBAtY2vZJqutMNoWv2N_S0NOPxNC9MGh3_QOb1pN9Up1_CRbybARfsGXLNWMP/exec", {
                 method: "POST",
                 body: formData
             })
