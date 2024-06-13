@@ -247,15 +247,15 @@
             document.getElementById("loadingOverlay").classList.add("active");
 
             var formData = new FormData(document.getElementById("dataForm"));
-            var timeFrom = formData.get("timeFromHour") + ":" + formData.get("timeFromMinute");
-            var timeTo = formData.get("timeToHour") + ":" + formData.get("timeToMinute");
+            var timeFrom = "'" + formData.get("timeFromHour") + ":" + formData.get("timeFromMinute"); // Add apostrophe
+            var timeTo = "'" + formData.get("timeToHour") + ":" + formData.get("timeToMinute"); // Add apostrophe
 
             formData.set("columnA", new Date().toISOString()); // Adding timestamp
             formData.set("date", formData.get("date").split("-").reverse().join("/")); // Formatting date to dd/mm/yyyy
             formData.set("columnE", timeFrom);
             formData.set("columnF", timeTo);
 
-            fetch("https://script.google.com/macros/s/AKfycbyyq1cgBAtY2vZJqutMNoWv2N_S0NOPxNC9MGh3_QOb1pN9Up1_CRbybARfsGXLNWMP/exec", {
+            fetch("https://script.google.com/macros/s/AKfycbyG-8LG5sCk13GoY5cVN_e8GXd5M6hznVvIn30BFkzjZk737TpEESsUy83MtR5cfv-r/exec", {
                 method: "POST",
                 body: formData
             })
