@@ -6,12 +6,25 @@ function submitData() {
     var timeFrom = "'" + formData.get("timeFromHour") + ":" + formData.get("timeFromMinute"); // Add apostrophe
     var timeTo = "'" + formData.get("timeToHour") + ":" + formData.get("timeToMinute"); // Add apostrophe
 
+    var date = formData.get("date").split("-").reverse().join("/"); // Format date to dd/mm/yyyy
+    var bookingKey = formData.get("translatorName") + "-" + date + "-" + timeFrom + "-" + timeTo; // Create unique key
+
+    // Check if booking already exists
+    if (localStorage.getItem(bookingKey)) {
+        document.getElementById("message").innerHTML = "การจองนี้มีอยู่แล้ว กรุณาเลือกเวลาอื่น";
+        document.getElementById("loadingOverlay").classList.remove("active");
+        return;
+    }
+
+    // Store booking in localStorage to prevent duplicate bookings
+    localStorage.setItem(bookingKey, "booked");
+
     formData.set("columnA", new Date().toISOString()); // Adding timestamp
-    formData.set("date", formData.get("date").split("-").reverse().join("/")); // Formatting date to dd/mm/yyyy
+    formData.set("date", date); // Update formatted date
     formData.set("columnE", timeFrom);
     formData.set("columnF", timeTo);
 
-    fetch("https://script.google.com/macros/s/AKfycbzStkRfTuKuU8b7ZWmyCXp8KzDfh-77oG5s9lW23lbjI_3uCLAZfklJ0RidSScp99Fi/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbw24w_bciupdzJ6HBjuFBnDRVHogh58T52a7GCSgYKIIQ_E7AKziPGE96IkmF13Uxc9/exec", {
         method: "POST",
         body: formData
     })
