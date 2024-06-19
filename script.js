@@ -12,7 +12,7 @@ function submitData() {
     formData.set("columnF", timeTo);
 
     // Check if the booking already exists
-    fetch("https://script.google.com/macros/s/AKfycbzznqrvjuhHofoeCtRDzTwxMEeHsxthQMDU3LHQM-D6VVt2o94da7lmpfLs4eSbnE15/exec")
+    fetch("https://script.google.com/macros/s/AKfycbyrGwQ-0iTZT8uRWZvBRTXlfQvnm6qYiThs1JWsG3p7reiYIFReozva55W5QQsFoQeB/exec")
         .then(response => response.json())
         .then(data => {
             // Hide loading overlay
@@ -44,7 +44,7 @@ function submitToGoogleSheets(formData) {
     // Show loading overlay
     document.getElementById("loadingOverlay").classList.add("active");
 
-    fetch("https://script.google.com/macros/s/AKfycbzznqrvjuhHofoeCtRDzTwxMEeHsxthQMDU3LHQM-D6VVt2o94da7lmpfLs4eSbnE15/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbyrGwQ-0iTZT8uRWZvBRTXlfQvnm6qYiThs1JWsG3p7reiYIFReozva55W5QQsFoQeB/exec", {
         method: "POST",
         body: formData
     })
