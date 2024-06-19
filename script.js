@@ -11,40 +11,7 @@ function submitData() {
     formData.set("columnE", timeFrom);
     formData.set("columnF", timeTo);
 
-    // Check if the booking already exists
-    fetch("https://script.google.com/macros/s/AKfycbyrGwQ-0iTZT8uRWZvBRTXlfQvnm6qYiThs1JWsG3p7reiYIFReozva55W5QQsFoQeB/exec")
-        .then(response => response.json())
-        .then(data => {
-            // Hide loading overlay
-            document.getElementById("loadingOverlay").classList.remove("active");
-
-            // Check if any booking matches the current form data
-            var isDuplicate = data.some(item => {
-                return item.date === formData.get("date") &&
-                       item.timeFrom === timeFrom &&
-                       item.timeTo === timeTo;
-            });
-
-            if (isDuplicate) {
-                document.getElementById("message").innerHTML = "เวลาที่เลือกมีการจองแล้ว กรุณาเลือกเวลาอื่น";
-            } else {
-                // Proceed to submit if no duplicates found
-                submitToGoogleSheets(formData);
-            }
-        })
-        .catch(error => {
-            // Hide loading overlay
-            document.getElementById("loadingOverlay").classList.remove("active");
-
-            console.error("เกิดข้อผิดพลาดในการตรวจสอบการจองซ้ำ:", error);
-        });
-}
-
-function submitToGoogleSheets(formData) {
-    // Show loading overlay
-    document.getElementById("loadingOverlay").classList.add("active");
-
-    fetch("https://script.google.com/macros/s/AKfycbyrGwQ-0iTZT8uRWZvBRTXlfQvnm6qYiThs1JWsG3p7reiYIFReozva55W5QQsFoQeB/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbzBxI35vuhxlTWqO6fsI-aKKMb_7SFG3E3THxjKxdGaon3fJg73ZV443aHt3Fe17blK/exec", {
         method: "POST",
         body: formData
     })
@@ -65,6 +32,6 @@ function submitToGoogleSheets(formData) {
         // Hide loading overlay
         document.getElementById("loadingOverlay").classList.remove("active");
 
-        console.error("เกิดข้อผิดพลาดในการส่งข้อมูลไปยัง Google Sheets:", error);
+        console.error("เกิดข้อผิดพลาด:", error);
     });
 }
