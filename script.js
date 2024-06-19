@@ -6,23 +6,43 @@ function submitData() {
     var timeFrom = "'" + formData.get("timeFromHour") + ":" + formData.get("timeFromMinute"); // Add apostrophe
     var timeTo = "'" + formData.get("timeToHour") + ":" + formData.get("timeToMinute"); // Add apostrophe
 
-    var date = formData.get("date").split("-").reverse().join("/"); // Format date to dd/mm/yyyy
-    var bookingKey = formData.get("translatorName") + "-" + date + "-" + timeFrom + "-" + timeTo; // Create unique key
-
-    // Check if booking already exists
-    if (localStorage.getItem(bookingKey)) {
-        document.getElementById("message").innerHTML = "การจองนี้มีอยู่แล้ว กรุณาเลือกเวลาอื่น";
-        document.getElementById("loadingOverlay").classList.remove("active");
-        return;
-    }
-
-    // Store booking in localStorage to prevent duplicate bookings
-    localStorage.setItem(bookingKey, "booked");
-
     formData.set("columnA", new Date().toISOString()); // Adding timestamp
-    formData.set("date", date); // Update formatted date
+    formData.set("date", formData.get("date").split("-").reverse().join("/")); // Formatting date to dd/mm/yyyy
     formData.set("columnE", timeFrom);
     formData.set("columnF", timeTo);
+
+    // Check if the booking already exists
+    fetch("https://script.google.com/macros/s/AKfycbzStkRfTuKuU8b7ZWmyCXp8KzDfh-77oG5s9lW23lbjI_3uCLAZfklJ0RidSScp99Fi/exec")
+        .then(response => response.json())
+        .then(data => {
+            // Hide loading overlay
+            document.getElementById("loadingOverlay").classList.remove("active");
+
+            // Check if any booking matches the current form data
+            var isDuplicate = data.some(item => {
+                return item.date === formData.get("date") &&
+                       item.timeFrom === timeFrom &&
+                       item.timeTo === timeTo;
+            });
+
+            if (isDuplicate) {
+                document.getElementById("message").innerHTML = "เวลาที่เลือกมีการจองแล้ว กรุณาเลือกเวลาอื่น";
+            } else {
+                // Proceed to submit if no duplicates found
+                submitToGoogleSheets(formData);
+            }
+        })
+        .catch(error => {
+            // Hide loading overlay
+            document.getElementById("loadingOverlay").classList.remove("active");
+
+            console.error("เกิดข้อผิดพลาดในการตรวจสอบการจองซ้ำ:", error);
+        });
+}
+
+function submitToGoogleSheets(formData) {
+    // Show loading overlay
+    document.getElementById("loadingOverlay").classList.add("active");
 
     fetch("https://script.google.com/macros/s/AKfycbzStkRfTuKuU8b7ZWmyCXp8KzDfh-77oG5s9lW23lbjI_3uCLAZfklJ0RidSScp99Fi/exec", {
         method: "POST",
@@ -45,6 +65,6 @@ function submitData() {
         // Hide loading overlay
         document.getElementById("loadingOverlay").classList.remove("active");
 
-        console.error("เกิดข้อผิดพลาด:", error);
+        console.error("เกิดข้อผิดพลาดในการส่งข้อมูลไปยัง Google Sheets:", error);
     });
 }
