@@ -11,7 +11,7 @@ function submitData() {
     formData.set("columnE", timeFrom);
     formData.set("columnF", timeTo);
 
-    fetch("https://script.google.com/macros/s/AKfycbw24w_bciupdzJ6HBjuFBnDRVHogh58T52a7GCSgYKIIQ_E7AKziPGE96IkmF13Uxc9/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbzStkRfTuKuU8b7ZWmyCXp8KzDfh-77oG5s9lW23lbjI_3uCLAZfklJ0RidSScp99Fi/exec", {
         method: "POST",
         body: formData
     })
