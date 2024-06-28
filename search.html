@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Search Bookings</title>
+    <title>Search Translator Booking</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
@@ -14,9 +14,42 @@
             </ul>
         </nav>
         <div class="container">
-            <h1>Search Bookings</h1>
-            <!-- Add search functionality here -->
+            <h1>Search Translator Booking</h1>
+            <form id="searchForm">
+                <label for="translatorName">Translator Name:</label>
+                <select id="translatorName" name="translatorName">
+                    <option value="" disabled selected>Select Translator</option>
+                    <option value="SOM SAN">SOM SAN</option>
+                    <option value="GOOK SAN">GOOK SAN</option>
+                    <option value="POOKY SAN">POOKY SAN</option>
+                    <option value="NOEY SAN">NOEY SAN</option>
+                </select>
+
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date">
+
+                <div class="buttons">
+                    <input type="button" value="Search" onclick="searchData()">
+                    <input type="reset" value="Clear">
+                </div>
+            </form>
+
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Booking By</th>
+                        <th>Translator for Work</th>
+                        <th>Translator Name</th>
+                        <th>Date</th>
+                        <th>Time From</th>
+                        <th>Time To</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
+
+    <script src="search.js"></script>
 </body>
 </html>
