@@ -19,6 +19,26 @@ body {
     box-sizing: border-box;
 }
 
+.menu {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.menu button {
+    border: none;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    margin-left: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.menu button:hover {
+    background-color: #0056b3;
+}
+
 h1 {
     color: #333;
     text-align: center;
@@ -124,4 +144,12 @@ input[type="reset"]:hover {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+.content {
+    display: none;
+}
+
+.content.active {
+    display: block;
 }
