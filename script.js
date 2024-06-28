@@ -35,3 +35,16 @@ function submitData() {
         console.error("เกิดข้อผิดพลาด:", error);
     });
 }
+
+function showPage(page) {
+    var bookingPage = document.getElementById('booking');
+    var searchingPage = document.getElementById('searching');
+    
+    if (page === 'booking') {
+        bookingPage.style.display = 'block';
+        searchingPage.style.display = 'none';
+    } else if (page === 'searching') {
+        bookingPage.style.display = 'none';
+        searchingPage.style.display = 'block';
+    }
+}
