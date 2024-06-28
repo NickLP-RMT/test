@@ -41,10 +41,10 @@ function showPage(page) {
     var searchingPage = document.getElementById('searching');
     
     if (page === 'booking') {
-        bookingPage.style.display = 'block';
-        searchingPage.style.display = 'none';
+        bookingPage.classList.add('active');
+        searchingPage.classList.remove('active');
     } else if (page === 'searching') {
-        bookingPage.style.display = 'none';
-        searchingPage.style.display = 'block';
+        bookingPage.classList.remove('active');
+        searchingPage.classList.add('active');
     }
 }
