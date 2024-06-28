@@ -129,7 +129,6 @@ input[type="reset"]:hover {
     font-size: 1em;
 }
 
-/* Loading overlay styles */
 .loading-overlay {
     display: none;
     position: fixed;
@@ -159,12 +158,4 @@ input[type="reset"]:hover {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-.content {
-    display: none;
-}
-
-.content.active {
-    display: block;
 }
