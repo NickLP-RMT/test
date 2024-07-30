@@ -44,35 +44,44 @@ function searchData() {
             var tbody = document.querySelector("#resultsTable tbody");
             tbody.innerHTML = "";
 
-            data.records.forEach(record => {
+            if (data.records && data.records.length > 0) {
+                data.records.forEach(record => {
+                    var row = document.createElement("tr");
+
+                    var bookingByCell = document.createElement("td");
+                    bookingByCell.textContent = record.bookingBy;
+                    row.appendChild(bookingByCell);
+
+                    var translatorForWorkCell = document.createElement("td");
+                    translatorForWorkCell.textContent = record.translatorForWork;
+                    row.appendChild(translatorForWorkCell);
+
+                    var translatorNameCell = document.createElement("td");
+                    translatorNameCell.textContent = record.translatorName;
+                    row.appendChild(translatorNameCell);
+
+                    var dateCell = document.createElement("td");
+                    dateCell.textContent = record.date;
+                    row.appendChild(dateCell);
+
+                    var timeFromCell = document.createElement("td");
+                    timeFromCell.textContent = record.timeFrom;
+                    row.appendChild(timeFromCell);
+
+                    var timeToCell = document.createElement("td");
+                    timeToCell.textContent = record.timeTo;
+                    row.appendChild(timeToCell);
+
+                    tbody.appendChild(row);
+                });
+            } else {
                 var row = document.createElement("tr");
-
-                var bookingByCell = document.createElement("td");
-                bookingByCell.textContent = record.bookingBy;
-                row.appendChild(bookingByCell);
-
-                var translatorForWorkCell = document.createElement("td");
-                translatorForWorkCell.textContent = record.translatorForWork;
-                row.appendChild(translatorForWorkCell);
-
-                var translatorNameCell = document.createElement("td");
-                translatorNameCell.textContent = record.translatorName;
-                row.appendChild(translatorNameCell);
-
-                var dateCell = document.createElement("td");
-                dateCell.textContent = record.date;
-                row.appendChild(dateCell);
-
-                var timeFromCell = document.createElement("td");
-                timeFromCell.textContent = record.timeFrom;
-                row.appendChild(timeFromCell);
-
-                var timeToCell = document.createElement("td");
-                timeToCell.textContent = record.timeTo;
-                row.appendChild(timeToCell);
-
+                var noDataCell = document.createElement("td");
+                noDataCell.setAttribute("colspan", "6");
+                noDataCell.textContent = "No records found.";
+                row.appendChild(noDataCell);
                 tbody.appendChild(row);
-            });
+            }
         })
         .catch(error => {
             console.error("Error:", error);
