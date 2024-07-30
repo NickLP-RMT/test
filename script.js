@@ -10,7 +10,7 @@ function submitData() {
     formData.set("columnE", timeFrom);
     formData.set("columnF", timeTo);
 
-    fetch("https://script.google.com/macros/s/AKfycbzBxI35vuhxlTWqO6fsI-aKKMb_7SFG3E3THxjKxdGaon3fJg73ZV443aHt3Fe17blK/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbxt0pkWsQK5tmS2vtscjTYXXHUzOKVF3Cmq6UoF1mJHTsloqWf--vmev4u3ovDnoi5D/exec", {
         method: "POST",
         body: formData
     })
@@ -38,7 +38,7 @@ function searchData() {
     var translatorName = formData.get("translatorName");
     var date = formData.get("date");
 
-    fetch(`https://script.google.com/macros/s/AKfycbzBxI35vuhxlTWqO6fsI-aKKMb_7SFG3E3THxjKxdGaon3fJg73ZV443aHt3Fe17blK/exec?translatorName=${translatorName}&date=${date}`)
+    fetch(`https://script.google.com/macros/s/AKfycbxt0pkWsQK5tmS2vtscjTYXXHUzOKVF3Cmq6UoF1mJHTsloqWf--vmev4u3ovDnoi5D/exec?translatorName=${translatorName}&date=${date}`)
         .then(response => response.json())
         .then(data => {
             var tbody = document.querySelector("#resultsTable tbody");
