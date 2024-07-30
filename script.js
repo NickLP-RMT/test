@@ -1,13 +1,12 @@
 function submitData() {
-    // Show loading overlay
     document.getElementById("loadingOverlay").classList.add("active");
 
     var formData = new FormData(document.getElementById("dataForm"));
-    var timeFrom = "'" + formData.get("timeFromHour") + ":" + formData.get("timeFromMinute"); // Add apostrophe
-    var timeTo = "'" + formData.get("timeToHour") + ":" + formData.get("timeToMinute"); // Add apostrophe
+    var timeFrom = "'" + formData.get("timeFromHour") + ":" + formData.get("timeFromMinute");
+    var timeTo = "'" + formData.get("timeToHour") + ":" + formData.get("timeToMinute");
 
-    formData.set("columnA", new Date().toISOString()); // Adding timestamp
-    formData.set("date", formData.get("date").split("-").reverse().join("/")); // Formatting date to dd/mm/yyyy
+    formData.set("columnA", new Date().toISOString());
+    formData.set("date", formData.get("date").split("-").reverse().join("/"));
     formData.set("columnE", timeFrom);
     formData.set("columnF", timeTo);
 
@@ -17,7 +16,6 @@ function submitData() {
     })
     .then(response => response.json())
     .then(data => {
-        // Hide loading overlay
         document.getElementById("loadingOverlay").classList.remove("active");
 
         if (data.success) {
@@ -25,22 +23,21 @@ function submitData() {
             document.getElementById("dataForm").reset();
             document.getElementById("message").innerHTML = "";
         } else {
-            document.getElementById("message").innerHTML = data.message; // แสดงข้อความที่ได้จากการตรวจสอบข้อมูลใน Google Sheets
+            document.getElementById("message").innerHTML = data.message;
         }
     })
     .catch(error => {
-        // Hide loading overlay
         document.getElementById("loadingOverlay").classList.remove("active");
-
         console.error("เกิดข้อผิดพลาด:", error);
     });
 }
+
 function searchData() {
     var formData = new FormData(document.getElementById("searchForm"));
     var translatorName = formData.get("translatorName");
     var date = formData.get("date");
 
-    fetch("https://script.google.com/macros/s/AKfycbzBxI35vuhxlTWqO6fsI-aKKMb_7SFG3E3THxjKxdGaon3fJg73ZV443aHt3Fe17blK/exec" + translatorName + "&date=" + date)
+    fetch(`https://script.google.com/macros/s/AKfycbzBxI35vuhxlTWqO6fsI-aKKMb_7SFG3E3THxjKxdGaon3fJg73ZV443aHt3Fe17blK/exec?translatorName=${translatorName}&date=${date}`)
         .then(response => response.json())
         .then(data => {
             var tbody = document.querySelector("#resultsTable tbody");
@@ -80,10 +77,11 @@ function searchData() {
             console.error("Error:", error);
         });
 }
+
 function showPage(page) {
     var bookingPage = document.getElementById('booking');
     var searchingPage = document.getElementById('searching');
-    
+
     if (page === 'booking') {
         bookingPage.classList.add('active');
         searchingPage.classList.remove('active');
