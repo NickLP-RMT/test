@@ -17,7 +17,7 @@
             <h1>Search Translator Booking</h1>
             <form id="searchForm">
                 <label for="translatorName">Translator Name:</label>
-                <select id="translatorName" name="translatorName">
+                <select id="translatorName" name="translatorName" required>
                     <option value="" disabled selected>Select Translator</option>
                     <option value="SOM SAN">SOM SAN</option>
                     <option value="GOOK SAN">GOOK SAN</option>
@@ -26,7 +26,7 @@
                 </select>
 
                 <label for="date">Date:</label>
-                <input type="date" id="date" name="date">
+                <input type="date" id="date" name="date" required>
 
                 <div class="buttons">
                     <input type="button" value="Search" onclick="searchData()">
@@ -50,6 +50,6 @@
         </div>
     </div>
 
-    <script src="search.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
