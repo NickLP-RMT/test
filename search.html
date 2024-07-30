@@ -1,55 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Search Translator Booking</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Translator Booking</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <div class="wrapper">
-        <nav class="sidebar">
-            <ul>
-                <li><a href="index.html">Booking</a></li>
-                <li><a href="search.html">Searching</a></li>
-            </ul>
-        </nav>
-        <div class="container">
-            <h1>Search Translator Booking</h1>
-            <form id="searchForm">
-                <label for="translatorName">Translator Name:</label>
-                <select id="translatorName" name="translatorName" required>
-                    <option value="" disabled selected>Select Translator</option>
-                    <option value="SOM SAN">SOM SAN</option>
-                    <option value="GOOK SAN">GOOK SAN</option>
-                    <option value="POOKY SAN">POOKY SAN</option>
-                    <option value="NOEY SAN">NOEY SAN</option>
-                </select>
-
-                <label for="date">Date:</label>
-                <input type="date" id="date" name="date" required>
-
-                <div class="buttons">
-                    <input type="button" value="Search" onclick="searchData()">
-                    <input type="reset" value="Clear">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Booking</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="search.html">Searching</a>
+                        </li>
+                    </ul>
                 </div>
-            </form>
+            </nav>
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <h1 class="h2">Search Translator Booking</h1>
+                <form id="searchForm">
+                    <div class="form-group">
+                        <label for="translatorName">Translator Name:</label>
+                        <select class="form-control" id="translatorName" name="translatorName" required>
+                            <option value="" disabled selected>Select Translator</option>
+                            <option value="SOM SAN">SOM SAN</option>
+                            <option value="GOOK SAN">GOOK SAN</option>
+                            <option value="POOKY SAN">POOKY SAN</option>
+                            <option value="NOEY SAN">NOEY SAN</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="searchData()">Search</button>
+                        <button type="reset" class="btn btn-secondary">Clear</button>
+                    </div>
+                </form>
 
-            <table id="resultsTable">
-                <thead>
-                    <tr>
-                        <th>Booking By</th>
-                        <th>Translator for Work</th>
-                        <th>Translator Name</th>
-                        <th>Date</th>
-                        <th>Time From</th>
-                        <th>Time To</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+                <table class="table table-striped" id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Booking By</th>
+                            <th>Translator for Work</th>
+                            <th>Translator Name</th>
+                            <th>Date</th>
+                            <th>Time From</th>
+                            <th>Time To</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </main>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
