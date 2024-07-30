@@ -1,9 +1,9 @@
 function submitData() {
-    document.getElementById("loadingOverlay").classList.add("active");
+    document.getElementById("loadingOverlay").style.display = 'flex';
 
     var formData = new FormData(document.getElementById("dataForm"));
-    var timeFrom = "'" + formData.get("timeFromHour") + ":" + formData.get("timeFromMinute");
-    var timeTo = "'" + formData.get("timeToHour") + ":" + formData.get("timeToMinute");
+    var timeFrom = formData.get("timeFromHour") + ":" + formData.get("timeFromMinute");
+    var timeTo = formData.get("timeToHour") + ":" + formData.get("timeToMinute");
 
     formData.set("columnA", new Date().toISOString());
     formData.set("date", formData.get("date").split("-").reverse().join("/"));
@@ -16,18 +16,19 @@ function submitData() {
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById("loadingOverlay").classList.remove("active");
+        document.getElementById("loadingOverlay").style.display = 'none';
 
         if (data.success) {
             alert("ข้อมูลถูกบันทึกเรียบร้อยแล้ว!");
             document.getElementById("dataForm").reset();
-            document.getElementById("message").innerHTML = "";
+            document.getElementById("message").style.display = 'none';
         } else {
-            document.getElementById("message").innerHTML = data.message;
+            document.getElementById("message").textContent = data.message;
+            document.getElementById("message").style.display = 'block';
         }
     })
     .catch(error => {
-        document.getElementById("loadingOverlay").classList.remove("active");
+        document.getElementById("loadingOverlay").style.display = 'none';
         console.error("เกิดข้อผิดพลาด:", error);
     });
 }
@@ -76,17 +77,4 @@ function searchData() {
         .catch(error => {
             console.error("Error:", error);
         });
-}
-
-function showPage(page) {
-    var bookingPage = document.getElementById('booking');
-    var searchingPage = document.getElementById('searching');
-
-    if (page === 'booking') {
-        bookingPage.classList.add('active');
-        searchingPage.classList.remove('active');
-    } else if (page === 'searching') {
-        bookingPage.classList.remove('active');
-        searchingPage.classList.add('active');
-    }
 }
