@@ -17,13 +17,13 @@
             <h1>Translator Booking</h1>
             <form id="dataForm">
                 <label for="bookingBy">Booking By:</label>
-                <input type="text" id="bookingBy" name="bookingBy">
+                <input type="text" id="bookingBy" name="bookingBy" required>
 
                 <label for="translatorForWork">Translator for work:</label>
-                <input type="text" id="translatorForWork" name="translatorForWork">
+                <input type="text" id="translatorForWork" name="translatorForWork" required>
 
                 <label for="translatorName">Translator Name:</label>
-                <select id="translatorName" name="translatorName">
+                <select id="translatorName" name="translatorName" required>
                     <option value="" disabled selected>Select Translator</option>
                     <option value="SOM SAN">SOM SAN</option>
                     <option value="GOOK SAN">GOOK SAN</option>
@@ -32,12 +32,11 @@
                 </select>
 
                 <label for="date">Date:</label>
-                <input type="date" id="date" name="date">
+                <input type="date" id="date" name="date" required>
 
                 <label for="timeFrom">Time From:</label>
                 <div class="time-select">
-                    <select id="timeFromHour" name="timeFromHour">
-                        <!-- Hour options from 00 to 23 -->
+                    <select id="timeFromHour" name="timeFromHour" required>
                         <option value="00">00</option>
                         <option value="01">01</option>
                         <option value="02">02</option>
@@ -63,8 +62,7 @@
                         <option value="22">22</option>
                         <option value="23">23</option>
                     </select>
-                    <select id="timeFromMinute" name="timeFromMinute">
-                        <!-- Minute options 00 and 30 -->
+                    <select id="timeFromMinute" name="timeFromMinute" required>
                         <option value="00">00</option>
                         <option value="30">30</option>
                     </select>
@@ -72,8 +70,7 @@
 
                 <label for="timeTo">Time To:</label>
                 <div class="time-select">
-                    <select id="timeToHour" name="timeToHour">
-                        <!-- Hour options from 00 to 23 -->
+                    <select id="timeToHour" name="timeToHour" required>
                         <option value="00">00</option>
                         <option value="01">01</option>
                         <option value="02">02</option>
@@ -99,8 +96,7 @@
                         <option value="22">22</option>
                         <option value="23">23</option>
                     </select>
-                    <select id="timeToMinute" name="timeToMinute">
-                        <!-- Minute options 00 and 30 -->
+                    <select id="timeToMinute" name="timeToMinute" required>
                         <option value="00">00</option>
                         <option value="30">30</option>
                     </select>
@@ -116,7 +112,6 @@
         </div>
     </div>
 
-    <!-- Loading overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
     </div>
