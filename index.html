@@ -1,121 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Translator Booking</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translator Booking</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <div class="wrapper">
-        <nav class="sidebar">
-            <ul>
-                <li><a href="index.html">Booking</a></li>
-                <li><a href="search.html">Searching</a></li>
-            </ul>
-        </nav>
-        <div class="container">
-            <h1>Translator Booking</h1>
-            <form id="dataForm">
-                <label for="bookingBy">Booking By:</label>
-                <input type="text" id="bookingBy" name="bookingBy" required>
-
-                <label for="translatorForWork">Translator for work:</label>
-                <input type="text" id="translatorForWork" name="translatorForWork" required>
-
-                <label for="translatorName">Translator Name:</label>
-                <select id="translatorName" name="translatorName" required>
-                    <option value="" disabled selected>Select Translator</option>
-                    <option value="SOM SAN">SOM SAN</option>
-                    <option value="GOOK SAN">GOOK SAN</option>
-                    <option value="POOKY SAN">POOKY SAN</option>
-                    <option value="NOEY SAN">NOEY SAN</option>
-                </select>
-
-                <label for="date">Date:</label>
-                <input type="date" id="date" name="date" required>
-
-                <label for="timeFrom">Time From:</label>
-                <div class="time-select">
-                    <select id="timeFromHour" name="timeFromHour" required>
-                        <option value="00">00</option>
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                        <option value="23">23</option>
-                    </select>
-                    <select id="timeFromMinute" name="timeFromMinute" required>
-                        <option value="00">00</option>
-                        <option value="30">30</option>
-                    </select>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html">Booking</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="search.html">Searching</a>
+                        </li>
+                    </ul>
                 </div>
-
-                <label for="timeTo">Time To:</label>
-                <div class="time-select">
-                    <select id="timeToHour" name="timeToHour" required>
-                        <option value="00">00</option>
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                        <option value="23">23</option>
-                    </select>
-                    <select id="timeToMinute" name="timeToMinute" required>
-                        <option value="00">00</option>
-                        <option value="30">30</option>
-                    </select>
-                </div>
-
-                <div class="buttons">
-                    <input type="button" value="Submit" onclick="submitData()">
-                    <input type="reset" value="Clear">
-                </div>
-
-                <p id="message"></p>
-            </form>
+            </nav>
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <h1 class="h2">Translator Booking</h1>
+                <form id="dataForm">
+                    <div class="form-group">
+                        <label for="bookingBy">Booking By:</label>
+                        <input type="text" class="form-control" id="bookingBy" name="bookingBy" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="translatorForWork">Translator for work:</label>
+                        <input type="text" class="form-control" id="translatorForWork" name="translatorForWork" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="translatorName">Translator Name:</label>
+                        <select class="form-control" id="translatorName" name="translatorName" required>
+                            <option value="" disabled selected>Select Translator</option>
+                            <option value="SOM SAN">SOM SAN</option>
+                            <option value="GOOK SAN">GOOK SAN</option>
+                            <option value="POOKY SAN">POOKY SAN</option>
+                            <option value="NOEY SAN">NOEY SAN</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeFrom">Time From:</label>
+                        <div class="form-row">
+                            <div class="col">
+                                <select class="form-control" id="timeFromHour" name="timeFromHour" required>
+                                    <option value="00">00</option>
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-control" id="timeFromMinute" name="timeFromMinute" required>
+                                    <option value="00">00</option>
+                                    <option value="30">30</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeTo">Time To:</label>
+                        <div class="form-row">
+                            <div class="col">
+                                <select class="form-control" id="timeToHour" name="timeToHour" required>
+                                    <option value="00">00</option>
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select class="form-control" id="timeToMinute" name="timeToMinute" required>
+                                    <option value="00">00</option>
+                                    <option value="30">30</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="submitData()">Submit</button>
+                        <button type="reset" class="btn btn-secondary">Clear</button>
+                    </div>
+                    <div id="message" class="alert alert-danger" role="alert" style="display:none;"></div>
+                </form>
+            </main>
         </div>
     </div>
 
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
