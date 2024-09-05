@@ -347,6 +347,7 @@
             spinner.style.display = 'block'; // Show the spinner when a day is clicked
             google.script.run.withSuccessHandler(function(events) {
                 spinner.style.display = 'none'; // Hide the spinner after the data is loaded
+
                 // Clear the table first
                 timeSlots.forEach(time => {
                     document.getElementById(`somSan_${time}`).textContent = '';
@@ -355,28 +356,39 @@
                     document.getElementById(`lSan_${time}`).textContent = '';
                 });
 
-                // Fill in the table with events for this day
-                events.forEach(event => {
-                    const timeFromSlot = event.timeFrom.replace(':', '');
-                    const timeToSlot = event.timeTo.replace(':', '');
+                // Check if events exist
+                if (events.length === 0) {
+                    modalText.textContent = "No events for this day.";
+                    document.getElementById('eventTable').style.display = 'none';
+                } else {
+                    document.getElementById('eventTable').style.display = '';
+                    events.forEach(event => {
+                        const timeFromSlot = event.timeFrom.replace(':', '');
+                        const timeToSlot = event.timeTo.replace(':', '');
 
-                    let timeSlot = timeFromSlot;
-                    while (timeSlot < timeToSlot) {
-                        if (event.translator === 'SOM SAN') {
-                            document.getElementById(`somSan_${timeSlot}`).textContent = event.work;
-                        } else if (event.translator === 'GOOK SAN') {
-                            document.getElementById(`gookSan_${timeSlot}`).textContent = event.work;
-                        } else if (event.translator === 'POOKY SAN') {
-                            document.getElementById(`pookySan_${timeSlot}`).textContent = event.work;
-                        } else if (event.translator === 'L SAN') {
-                            document.getElementById(`lSan_${timeSlot}`).textContent = event.work;
+                        let timeSlot = timeFromSlot;
+                        while (timeSlot < timeToSlot) {
+                            if (event.translator === 'SOM SAN') {
+                                document.getElementById(`somSan_${timeSlot}`).textContent = event.work;
+                            } else if (event.translator === 'GOOK SAN') {
+                                document.getElementById(`gookSan_${timeSlot}`).textContent = event.work;
+                            } else if (event.translator === 'POOKY SAN') {
+                                document.getElementById(`pookySan_${timeSlot}`).textContent = event.work;
+                            } else if (event.translator === 'L SAN') {
+                                document.getElementById(`lSan_${timeSlot}`).textContent = event.work;
+                            }
+                            timeSlot = incrementTimeSlot(timeSlot);
                         }
-                        timeSlot = incrementTimeSlot(timeSlot);
-                    }
-                });
+                    });
+                    modalText.textContent = `Details for ${months[month]} ${day}, ${year}`;
+                }
 
-                modalText.textContent = `Details for ${months[month]} ${day}, ${year}`;
                 modal.style.display = "block";
+            }).withFailureHandler(function(error) {
+                spinner.style.display = 'none'; // Hide spinner in case of error
+                modalText.textContent = "An error occurred while fetching data.";
+                modal.style.display = "block";
+                console.error(error);
             }).getEventsForDay(`${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`);
         });
 
