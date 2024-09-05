@@ -281,58 +281,41 @@
     form.onsubmit = function(event) {
       event.preventDefault();
 
-      var requiredFields = ['date', 'translatorName', 'bookingBy', 'timeFrom', 'timeTo', 'forWork'];
-      var missingFields = [];
-
-      requiredFields.forEach(function(field) {
-        var value = document.getElementById(field).value;
-        if (!value || value === 'HH:MM' || value === 'Select Translator') {
-          missingFields.push(field);
-        }
-      });
-
-      if (missingFields.length > 0) {
-        modalMessage.innerHTML = "กรุณากรอกข้อมูลในช่องที่จำเป็น: " + missingFields.join(", ");
-        modal.style.display = "flex";
-        return;
-      }
-
-      var timeFrom = document.getElementById('timeFrom').value;
-      var timeTo = document.getElementById('timeTo').value;
-
-      if (timeToMinutes(timeFrom) >= timeToMinutes(timeTo)) {
-        modalMessage.innerHTML = '<span class="alert-icon alert-error">&#x2716;</span><span class="alert-error">Please enter a valid time: Time From < Time To</span>';
-        modal.style.display = "flex";
-        return;
-      }
-
-      spinnerModal.style.display = 'flex'; // Show the spinner modal
-
       var formData = new FormData(form);
-      google.script.run.withSuccessHandler(function(output) {
-        spinnerModal.style.display = 'none'; // Hide the spinner modal
-        
-        if (!output.success) {
-            modalMessage.innerHTML = '<span class="alert-icon alert-error">&#x2716;</span>' + output.message;
+
+      // เปลี่ยน 'YOUR_WEB_APP_URL' เป็น URL ของ Web App ที่คุณได้จากการ Deploy Google Apps Script
+      fetch('https://script.google.com/macros/s/AKfycbzkP4Mv7sc5bbj4pFKHBfGIsee5Z6sK_zyGZZ60EhiOJFDXyo_cgYrhzlhqOzFgdx7U/exec', {
+        method: 'POST',
+        mode: 'cors',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        spinnerModal.style.display = 'none'; // ซ่อน spinner modal
+
+        if (data.success) {
+          modalMessage.innerHTML = '<span class="alert-icon alert-success">&#x2714;</span> Booking successfully saved!';
         } else {
-            modalMessage.innerHTML = '<span class="alert-icon alert-success">&#x2714;</span>' + output.message;
+          modalMessage.innerHTML = '<span class="alert-icon alert-error">&#x2716;</span> ' + data.message;
         }
 
         modal.style.display = "flex";
-        
-        if (output.success) {
+
+        if (data.success) {
           form.reset(); // ล้างฟอร์มหลังจากการจองสำเร็จ
         }
-      }).processForm(Object.fromEntries(formData));
+      })
+      .catch(error => {
+        spinnerModal.style.display = 'none'; // ซ่อน spinner modal
+        modalMessage.innerHTML = '<span class="alert-icon alert-error">&#x2716;</span> There was an error.';
+        modal.style.display = "flex";
+      });
+
+      spinnerModal.style.display = 'flex'; // แสดง spinner modal ขณะกำลังส่งข้อมูล
     }
 
     function closeModal() {
       modal.style.display = "none";
-    }
-
-    function timeToMinutes(time) {
-      var parts = time.split(":");
-      return parseInt(parts[0]) * 60 + parseInt(parts[1]);
     }
   </script>
 </body>
