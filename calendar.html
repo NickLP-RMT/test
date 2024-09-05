@@ -298,11 +298,11 @@
   const monthYear = document.getElementById('monthYear');
   const prevMonth = document.getElementById('prevMonth');
   const nextMonth = document.getElementById('nextMonth');
-  const todayButton = document.getElementById('todayButton'); // ปุ่ม Today
+  const todayButton = document.getElementById('todayButton'); 
   const modal = document.getElementById("myModal");
   const modalText = document.getElementById("modalText");
   const span = document.getElementsByClassName("close")[0];
-  const spinner = document.getElementById('spinner'); // Reference to the spinner element
+  const spinner = document.getElementById('spinner');
 
   const timeSlots = ['0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900'];
 
@@ -322,77 +322,79 @@
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    const today = new Date(); // Get today's date
+    const today = new Date();
     const todayDate = today.getDate();
     const todayMonth = today.getMonth();
     const todayYear = today.getFullYear();
 
     for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.classList.add('calendar-day');
-        calendarDays.appendChild(emptyCell);
+      const emptyCell = document.createElement('div');
+      emptyCell.classList.add('calendar-day');
+      calendarDays.appendChild(emptyCell);
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
-        const dayCell = document.createElement('div');
-        dayCell.classList.add('calendar-day');
+      const dayCell = document.createElement('div');
+      dayCell.classList.add('calendar-day');
 
-        if (day === todayDate && month === todayMonth && year === todayYear) {
-            dayCell.classList.add('today'); // Add special class for today
-        }
+      if (day === todayDate && month === todayMonth && year === todayYear) {
+        dayCell.classList.add('today');
+      }
 
-        dayCell.innerHTML = `<p>${day}</p>`;
+      dayCell.innerHTML = `<p>${day}</p>`;
 
-        dayCell.addEventListener('click', () => {
-            spinner.style.display = 'block'; // Show the spinner when a day is clicked
-            google.script.run.withSuccessHandler(function(events) {
-                spinner.style.display = 'none'; // Hide the spinner after the data is loaded
+      dayCell.addEventListener('click', () => {
+        spinner.style.display = 'block';
+        const requestUrl = `https://script.google.com/macros/s/AKfycbxmey-qrgJTv3O-fIXEX-aDjYoOR1_alQXJjvLpn0WsfWk4HfPWe-Wrfv-5IrExGa0/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
 
-                // Clear the table first
-                timeSlots.forEach(time => {
-                    document.getElementById(`somSan_${time}`).textContent = '';
-                    document.getElementById(`gookSan_${time}`).textContent = '';
-                    document.getElementById(`pookySan_${time}`).textContent = '';
-                    document.getElementById(`lSan_${time}`).textContent = '';
-                });
+        fetch(requestUrl)
+          .then(response => response.json())
+          .then(events => {
+            spinner.style.display = 'none';
+            timeSlots.forEach(time => {
+              document.getElementById(`somSan_${time}`).textContent = '';
+              document.getElementById(`gookSan_${time}`).textContent = '';
+              document.getElementById(`pookySan_${time}`).textContent = '';
+              document.getElementById(`lSan_${time}`).textContent = '';
+            });
 
-                // Check if events exist
-                if (events.length === 0) {
-                    modalText.textContent = "No events for this day.";
-                    document.getElementById('eventTable').style.display = 'none';
-                } else {
-                    document.getElementById('eventTable').style.display = '';
-                    events.forEach(event => {
-                        const timeFromSlot = event.timeFrom.replace(':', '');
-                        const timeToSlot = event.timeTo.replace(':', '');
+            if (events.length === 0) {
+              modalText.textContent = "No events for this day.";
+              document.getElementById('eventTable').style.display = 'none';
+            } else {
+              document.getElementById('eventTable').style.display = '';
+              events.forEach(event => {
+                const timeFromSlot = event.timeFrom.replace(':', '');
+                const timeToSlot = event.timeTo.replace(':', '');
 
-                        let timeSlot = timeFromSlot;
-                        while (timeSlot < timeToSlot) {
-                            if (event.translator === 'SOM SAN') {
-                                document.getElementById(`somSan_${timeSlot}`).textContent = event.work;
-                            } else if (event.translator === 'GOOK SAN') {
-                                document.getElementById(`gookSan_${timeSlot}`).textContent = event.work;
-                            } else if (event.translator === 'POOKY SAN') {
-                                document.getElementById(`pookySan_${timeSlot}`).textContent = event.work;
-                            } else if (event.translator === 'L SAN') {
-                                document.getElementById(`lSan_${timeSlot}`).textContent = event.work;
-                            }
-                            timeSlot = incrementTimeSlot(timeSlot);
-                        }
-                    });
-                    modalText.textContent = `Details for ${months[month]} ${day}, ${year}`;
+                let timeSlot = timeFromSlot;
+                while (timeSlot < timeToSlot) {
+                  if (event.translator === 'SOM SAN') {
+                    document.getElementById(`somSan_${timeSlot}`).textContent = event.work;
+                  } else if (event.translator === 'GOOK SAN') {
+                    document.getElementById(`gookSan_${timeSlot}`).textContent = event.work;
+                  } else if (event.translator === 'POOKY SAN') {
+                    document.getElementById(`pookySan_${timeSlot}`).textContent = event.work;
+                  } else if (event.translator === 'L SAN') {
+                    document.getElementById(`lSan_${timeSlot}`).textContent = event.work;
+                  }
+                  timeSlot = incrementTimeSlot(timeSlot);
                 }
+              });
+              modalText.textContent = `Details for ${months[month]} ${day}, ${year}`;
+            }
 
-                modal.style.display = "block";
-            }).withFailureHandler(function(error) {
-                spinner.style.display = 'none'; // Hide spinner in case of error
-                modalText.textContent = "An error occurred while fetching data.";
-                modal.style.display = "block";
-                console.error(error);
-            }).getEventsForDay(`${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`);
-        });
+            modal.style.display = "block";
+          })
+          .catch(error => {
+            spinner.style.display = 'none';
+            modalText.textContent = "An error occurred while fetching data.";
+            modal.style.display = "block";
+            console.error(error);
+          });
+      });
 
-        calendarDays.appendChild(dayCell);
+      calendarDays.appendChild(dayCell);
     }
   }
 
@@ -422,7 +424,6 @@
     renderCalendar(currentMonth, currentYear);
   }
 
-  // ฟังก์ชันสำหรับปุ่ม Today
   todayButton.addEventListener('click', () => {
     const today = new Date();
     currentMonth = today.getMonth();
