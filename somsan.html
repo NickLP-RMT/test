@@ -105,7 +105,7 @@
 <body>
 
 <div class="container">
-  <h2>SOM SAN JOB LIST</h2>
+  <h2>SOM SAN JOB LIST v2</h2>
   <form id="searchForm">
     <label for="searchDate">Select Date:</label>
     <input type="date" id="searchDate" name="searchDate" required>
@@ -128,7 +128,7 @@
 </div>
 
 <!-- Spinner Modal -->
-<div id="spinnerModal" class="spinner-modal">
+<div class="spinner-modal" id="spinnerModal">
   <div class="spinner"></div>
 </div>
 
@@ -140,80 +140,128 @@
   searchForm.onsubmit = function(event) {
     event.preventDefault();
     const searchDate = document.getElementById('searchDate').value;
-    
+
     spinnerModal.style.display = 'flex'; // Show spinner modal
 
-    google.script.run.withSuccessHandler(function(data) {
-      populateTable(data);
-      spinnerModal.style.display = 'none'; // Hide spinner modal after data is loaded
-    }).getSomsanData(searchDate);
+    // URL ของ Web App ที่เชื่อมต่อกับ Google Apps Script
+    const requestUrl = `https://script.google.com/macros/s/AKfycbx0bGEf2A1CmWxBaqW_EXPXmdNeAZGtkUTI7vBJbuXLRHm7834uxRZcIDepqoLe7zjf/exec?page=somsan&date=${searchDate}`;
+
+    fetch(requestUrl)
+      .then(response => response.json())
+      .then(data => {
+        populateTable(data);
+        spinnerModal.style.display = 'none'; // Hide spinner modal after data is loaded
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        spinnerModal.style.display = 'none'; // Hide spinner modal if error occurs
+      });
   }
 
   function populateTable(data) {
-  resultTable.innerHTML = ''; // Clear previous results
-  data.forEach((row, index) => {
-    const newRow = resultTable.insertRow();
-    newRow.insertCell(0).textContent = row.timeFrom;
-    newRow.insertCell(1).textContent = row.timeTo;
+    resultTable.innerHTML = ''; // Clear previous results
+    data.forEach((row, index) => {
+      const newRow = resultTable.insertRow();
+      newRow.insertCell(0).textContent = row.timeFrom;
+      newRow.insertCell(1).textContent = row.timeTo;
 
-    const bookingByCell = newRow.insertCell(2);
-    const bookingByInput = document.createElement('input');
-    bookingByInput.type = 'text';
-    bookingByInput.value = row.bookingBy;
-    bookingByInput.disabled = true;
-    bookingByInput.style.width = '100%';
-    bookingByCell.appendChild(bookingByInput);
+      const bookingByCell = newRow.insertCell(2);
+      const bookingByInput = document.createElement('input');
+      bookingByInput.type = 'text';
+      bookingByInput.value = row.bookingBy;
+      bookingByInput.disabled = true;
+      bookingByInput.style.width = '100%';
+      bookingByCell.appendChild(bookingByInput);
 
-    const forWorkCell = newRow.insertCell(3);
-    const forWorkInput = document.createElement('input');
-    forWorkInput.type = 'text';
-    forWorkInput.value = row.work;
-    forWorkInput.disabled = true;
-    forWorkInput.style.width = '100%';
-    forWorkCell.appendChild(forWorkInput);
+      const forWorkCell = newRow.insertCell(3);
+      const forWorkInput = document.createElement('input');
+      forWorkInput.type = 'text';
+      forWorkInput.value = row.work;
+      forWorkInput.disabled = true;
+      forWorkInput.style.width = '100%';
+      forWorkCell.appendChild(forWorkInput);
 
-    const actionsCell = newRow.insertCell(4);
+      const actionsCell = newRow.insertCell(4);
 
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
-    editButton.classList.add('edit-btn');
-    editButton.onclick = () => toggleEdit(forWorkInput, editButton, row, index);
-    actionsCell.appendChild(editButton);
+      const editButton = document.createElement('button');
+      editButton.textContent = 'Edit';
+      editButton.classList.add('edit-btn');
+      editButton.onclick = () => toggleEdit(forWorkInput, editButton, row, index);
+      actionsCell.appendChild(editButton);
 
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.classList.add('delete-btn');
-    deleteButton.onclick = () => deleteRow(row, index);
-    actionsCell.appendChild(deleteButton);
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.classList.add('delete-btn');
+      deleteButton.onclick = () => deleteRow(row, index);
+      actionsCell.appendChild(deleteButton);
     });
   }
 
   function toggleEdit(forWorkInput, editButton, row, index) {
-  const bookingByInput = resultTable.rows[index].cells[2].querySelector('input');
+    const bookingByInput = resultTable.rows[index].cells[2].querySelector('input');
 
-  if (forWorkInput.disabled && bookingByInput.disabled) {
-    // Enable both inputs for editing
-    forWorkInput.disabled = false;
-    bookingByInput.disabled = false;
-    editButton.textContent = 'Save';
-  } else {
-    // Disable both inputs and save the changes
-    forWorkInput.disabled = true;
-    bookingByInput.disabled = true;
-    editButton.textContent = 'Edit';
+    if (forWorkInput.disabled && bookingByInput.disabled) {
+      // Enable both inputs for editing
+      forWorkInput.disabled = false;
+      bookingByInput.disabled = false;
+      editButton.textContent = 'Save';
+    } else {
+      // Disable both inputs and save the changes
+      forWorkInput.disabled = true;
+      bookingByInput.disabled = true;
+      editButton.textContent = 'Edit';
 
-    // Update row data
-    row.work = forWorkInput.value;
-    row.bookingBy = bookingByInput.value;
-    
-    google.script.run.updateSomsanData([row]);
+      // Update row data
+      row.work = forWorkInput.value;
+      row.bookingBy = bookingByInput.value;
+
+      // Update data by making a request to the Web App
+      const updateUrl = `https://script.google.com/macros/s/AKfycbx0bGEf2A1CmWxBaqW_EXPXmdNeAZGtkUTI7vBJbuXLRHm7834uxRZcIDepqoLe7zjf/exec?page=updateSomsanData`;
+
+      fetch(updateUrl, {
+        method: 'POST',
+        body: JSON.stringify([row]),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          console.log('Data updated successfully:', result.message);
+        } else {
+          console.error('Failed to update data:', result.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating data:', error);
+      });
     }
   }
 
   function deleteRow(row, index) {
     if (confirm('Are you sure you want to delete this booking?')) {
-      google.script.run.deleteBooking(row.row);
-      resultTable.deleteRow(index);
+      const deleteUrl = `https://script.google.com/macros/s/AKfycbx0bGEf2A1CmWxBaqW_EXPXmdNeAZGtkUTI7vBJbuXLRHm7834uxRZcIDepqoLe7zjf/exec?page=deleteBooking`;
+
+      fetch(deleteUrl, {
+        method: 'POST',
+        body: JSON.stringify({ row: row.row }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          resultTable.deleteRow(index);
+          console.log('Data deleted successfully:', result.message);
+        } else {
+          console.error('Failed to delete data:', result.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting data:', error);
+      });
     }
   }
 </script>
