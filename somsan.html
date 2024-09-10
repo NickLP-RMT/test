@@ -105,7 +105,7 @@
 <body>
 
 <div class="container">
-  <h2>SOM SAN JOB LIST v4</h2>
+  <h2>SOM SAN JOB LIST v5</h2>
   <form id="searchForm">
     <label for="searchDate">Select Date:</label>
     <input type="date" id="searchDate" name="searchDate" required>
@@ -212,20 +212,24 @@
       row.work = forWorkInput.value;
       row.bookingBy = bookingByInput.value;
 
-      console.log('Sending update:', JSON.stringify([row])); // ตรวจสอบข้อมูลที่ส่ง
+      spinnerModal.style.display = 'flex'; // Show spinner modal
 
       // Update data by making a request to the Web App
-      const updateUrl = `https://script.google.com/macros/s/AKfycbyu9x-_jy2tIItVCZxcnGHugW8o9ipe7BBM7UEyRpPJ319Sg0EyLjKllV4to04-NZmc/exec?page=updateSomsanData`;
+      const updateUrl = `https://script.google.com/macros/s/AKfycbyu9x-_jy2tIItVCZxcnGHugW8o9ipe7BBM7UEyRpPJ319Sg0EyLjKllV4to04-NZmc/exec`;
+
+      const formData = new FormData();
+      formData.append('row', row.row); // ส่งข้อมูลแถวที่ต้องการอัปเดต
+      formData.append('work', row.work);
+      formData.append('bookingBy', row.bookingBy);
 
       fetch(updateUrl, {
         method: 'POST',
-        body: JSON.stringify([row]),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        body: formData
       })
       .then(response => response.json())
       .then(result => {
+        spinnerModal.style.display = 'none'; // Hide spinner modal after data is loaded
+
         if (result.success) {
           console.log('Data updated successfully:', result.message);
         } else {
@@ -233,6 +237,7 @@
         }
       })
       .catch(error => {
+        spinnerModal.style.display = 'none'; // Hide spinner modal if error occurs
         console.error('Error updating data:', error);
       });
     }
