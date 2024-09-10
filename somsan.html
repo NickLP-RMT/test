@@ -105,7 +105,7 @@
 <body>
 
 <div class="container">
-  <h2>SOM SAN JOB LIST v3</h2>
+  <h2>SOM SAN JOB LIST v4</h2>
   <form id="searchForm">
     <label for="searchDate">Select Date:</label>
     <input type="date" id="searchDate" name="searchDate" required>
@@ -143,7 +143,6 @@
 
     spinnerModal.style.display = 'flex'; // Show spinner modal
 
-    // URL ของ Web App ที่เชื่อมต่อกับ Google Apps Script
     const requestUrl = `https://script.google.com/macros/s/AKfycbyu9x-_jy2tIItVCZxcnGHugW8o9ipe7BBM7UEyRpPJ319Sg0EyLjKllV4to04-NZmc/exec?page=somsan&date=${searchDate}`;
 
     fetch(requestUrl)
@@ -186,7 +185,7 @@
       const editButton = document.createElement('button');
       editButton.textContent = 'Edit';
       editButton.classList.add('edit-btn');
-      editButton.onclick = () => toggleEdit(forWorkInput, editButton, row, index);
+      editButton.onclick = () => toggleEdit(forWorkInput, bookingByInput, editButton, row, index);
       actionsCell.appendChild(editButton);
 
       const deleteButton = document.createElement('button');
@@ -197,9 +196,7 @@
     });
   }
 
-  function toggleEdit(forWorkInput, editButton, row, index) {
-    const bookingByInput = resultTable.rows[index].cells[2].querySelector('input');
-
+  function toggleEdit(forWorkInput, bookingByInput, editButton, row, index) {
     if (forWorkInput.disabled && bookingByInput.disabled) {
       // Enable both inputs for editing
       forWorkInput.disabled = false;
@@ -214,6 +211,8 @@
       // Update row data
       row.work = forWorkInput.value;
       row.bookingBy = bookingByInput.value;
+
+      console.log('Sending update:', JSON.stringify([row])); // ตรวจสอบข้อมูลที่ส่ง
 
       // Update data by making a request to the Web App
       const updateUrl = `https://script.google.com/macros/s/AKfycbyu9x-_jy2tIItVCZxcnGHugW8o9ipe7BBM7UEyRpPJ319Sg0EyLjKllV4to04-NZmc/exec?page=updateSomsanData`;
@@ -241,6 +240,8 @@
 
   function deleteRow(row, index) {
     if (confirm('Are you sure you want to delete this booking?')) {
+      console.log('Sending delete request for row:', row.row); // ตรวจสอบข้อมูลที่ส่ง
+
       const deleteUrl = `https://script.google.com/macros/s/AKfycbyu9x-_jy2tIItVCZxcnGHugW8o9ipe7BBM7UEyRpPJ319Sg0EyLjKllV4to04-NZmc/exec?page=deleteBooking`;
 
       fetch(deleteUrl, {
