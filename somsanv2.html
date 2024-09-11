@@ -177,47 +177,48 @@
   }
 
   function toggleEdit(forWorkInput, bookingByInput, editButton, row, index) {
-    if (forWorkInput.disabled && bookingByInput.disabled) {
-      forWorkInput.disabled = false;
-      bookingByInput.disabled = false;
-      editButton.textContent = 'Save';
-    } else {
-      forWorkInput.disabled = true;
-      bookingByInput.disabled = true;
-      editButton.textContent = 'Edit';
+  if (forWorkInput.disabled && bookingByInput.disabled) {
+    forWorkInput.disabled = false;
+    bookingByInput.disabled = false;
+    editButton.textContent = 'Save';
+  } else {
+    forWorkInput.disabled = true;
+    bookingByInput.disabled = true;
+    editButton.textContent = 'Edit';
 
-      const formData = new FormData();
-      formData.append('row', row.row);
-      formData.append('work', forWorkInput.value);
-      formData.append('bookingBy', bookingByInput.value);
+    // สร้าง FormData และส่งข้อมูลไปยัง Google Apps Script
+    var formData = new FormData();
+    formData.append('page', 'updateSomsanData');
+    formData.append('row', row.row);
+    formData.append('bookingBy', bookingByInput.value);
+    formData.append('work', forWorkInput.value);
 
-      const updateUrl = `https://script.google.com/macros/s/AKfycbxIMVL-RngZBqOD4IEBN5n2Ds9BSR4SYY0PWUpSZGrFPHJGS4cDOKjJJ_bFBwiwQFO4/exec?page=updateSomsanData`;
-
-      fetch(updateUrl, {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(result => {
-        if (result.success) {
-          alert('Edit success');
-          console.log('Data updated successfully:', result.message);
-        } else {
-          console.error('Failed to update data:', result.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error updating data:', error);
-      });
-    }
+    fetch('https://script.google.com/macros/s/AKfycbxfdekfEm9ChYqokcUlEN7kgCWHOG0-mSjfPjVIBssCuJRnmWb2_hsDHGNwCmFBbTCF/exec', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert('Edit success');
+        console.log('Data updated successfully:', result.message);
+      } else {
+        console.error('Failed to update data:', result.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error updating data:', error);
+    });
   }
+}
+
 
 function deleteRow(row, index) {
   if (confirm('Are you sure you want to delete this booking?')) {
     const formData = new FormData();
     formData.append('row', row.row);
 
-    const deleteUrl = `https://script.google.com/macros/s/AKfycbxIMVL-RngZBqOD4IEBN5n2Ds9BSR4SYY0PWUpSZGrFPHJGS4cDOKjJJ_bFBwiwQFO4/exec?page=deleteBooking`;
+    const deleteUrl = `https://script.google.com/macros/s/AKfycbxfdekfEm9ChYqokcUlEN7kgCWHOG0-mSjfPjVIBssCuJRnmWb2_hsDHGNwCmFBbTCF/exec?page=deleteBooking`;
 
     fetch(deleteUrl, {
       method: 'POST',
