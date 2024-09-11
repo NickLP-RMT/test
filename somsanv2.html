@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SOM SAN Booking v2</title>
+  <title>SOM SAN Booking</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -83,7 +83,7 @@
 <body>
 
 <div class="container">
-  <h2>SOM SAN JOB LIST v12</h2>
+  <h2>SOM SAN JOB LIST v14</h2>
   <form id="searchForm">
     <label for="searchDate">Select Date:</label>
     <input type="date" id="searchDate" name="searchDate" required>
@@ -123,7 +123,7 @@
 
     loadingText.style.display = 'block'; // Show loading text
 
-    const requestUrl = `https://script.google.com/macros/s/AKfycbxTtKSV0fUQMDfXLzDD_E3iw3JnWddSacvBiPf7UwnD7l-XTpQyMMTsDCWrsVcGE6b0/exec?page=somsan&date=${searchDate}`;
+    const requestUrl = `https://script.google.com/macros/s/AKfycbxIMVL-RngZBqOD4IEBN5n2Ds9BSR4SYY0PWUpSZGrFPHJGS4cDOKjJJ_bFBwiwQFO4/exec?page=somsan&date=${searchDate}`;
 
     fetch(requestUrl)
       .then(response => response.json())
@@ -186,17 +186,16 @@
       bookingByInput.disabled = true;
       editButton.textContent = 'Edit';
 
-      row.work = forWorkInput.value;
-      row.bookingBy = bookingByInput.value;
+      const formData = new FormData();
+      formData.append('row', row.row);
+      formData.append('work', forWorkInput.value);
+      formData.append('bookingBy', bookingByInput.value);
 
-      const updateUrl = `https://script.google.com/macros/s/AKfycbxTtKSV0fUQMDfXLzDD_E3iw3JnWddSacvBiPf7UwnD7l-XTpQyMMTsDCWrsVcGE6b0/exec?page=updateSomsanData`;
+      const updateUrl = `https://script.google.com/macros/s/AKfycbxIMVL-RngZBqOD4IEBN5n2Ds9BSR4SYY0PWUpSZGrFPHJGS4cDOKjJJ_bFBwiwQFO4/exec?page=updateSomsanData`;
 
       fetch(updateUrl, {
         method: 'POST',
-        body: JSON.stringify([row]),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        body: formData
       })
       .then(response => response.json())
       .then(result => {
@@ -213,46 +212,32 @@
     }
   }
 
-function toggleEdit(forWorkInput, bookingByInput, editButton, row, index) {
-    if (forWorkInput.disabled && bookingByInput.disabled) {
-        forWorkInput.disabled = false;
-        bookingByInput.disabled = false;
-        editButton.textContent = 'Save';
-    } else {
-        forWorkInput.disabled = true;
-        bookingByInput.disabled = true;
-        editButton.textContent = 'Edit';
+function deleteRow(row, index) {
+  if (confirm('Are you sure you want to delete this booking?')) {
+    const formData = new FormData();
+    formData.append('row', row.row);
 
-        row.work = forWorkInput.value;
-        row.bookingBy = bookingByInput.value;
+    const deleteUrl = `https://script.google.com/macros/s/AKfycbxIMVL-RngZBqOD4IEBN5n2Ds9BSR4SYY0PWUpSZGrFPHJGS4cDOKjJJ_bFBwiwQFO4/exec?page=deleteBooking`;
 
-        // Log the data before sending it to the server
-        console.log('Sending updated data:', row);
-
-        const updateUrl = `https://script.google.com/macros/s/AKfycbxTtKSV0fUQMDfXLzDD_E3iw3JnWddSacvBiPf7UwnD7l-XTpQyMMTsDCWrsVcGE6b0/exec?page=updateSomsanData`;
-
-        fetch(updateUrl, {
-            method: 'POST',
-            body: JSON.stringify([row]),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                alert('Edit success');
-                console.log('Data updated successfully:', result.message);
-            } else {
-                console.error('Failed to update data:', result.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error updating data:', error);
-        });
-    }
+    fetch(deleteUrl, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert('Delete success');
+        resultTable.deleteRow(index); // ลบแถวจากหน้าจอ
+        console.log('Data deleted successfully:', result.message);
+      } else {
+        console.error('Failed to delete data:', result.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error deleting data:', error);
+    });
+  }
 }
-
 </script>
 
 </body>
