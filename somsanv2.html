@@ -66,45 +66,24 @@
       color: white;
     }
 
-    /* Loading Spinner Styles */
-    .spinner {
+    /* Loading Text Styles */
+    .loading-text {
       display: none;
       position: fixed;
       z-index: 1000;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 120px;
-      height: 120px;
-      animation: spin 2s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .spinner-modal {
-      display: none; 
-      position: fixed; 
-      z-index: 999; 
-      left: 0;
-      top: 0;
-      width: 100%; 
-      height: 100%; 
-      background-color: rgba(0, 0, 0, 0.6); 
-      justify-content: center;
-      align-items: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #3498db;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>SOM SAN JOB LIST v18</h2>
+  <h2>SOM SAN JOB LIST v10</h2>
   <form id="searchForm">
     <label for="searchDate">Select Date:</label>
     <input type="date" id="searchDate" name="searchDate" required>
@@ -127,21 +106,19 @@
   </table>
 </div>
 
-<!-- Spinner Modal -->
-<div id="spinnerModal" class="spinner-modal">
-  <div class="spinner"></div>
-</div>
+<!-- Loading Text -->
+<div id="loadingText" class="loading-text">Loading...</div>
 
 <script>
   const searchForm = document.getElementById('searchForm');
   const resultTable = document.getElementById('resultTable').querySelector('tbody');
-  const spinnerModal = document.getElementById('spinnerModal');
+  const loadingText = document.getElementById('loadingText'); // Reference to the loading text
 
   searchForm.onsubmit = function(event) {
     event.preventDefault();
     const searchDate = document.getElementById('searchDate').value;
 
-    spinnerModal.style.display = 'flex'; // แสดงวงกลมโหลด
+    loadingText.style.display = 'block'; // แสดงข้อความ Loading...
 
     const requestUrl = `https://script.google.com/macros/s/AKfycbzalCfay_E0A854qFmqGctR69tvl_MkWT50igq9Eh6Cer0g_zdVuCwd1q804UAaz1YO/exec?page=somsan&date=${searchDate}`;
 
@@ -149,11 +126,11 @@
       .then(response => response.json())
       .then(data => {
         populateTable(data);
-        spinnerModal.style.display = 'none'; // ซ่อนวงกลมโหลดเมื่อข้อมูลโหลดเสร็จแล้ว
+        loadingText.style.display = 'none'; // ซ่อนข้อความ Loading เมื่อข้อมูลโหลดเสร็จแล้ว
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        spinnerModal.style.display = 'none'; // ซ่อนวงกลมโหลดเมื่อเกิดข้อผิดพลาด
+        loadingText.style.display = 'none'; // ซ่อนข้อความ Loading เมื่อเกิดข้อผิดพลาด
       });
   }
 
