@@ -141,7 +141,7 @@
     event.preventDefault();
     const searchDate = document.getElementById('searchDate').value;
 
-    spinnerModal.style.display = 'flex';
+    spinnerModal.style.display = 'flex'; // แสดงวงกลมโหลด
 
     const requestUrl = `https://script.google.com/macros/s/AKfycbzalCfay_E0A854qFmqGctR69tvl_MkWT50igq9Eh6Cer0g_zdVuCwd1q804UAaz1YO/exec?page=somsan&date=${searchDate}`;
 
@@ -149,11 +149,11 @@
       .then(response => response.json())
       .then(data => {
         populateTable(data);
-        spinnerModal.style.display = 'none';
+        spinnerModal.style.display = 'none'; // ซ่อนวงกลมโหลดเมื่อข้อมูลโหลดเสร็จแล้ว
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        spinnerModal.style.display = 'none';
+        spinnerModal.style.display = 'none'; // ซ่อนวงกลมโหลดเมื่อเกิดข้อผิดพลาด
       });
   }
 
