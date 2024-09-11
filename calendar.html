@@ -345,7 +345,7 @@
 
       dayCell.addEventListener('click', () => {
         spinner.style.display = 'block';
-        const requestUrl = `https://script.google.com/macros/s/AKfycbzrDiMVoiFwzktOWKGL5mP4Hg7-kTjzB_zMwJF2XIc106gRvL9EIuse8BURtsWcEhtZ/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
+        const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
 
         fetch(requestUrl)
           .then(response => response.json())
