@@ -213,32 +213,46 @@
     }
   }
 
-function deleteRow(row, index) {
-  if (confirm('Are you sure you want to delete this booking?')) {
-    const deleteUrl = `https://script.google.com/macros/s/AKfycbxTtKSV0fUQMDfXLzDD_E3iw3JnWddSacvBiPf7UwnD7l-XTpQyMMTsDCWrsVcGE6b0/exec?page=deleteBooking`;
+function toggleEdit(forWorkInput, bookingByInput, editButton, row, index) {
+    if (forWorkInput.disabled && bookingByInput.disabled) {
+        forWorkInput.disabled = false;
+        bookingByInput.disabled = false;
+        editButton.textContent = 'Save';
+    } else {
+        forWorkInput.disabled = true;
+        bookingByInput.disabled = true;
+        editButton.textContent = 'Edit';
 
-    fetch(deleteUrl, {
-      method: 'POST',
-      body: JSON.stringify({ row: row.row }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(result => {
-      if (result.success) {
-        alert('Delete success');
-        resultTable.deleteRow(index); // ลบแถวจากหน้าจอ
-        console.log('Data deleted successfully:', result.message);
-      } else {
-        console.error('Failed to delete data:', result.message);
-      }
-    })
-    .catch(error => {
-      console.error('Error deleting data:', error);
-    });
-  }
+        row.work = forWorkInput.value;
+        row.bookingBy = bookingByInput.value;
+
+        // Log the data before sending it to the server
+        console.log('Sending updated data:', row);
+
+        const updateUrl = `https://script.google.com/macros/s/AKfycbxTtKSV0fUQMDfXLzDD_E3iw3JnWddSacvBiPf7UwnD7l-XTpQyMMTsDCWrsVcGE6b0/exec?page=updateSomsanData`;
+
+        fetch(updateUrl, {
+            method: 'POST',
+            body: JSON.stringify([row]),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Edit success');
+                console.log('Data updated successfully:', result.message);
+            } else {
+                console.error('Failed to update data:', result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating data:', error);
+        });
+    }
 }
+
 </script>
 
 </body>
