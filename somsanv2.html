@@ -83,7 +83,7 @@
 <body>
 
 <div class="container">
-  <h2>SOM SAN JOB LIST v10</h2>
+  <h2>SOM SAN JOB LIST v11</h2>
   <form id="searchForm">
     <label for="searchDate">Select Date:</label>
     <input type="date" id="searchDate" name="searchDate" required>
@@ -118,7 +118,10 @@
     event.preventDefault();
     const searchDate = document.getElementById('searchDate').value;
 
-    loadingText.style.display = 'block'; // แสดงข้อความ Loading...
+    // Clear previous data
+    resultTable.innerHTML = ''; 
+
+    loadingText.style.display = 'block'; // Show loading text
 
     const requestUrl = `https://script.google.com/macros/s/AKfycbzalCfay_E0A854qFmqGctR69tvl_MkWT50igq9Eh6Cer0g_zdVuCwd1q804UAaz1YO/exec?page=somsan&date=${searchDate}`;
 
@@ -126,16 +129,15 @@
       .then(response => response.json())
       .then(data => {
         populateTable(data);
-        loadingText.style.display = 'none'; // ซ่อนข้อความ Loading เมื่อข้อมูลโหลดเสร็จแล้ว
+        loadingText.style.display = 'none'; // Hide loading text after data is loaded
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        loadingText.style.display = 'none'; // ซ่อนข้อความ Loading เมื่อเกิดข้อผิดพลาด
+        loadingText.style.display = 'none'; // Hide loading text on error
       });
   }
 
   function populateTable(data) {
-    resultTable.innerHTML = ''; 
     data.forEach((row, index) => {
       const newRow = resultTable.insertRow();
       newRow.insertCell(0).textContent = row.date;
