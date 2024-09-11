@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOM SAN Booking v2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container h2 {
+      text-align: center;
+      color: #333;
+    }
+    .container input[type="date"],
+    .container input[type="submit"] {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .container input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    .container input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #2196F3;
+      color: white;
+    }
+    td button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Loading Spinner Styles */
+    .spinner {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .spinner-modal {
+      display: none; 
+      position: fixed; 
+      z-index: 999; 
+      left: 0;
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      background-color: rgba(0, 0, 0, 0.6); 
+      justify-content: center;
+      align-items: center;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>SOM SAN JOB LIST v2</h2>
+  <form id="searchForm">
+    <label for="searchDate">Select Date:</label>
+    <input type="date" id="searchDate" name="searchDate" required>
+    <input type="submit" value="Search">
+  </form>
+  <table id="resultTable">
+    <thead>
+      <tr>
+        <th>Time From</th>
+        <th>Time To</th>
+        <th>Booking By</th>
+        <th>For Work</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data will be populated here by JavaScript -->
+    </tbody>
+  </table>
+</div>
+
+<!-- Spinner Modal -->
+<div id="spinnerModal" class="spinner-modal">
+  <div class="spinner"></div>
+</div>
+
+<script>
+  const searchForm = document.getElementById('searchForm');
+  const resultTable = document.getElementById('resultTable').querySelector('tbody');
+  const spinnerModal = document.getElementById('spinnerModal'); // Reference to the spinner modal
+
+  searchForm.onsubmit = function(event) {
+    event.preventDefault();
+    const searchDate = document.getElementById('searchDate').value;
+
+    spinnerModal.style.display = 'flex'; // Show spinner modal
+
+    // URL ของ Web App ที่เชื่อมต่อกับ Google Apps Script
+    const requestUrl = `https://script.google.com/macros/s/AKfycbyu9x-_jy2tIItVCZxcnGHugW8o9ipe7BBM7UEyRpPJ319Sg0EyLjKllV4to04-NZmc/exec?page=somsan&date=${searchDate}&translatorName=SOM%20SAN`;
+
+    fetch(requestUrl)
+      .then(response => response.json())
+      .then(data => {
+        populateTable(data);
+        spinnerModal.style.display = 'none'; // Hide spinner modal after data is loaded
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        spinnerModal.style.display = 'none'; // Hide spinner modal if error occurs
+      });
+  }
+
+  function populateTable(data) {
+    resultTable.innerHTML = ''; // Clear previous results
+    data.forEach((row, index) => {
+      const newRow = resultTable.insertRow();
+      newRow.insertCell(0).textContent = row.timeFrom;
+      newRow.insertCell(1).textContent = row.timeTo;
+      newRow.insertCell(2).textContent = row.bookingBy;
+      newRow.insertCell(3).textContent = row.work;
+    });
+  }
+</script>
+
+</body>
+</html>
