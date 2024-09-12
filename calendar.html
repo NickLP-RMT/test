@@ -69,17 +69,14 @@
       font-weight: bold;
       cursor: default;
     }
-    .event {
-      background-color: #4CAF50;
-      color: white;
-      padding: 2px 5px;
-      font-size: 0.8em;
+    .has-event::after {
+      content: '\1F4D6'; /* ไอคอนหนังสือ */
       position: absolute;
       bottom: 5px;
-      left: 5px;
-      right: 5px;
-      text-align: left;
-      border-radius: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px; /* ขนาดของไอคอนหนังสือ */
+      color: #4CAF50; /* สีเขียว */
     }
     .modal {
       display: none; 
@@ -393,6 +390,20 @@
             console.error(error);
           });
       });
+
+      // ตรวจสอบว่ามีการจองหรือไม่
+      const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
+
+      fetch(requestUrl)
+        .then(response => response.json())
+        .then(events => {
+          if (events.length > 0) {
+            dayCell.classList.add('has-event'); // เพิ่มคลาส has-event หากมีการจองในวันนั้น
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
 
       calendarDays.appendChild(dayCell);
     }
