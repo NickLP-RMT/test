@@ -99,20 +99,17 @@
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
     }
-    .close, .refresh {
+    .close {
       color: #aaa;
       float: right;
       font-size: 28px;
       font-weight: bold;
-      cursor: pointer;
-      margin-left: 10px;
     }
     .close:hover,
-    .close:focus,
-    .refresh:hover,
-    .refresh:focus {
+    .close:focus {
       color: black;
       text-decoration: none;
+      cursor: pointer;
     }
     table {
       width: 100%;
@@ -192,7 +189,6 @@
 <div id="myModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
-    <span class="refresh">&#x21bb;</span> <!-- ปุ่มรีเฟรช -->
     <h3 id="modalText">Details</h3>
     <table id="eventTable">
       <thead>
@@ -226,7 +222,69 @@
           <td id="pookySan_1000"></td>
           <td id="lSan_1000"></td>
         </tr>
-        <!-- ตารางที่เหลือยังคงเดิม -->
+        <tr>
+          <td>11:00-12:00</td>
+          <td id="somSan_1100"></td>
+          <td id="gookSan_1100"></td>
+          <td id="pookySan_1100"></td>
+          <td id="lSan_1100"></td>
+        </tr>
+        <tr>
+          <td>12:00-13:00</td>
+          <td id="somSan_1200"></td>
+          <td id="gookSan_1200"></td>
+          <td id="pookySan_1200"></td>
+          <td id="lSan_1200"></td>
+        </tr>
+        <tr>
+          <td>13:00-14:00</td>
+          <td id="somSan_1300"></td>
+          <td id="gookSan_1300"></td>
+          <td id="pookySan_1300"></td>
+          <td id="lSan_1300"></td>
+        </tr>
+        <tr>
+          <td>14:00-15:00</td>
+          <td id="somSan_1400"></td>
+          <td id="gookSan_1400"></td>
+          <td id="pookySan_1400"></td>
+          <td id="lSan_1400"></td>
+        </tr>
+        <tr>
+          <td>15:00-16:00</td>
+          <td id="somSan_1500"></td>
+          <td id="gookSan_1500"></td>
+          <td id="pookySan_1500"></td>
+          <td id="lSan_1500"></td>
+        </tr>
+        <tr>
+          <td>16:00-17:00</td>
+          <td id="somSan_1600"></td>
+          <td id="gookSan_1600"></td>
+          <td id="pookySan_1600"></td>
+          <td id="lSan_1600"></td>
+        </tr>
+        <tr>
+          <td>17:00-18:00</td>
+          <td id="somSan_1700"></td>
+          <td id="gookSan_1700"></td>
+          <td id="pookySan_1700"></td>
+          <td id="lSan_1700"></td>
+        </tr>
+        <tr>
+          <td>18:00-19:00</td>
+          <td id="somSan_1800"></td>
+          <td id="gookSan_1800"></td>
+          <td id="pookySan_1800"></td>
+          <td id="lSan_1800"></td>
+        </tr>
+        <tr>
+          <td>19:00-20:00</td>
+          <td id="somSan_1900"></td>
+          <td id="gookSan_1900"></td>
+          <td id="pookySan_1900"></td>
+          <td id="lSan_1900"></td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -241,7 +299,6 @@
   const modal = document.getElementById("myModal");
   const modalText = document.getElementById("modalText");
   const span = document.getElementsByClassName("close")[0];
-  const refreshButton = document.querySelector('.refresh'); // ปุ่มรีเฟรช
   const spinner = document.getElementById('spinner');
 
   const timeSlots = ['0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900'];
@@ -397,57 +454,6 @@
       modal.style.display = "none";
     }
   }
-
-  refreshButton.addEventListener('click', () => {
-    const selectedDate = document.querySelector('.calendar-day.today p').textContent; // รับวันที่ที่เลือก
-    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${currentYear}-${('0' + (currentMonth + 1)).slice(-2)}-${('0' + selectedDate).slice(-2)}`;
-
-    spinner.style.display = 'block';
-
-    fetch(requestUrl)
-      .then(response => response.json())
-      .then(events => {
-        spinner.style.display = 'none';
-
-        // ล้างข้อมูลเก่าในตาราง
-        timeSlots.forEach(time => {
-          document.getElementById(`somSan_${time}`).textContent = '';
-          document.getElementById(`gookSan_${time}`).textContent = '';
-          document.getElementById(`pookySan_${time}`).textContent = '';
-          document.getElementById(`lSan_${time}`).textContent = '';
-        });
-
-        if (events.length === 0) {
-          modalText.textContent = "No events for this day.";
-          document.getElementById('eventTable').style.display = 'none';
-        } else {
-          document.getElementById('eventTable').style.display = '';
-          events.forEach(event => {
-            const timeFromSlot = event.timeFrom.replace(':', '');
-            const timeToSlot = event.timeTo.replace(':', '');
-
-            let timeSlot = timeFromSlot;
-            while (timeSlot < timeToSlot) {
-              if (event.translator === 'SOM SAN') {
-                document.getElementById(`somSan_${timeSlot}`).textContent = event.work;
-              } else if (event.translator === 'GOOK SAN') {
-                document.getElementById(`gookSan_${timeSlot}`).textContent = event.work;
-              } else if (event.translator === 'POOKY SAN') {
-                document.getElementById(`pookySan_${timeSlot}`).textContent = event.work;
-              } else if (event.translator === 'L SAN') {
-                document.getElementById(`lSan_${timeSlot}`).textContent = event.work;
-              }
-              timeSlot = incrementTimeSlot(timeSlot);
-            }
-          });
-        }
-      })
-      .catch(error => {
-        spinner.style.display = 'none';
-        modalText.textContent = "An error occurred while fetching data.";
-        console.error(error);
-      });
-  });
 
   renderCalendar(currentMonth, currentYear);
 </script>
