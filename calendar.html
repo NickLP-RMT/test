@@ -98,29 +98,25 @@
       width: 80%; 
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-      position: relative;
-    }
-    .close, .refresh {
-      position: absolute;
-      top: 10px;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
     }
     .close {
-      right: 50px;
       color: #aaa;
-    }
-    .refresh {
-      right: 10px;
-      color: #4CAF50;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
     }
     .close:hover,
-    .close:focus,
-    .refresh:hover,
-    .refresh:focus {
+    .close:focus {
       color: black;
       text-decoration: none;
+      cursor: pointer;
+    }
+    .refresh {
+      color: #2196F3;
+      font-size: 24px;
+      cursor: pointer;
+      margin-left: 10px;
+      vertical-align: middle;
     }
     table {
       width: 100%;
@@ -311,15 +307,15 @@
   const modal = document.getElementById("myModal");
   const modalText = document.getElementById("modalText");
   const span = document.getElementsByClassName("close")[0];
-  const refreshButton = document.getElementsByClassName("refresh")[0];
   const spinner = document.getElementById('spinner');
+  const refreshButton = document.querySelector('.refresh');
 
   const timeSlots = ['0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900'];
 
   const date = new Date();
   let currentMonth = date.getMonth();
   let currentYear = date.getFullYear();
-  let selectedDate;
+  let currentDay = null;
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -355,18 +351,18 @@
       dayCell.innerHTML = `<p>${day}</p>`;
 
       dayCell.addEventListener('click', () => {
-        spinner.style.display = 'block';
-        selectedDate = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
-        fetchEvents(selectedDate);
+        currentDay = day; // บันทึกวันที่ปัจจุบันที่เลือก
+        loadEventsForDay(year, month + 1, day);
       });
 
+      // ตรวจสอบว่ามีการจองหรือไม่
       const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
 
       fetch(requestUrl)
         .then(response => response.json())
         .then(events => {
           if (events.length > 0) {
-            dayCell.classList.add('has-event');
+            dayCell.classList.add('has-event'); // เพิ่มคลาส has-event หากมีการจองในวันนั้น
           }
         })
         .catch(error => {
@@ -377,8 +373,9 @@
     }
   }
 
-  function fetchEvents(date) {
-    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${date}`;
+  function loadEventsForDay(year, month, day) {
+    spinner.style.display = 'block';
+    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}`;
 
     fetch(requestUrl)
       .then(response => response.json())
@@ -414,7 +411,7 @@
               timeSlot = incrementTimeSlot(timeSlot);
             }
           });
-          modalText.textContent = `Details for ${selectedDate}`;
+          modalText.textContent = `Details for ${months[month - 1]} ${day}, ${year}`;
         }
 
         modal.style.display = "block";
@@ -425,22 +422,6 @@
         modal.style.display = "block";
         console.error(error);
       });
-  }
-
-  refreshButton.onclick = function() {
-    if (selectedDate) {
-      fetchEvents(selectedDate);
-    }
-  }
-
-  span.onclick = function() {
-    modal.style.display = "none";
-  }
-
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
   }
 
   function incrementTimeSlot(timeSlot) {
@@ -469,6 +450,12 @@
     renderCalendar(currentMonth, currentYear);
   }
 
+  refreshButton.addEventListener('click', () => {
+    if (currentDay) {
+      loadEventsForDay(currentYear, currentMonth + 1, currentDay);
+    }
+  });
+
   todayButton.addEventListener('click', () => {
     const today = new Date();
     currentMonth = today.getMonth();
@@ -478,6 +465,16 @@
 
   prevMonth.addEventListener('click', () => changeMonth(-1));
   nextMonth.addEventListener('click', () => changeMonth(1));
+
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
 
   renderCalendar(currentMonth, currentYear);
 </script>
