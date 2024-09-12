@@ -111,6 +111,13 @@
       text-decoration: none;
       cursor: pointer;
     }
+    .refresh {
+      color: #2196F3;
+      font-size: 24px;
+      cursor: pointer;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -189,6 +196,7 @@
 <div id="myModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
+    <span class="refresh">&#x21bb;</span>
     <h3 id="modalText">Details</h3>
     <table id="eventTable">
       <thead>
@@ -300,12 +308,14 @@
   const modalText = document.getElementById("modalText");
   const span = document.getElementsByClassName("close")[0];
   const spinner = document.getElementById('spinner');
+  const refreshButton = document.querySelector('.refresh');
 
   const timeSlots = ['0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900'];
 
   const date = new Date();
   let currentMonth = date.getMonth();
   let currentYear = date.getFullYear();
+  let currentDay = null;
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -341,54 +351,8 @@
       dayCell.innerHTML = `<p>${day}</p>`;
 
       dayCell.addEventListener('click', () => {
-        spinner.style.display = 'block';
-        const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
-
-        fetch(requestUrl)
-          .then(response => response.json())
-          .then(events => {
-            spinner.style.display = 'none';
-            timeSlots.forEach(time => {
-              document.getElementById(`somSan_${time}`).textContent = '';
-              document.getElementById(`gookSan_${time}`).textContent = '';
-              document.getElementById(`pookySan_${time}`).textContent = '';
-              document.getElementById(`lSan_${time}`).textContent = '';
-            });
-
-            if (events.length === 0) {
-              modalText.textContent = "No events for this day.";
-              document.getElementById('eventTable').style.display = 'none';
-            } else {
-              document.getElementById('eventTable').style.display = '';
-              events.forEach(event => {
-                const timeFromSlot = event.timeFrom.replace(':', '');
-                const timeToSlot = event.timeTo.replace(':', '');
-
-                let timeSlot = timeFromSlot;
-                while (timeSlot < timeToSlot) {
-                  if (event.translator === 'SOM SAN') {
-                    document.getElementById(`somSan_${timeSlot}`).textContent = event.work;
-                  } else if (event.translator === 'GOOK SAN') {
-                    document.getElementById(`gookSan_${timeSlot}`).textContent = event.work;
-                  } else if (event.translator === 'POOKY SAN') {
-                    document.getElementById(`pookySan_${timeSlot}`).textContent = event.work;
-                  } else if (event.translator === 'L SAN') {
-                    document.getElementById(`lSan_${timeSlot}`).textContent = event.work;
-                  }
-                  timeSlot = incrementTimeSlot(timeSlot);
-                }
-              });
-              modalText.textContent = `Details for ${months[month]} ${day}, ${year}`;
-            }
-
-            modal.style.display = "block";
-          })
-          .catch(error => {
-            spinner.style.display = 'none';
-            modalText.textContent = "An error occurred while fetching data.";
-            modal.style.display = "block";
-            console.error(error);
-          });
+        currentDay = day; // บันทึกวันที่ปัจจุบันที่เลือก
+        loadEventsForDay(year, month + 1, day);
       });
 
       // ตรวจสอบว่ามีการจองหรือไม่
@@ -407,6 +371,57 @@
 
       calendarDays.appendChild(dayCell);
     }
+  }
+
+  function loadEventsForDay(year, month, day) {
+    spinner.style.display = 'block';
+    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}`;
+
+    fetch(requestUrl)
+      .then(response => response.json())
+      .then(events => {
+        spinner.style.display = 'none';
+        timeSlots.forEach(time => {
+          document.getElementById(`somSan_${time}`).textContent = '';
+          document.getElementById(`gookSan_${time}`).textContent = '';
+          document.getElementById(`pookySan_${time}`).textContent = '';
+          document.getElementById(`lSan_${time}`).textContent = '';
+        });
+
+        if (events.length === 0) {
+          modalText.textContent = "No events for this day.";
+          document.getElementById('eventTable').style.display = 'none';
+        } else {
+          document.getElementById('eventTable').style.display = '';
+          events.forEach(event => {
+            const timeFromSlot = event.timeFrom.replace(':', '');
+            const timeToSlot = event.timeTo.replace(':', '');
+
+            let timeSlot = timeFromSlot;
+            while (timeSlot < timeToSlot) {
+              if (event.translator === 'SOM SAN') {
+                document.getElementById(`somSan_${timeSlot}`).textContent = event.work;
+              } else if (event.translator === 'GOOK SAN') {
+                document.getElementById(`gookSan_${timeSlot}`).textContent = event.work;
+              } else if (event.translator === 'POOKY SAN') {
+                document.getElementById(`pookySan_${timeSlot}`).textContent = event.work;
+              } else if (event.translator === 'L SAN') {
+                document.getElementById(`lSan_${timeSlot}`).textContent = event.work;
+              }
+              timeSlot = incrementTimeSlot(timeSlot);
+            }
+          });
+          modalText.textContent = `Details for ${months[month - 1]} ${day}, ${year}`;
+        }
+
+        modal.style.display = "block";
+      })
+      .catch(error => {
+        spinner.style.display = 'none';
+        modalText.textContent = "An error occurred while fetching data.";
+        modal.style.display = "block";
+        console.error(error);
+      });
   }
 
   function incrementTimeSlot(timeSlot) {
@@ -434,6 +449,12 @@
     }
     renderCalendar(currentMonth, currentYear);
   }
+
+  refreshButton.addEventListener('click', () => {
+    if (currentDay) {
+      loadEventsForDay(currentYear, currentMonth + 1, currentDay);
+    }
+  });
 
   todayButton.addEventListener('click', () => {
     const today = new Date();
