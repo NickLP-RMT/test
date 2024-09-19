@@ -36,6 +36,9 @@
     .button-group button:hover {
       background-color: #1976D2;
     }
+    .day-table {
+      margin-bottom: 40px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -59,6 +62,15 @@
     tr:nth-child(even) td {
       background-color: #f9f9f9;
     }
+    .day-header {
+      background-color: #FFEB3B;
+      color: black;
+      font-weight: bold;
+      text-align: left;
+      padding-left: 15px;
+      font-size: 16px;
+    }
+    /* Loading Spinner Styles */
     .spinner {
       display: none;
       position: fixed;
@@ -95,25 +107,14 @@
 <!-- Loading spinner -->
 <div class="spinner" id="spinner"></div>
 
-<!-- Summary Table -->
-<table id="summaryTable">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Table rows will be inserted here dynamically by JavaScript -->
-  </tbody>
-</table>
+<!-- Container for day tables -->
+<div id="dayTablesContainer">
+  <!-- 7 day tables will be dynamically inserted here by JavaScript -->
+</div>
 
 <script>
   const spinner = document.getElementById('spinner');
-  const summaryTable = document.getElementById('summaryTable').querySelector('tbody');
+  const dayTablesContainer = document.getElementById('dayTablesContainer');
   const selectedMonth = document.getElementById('selectedMonth');
 
   let currentDay = 1;  // Start from day 1 of the month
@@ -132,7 +133,7 @@
   // Load data for 7 days starting from currentDay
   function loadWeekData(startDay) {
     spinner.style.display = 'block';
-    summaryTable.innerHTML = '';  // Clear previous data
+    dayTablesContainer.innerHTML = '';  // Clear previous data
     const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=summary&startDay=${startDay}&month=${currentMonth}&year=${currentYear}`;
 
     fetch(requestUrl)
@@ -141,7 +142,7 @@
         spinner.style.display = 'none';
         for (let day = 0; day < 7; day++) {
           const currentData = data[day];  // Data for each day (assumes data for 7 days is returned)
-          addDayRow(currentData);
+          addDayTable(currentData, startDay + day);  // Add table for each day
         }
       })
       .catch(error => {
@@ -150,8 +151,38 @@
       });
   }
 
-  // Create a row for each day
-  function addDayRow(dayData) {
+  // Create a table for each day
+  function addDayTable(dayData, dayNumber) {
+    const dayTableDiv = document.createElement('div');
+    dayTableDiv.classList.add('day-table');
+
+    // Create header for the day
+    const dayHeader = document.createElement('div');
+    dayHeader.classList.add('day-header');
+    const date = new Date(currentYear, currentMonth, dayNumber);
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+    dayHeader.textContent = `${dayNumber}/${currentMonth + 1}/${currentYear} - ${dayName}`;
+    dayTableDiv.appendChild(dayHeader);
+
+    // Create the table
+    const table = document.createElement('table');
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>TIME</th>
+          <th>SOM SAN</th>
+          <th>GOOK SAN</th>
+          <th>POOKY SAN</th>
+          <th>L SAN</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    `;
+    dayTableDiv.appendChild(table);
+
+    // Add time slots to the table
+    const tbody = table.querySelector('tbody');
     timeSlots.forEach(time => {
       const newRow = document.createElement('tr');
       const timeCell = document.createElement('td');
@@ -165,8 +196,10 @@
         newRow.appendChild(cell);
       });
 
-      summaryTable.appendChild(newRow);
+      tbody.appendChild(newRow);
     });
+
+    dayTablesContainer.appendChild(dayTableDiv);
   }
 
   // Event listeners for navigation buttons
