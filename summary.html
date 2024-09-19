@@ -3,145 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Summary with Red Dots</title>
+  <title>Booking Summary</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f7f7f7;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
       padding: 20px;
     }
-    .day-table {
-      margin-bottom: 30px;
+    table {
       width: 100%;
       border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
       border: 1px solid #ddd;
     }
-    .day-table th, .day-table td {
-      border: 1px solid #ddd;
+    th, td {
       padding: 8px;
       text-align: center;
     }
-    .day-table th {
-      background-color: #f4f4f4;
+    th {
+      background-color: #4CAF50;
+      color: white;
     }
-    .day-header {
-      text-align: left;
-      font-weight: bold;
-      font-size: 1.2em;
-      margin-bottom: 10px;
+    td {
+      background-color: #fff;
+      color: #333;
     }
-    .has-task {
-      color: red;
-      font-size: 24px;
+    tr:nth-child(even) td {
+      background-color: #f9f9f9;
     }
-    .no-task {
-      color: gray;
-      font-size: 24px;
+    /* จุดสีแดง */
+    .dot {
+      height: 12px;
+      width: 12px;
+      background-color: red;
+      border-radius: 50%;
+      display: inline-block;
     }
+    /* Pagination Button */
     .pagination {
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
+      margin-top: 10px;
     }
     .pagination button {
-      padding: 10px 20px;
-      background-color: #2196F3;
+      padding: 10px;
+      cursor: pointer;
+      background-color: #4CAF50;
       color: white;
       border: none;
-      cursor: pointer;
       border-radius: 5px;
-      font-size: 1em;
+      transition: background-color 0.3s ease;
     }
-    .pagination button:hover {
-      background-color: #1976D2;
+    .pagination button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
 
-<h2>Summary of September</h2>
+<div class="container">
+  <h2>Booking Summary</h2>
 
-<!-- Day 1 -->
-<div class="day-header">1/9/2024 - Monday</div>
-<table class="day-table">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>08:00 - 08:30</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-    </tr>
-    <tr>
-      <td>08:30 - 09:00</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-    </tr>
-    <tr>
-      <td>09:00 - 09:30</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-    </tr>
-    <!-- Add more time slots as needed -->
-  </tbody>
-</table>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>SOM SAN</th>
+        <th>GOOK SAN</th>
+        <th>POOKY SAN</th>
+        <th>L SAN</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Rows will be dynamically inserted here -->
+    </tbody>
+  </table>
 
-<!-- Day 2 -->
-<div class="day-header">2/9/2024 - Tuesday</div>
-<table class="day-table">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>08:00 - 08:30</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-    </tr>
-    <tr>
-      <td>08:30 - 09:00</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-    </tr>
-    <tr>
-      <td>09:00 - 09:30</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-    </tr>
-    <!-- Add more time slots as needed -->
-  </tbody>
-</table>
-
-<!-- Pagination buttons -->
-<div class="pagination">
-  <button id="prev7Days">Previous 7 Days</button>
-  <button id="next7Days">Next 7 Days</button>
+  <div class="pagination">
+    <button id="prevBtn" onclick="prevPage()" disabled>Previous</button>
+    <button id="nextBtn" onclick="nextPage()">Next</button>
+  </div>
 </div>
+
+<script>
+  const data = [
+    { date: '01/01/2024', time: '08:00-09:00', somSan: true, gookSan: false, pookySan: true, lSan: false },
+    { date: '01/01/2024', time: '09:00-10:00', somSan: false, gookSan: true, pookySan: true, lSan: false },
+    { date: '02/01/2024', time: '08:00-09:00', somSan: true, gookSan: false, pookySan: true, lSan: true },
+    { date: '02/01/2024', time: '09:00-10:00', somSan: false, gookSan: false, pookySan: true, lSan: true },
+    // เพิ่มข้อมูลตามที่ต้องการ...
+  ];
+
+  const rowsPerPage = 7;
+  let currentPage = 1;
+
+  function displayTable() {
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = '';
+
+    // คำนวณวันที่เริ่มต้นและสิ้นสุดในหน้าปัจจุบัน
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    const pageData = data.slice(start, end);
+
+    pageData.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${row.date}</td>
+        <td>${row.time}</td>
+        <td>${row.somSan ? '<span class="dot"></span>' : ''}</td>
+        <td>${row.gookSan ? '<span class="dot"></span>' : ''}</td>
+        <td>${row.pookySan ? '<span class="dot"></span>' : ''}</td>
+        <td>${row.lSan ? '<span class="dot"></span>' : ''}</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    document.getElementById('prevBtn').disabled = currentPage === 1;
+    document.getElementById('nextBtn').disabled = end >= data.length;
+  }
+
+  function nextPage() {
+    currentPage++;
+    displayTable();
+  }
+
+  function prevPage() {
+    currentPage--;
+    displayTable();
+  }
+
+  // Initial call to display the table
+  displayTable();
+</script>
 
 </body>
 </html>
