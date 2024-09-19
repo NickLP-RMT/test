@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Summary</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+    }
+    .summary {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .summary-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .summary-header h2 {
+      margin: 0;
+      color: #333;
+    }
+    .months {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 10px;
+      margin-bottom: 20px;
+    }
+    .month {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border-radius: 4px;
+    }
+    .month:hover {
+      background-color: #e3f2fd;
+    }
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-gap: 5px;
+    }
+    .day, .day-header {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .day-header {
+      background-color: #ddd;
+      font-weight: bold;
+    }
+    .day:hover {
+      background-color: #e3f2fd;
+      cursor: pointer;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      border-radius: 10px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #2196F3;
+      color: white;
+    }
+    td {
+      background-color: #fff;
+      color: #333;
+    }
+    tr:nth-child(even) td {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+<div class="summary">
+  <div class="summary-header">
+    <h2>Booking Summary - Select a Month</h2>
+  </div>
+  <div class="months">
+    <div class="month" data-month="1">January</div>
+    <div class="month" data-month="2">February</div>
+    <div class="month" data-month="3">March</div>
+    <div class="month" data-month="4">April</div>
+    <div class="month" data-month="5">May</div>
+    <div class="month" data-month="6">June</div>
+    <div class="month" data-month="7">July</div>
+    <div class="month" data-month="8">August</div>
+    <div class="month" data-month="9">September</div>
+    <div class="month" data-month="10">October</div>
+    <div class="month" data-month="11">November</div>
+    <div class="month" data-month="12">December</div>
+  </div>
+
+  <!-- Loading spinner element -->
+  <div class="spinner" id="spinner"></div>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3 id="modalText">Details</h3>
+      <table id="eventTable">
+        <thead>
+          <tr>
+            <th>TIME</th>
+            <th>SOM SAN</th>
+            <th>GOOK SAN</th>
+            <th>POOKY SAN</th>
+            <th>L SAN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Event data will be populated here by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const months = document.querySelectorAll('.month');
+  const modal = document.getElementById("myModal");
+  const modalText = document.getElementById("modalText");
+  const span = document.getElementsByClassName("close")[0];
+  const spinner = document.getElementById('spinner');
+  const eventTable = document.getElementById('eventTable').querySelector('tbody');
+
+  months.forEach(month => {
+    month.addEventListener('click', () => {
+      const selectedMonth = month.getAttribute('data-month');
+      loadMonthSummary(selectedMonth);
+    });
+  });
+
+  function loadMonthSummary(month) {
+    spinner.style.display = 'block';
+    const year = new Date().getFullYear();
+    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=summary&year=${year}&month=${month}`;
+
+    fetch(requestUrl)
+      .then(response => response.json())
+      .then(data => {
+        spinner.style.display = 'none';
+        eventTable.innerHTML = ''; // Clear previous data
+        if (data.length === 0) {
+          modalText.textContent = "No events for this month.";
+          document.getElementById('eventTable').style.display = 'none';
+        } else {
+          document.getElementById('eventTable').style.display = '';
+          data.forEach(event => {
+            const row = eventTable.insertRow();
+            row.insertCell(0).textContent = event.time;
+            row.insertCell(1).textContent = event.somSan || '';
+            row.insertCell(2).textContent = event.gookSan || '';
+            row.insertCell(3).textContent = event.pookySan || '';
+            row.insertCell(4).textContent = event.lSan || '';
+          });
+          modalText.textContent = `Details for ${getMonthName(month)} ${year}`;
+        }
+        modal.style.display = "block";
+      })
+      .catch(error => {
+        spinner.style.display = 'none';
+        modalText.textContent = "An error occurred while fetching data.";
+        modal.style.display = "block";
+        console.error(error);
+      });
+  }
+
+  function getMonthName(month) {
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June', 
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return monthNames[month - 1];
+  }
+
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+</script>
+
+</body>
+</html>
