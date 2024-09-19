@@ -3,223 +3,145 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Summary - Booking Calendar</title>
+  <title>Summary with Red Dots</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f7f7f7;
-      margin: 0;
       padding: 20px;
     }
-    .summary-header {
+    .day-table {
+      margin-bottom: 30px;
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #ddd;
+    }
+    .day-table th, .day-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
       text-align: center;
-      margin-bottom: 20px;
     }
-    .summary-header h1 {
-      margin: 0;
-      color: #333;
+    .day-table th {
+      background-color: #f4f4f4;
     }
-    .button-group {
+    .day-header {
+      text-align: left;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .has-task {
+      color: red;
+      font-size: 24px;
+    }
+    .no-task {
+      color: gray;
+      font-size: 24px;
+    }
+    .pagination {
       display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
+      justify-content: space-between;
+      margin-top: 20px;
     }
-    .button-group button {
+    .pagination button {
       padding: 10px 20px;
-      margin: 0 10px;
       background-color: #2196F3;
       color: white;
       border: none;
-      border-radius: 4px;
       cursor: pointer;
+      border-radius: 5px;
+      font-size: 1em;
     }
-    .button-group button:hover {
+    .pagination button:hover {
       background-color: #1976D2;
-    }
-    .day-table {
-      margin-bottom: 40px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 12px;
-      text-align: center;
-    }
-    th {
-      background-color: #4CAF50;
-      color: white;
-    }
-    td {
-      background-color: #fff;
-      color: #333;
-    }
-    tr:nth-child(even) td {
-      background-color: #f9f9f9;
-    }
-    .day-header {
-      background-color: #FFEB3B;
-      color: black;
-      font-weight: bold;
-      text-align: left;
-      padding-left: 15px;
-      font-size: 16px;
-    }
-    /* Loading Spinner Styles */
-    .spinner {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      top: 50%;
-      left: 50%;
-      margin-top: -60px;
-      margin-left: -60px;
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 120px;
-      height: 120px;
-      animation: spin 2s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
-<div class="summary-header">
-  <h1>Booking Summary</h1>
-  <h2 id="selectedMonth">Month: September 2024</h2>
+<h2>Summary of September</h2>
+
+<!-- Day 1 -->
+<div class="day-header">1/9/2024 - Monday</div>
+<table class="day-table">
+  <thead>
+    <tr>
+      <th>TIME</th>
+      <th>SOM SAN</th>
+      <th>GOOK SAN</th>
+      <th>POOKY SAN</th>
+      <th>L SAN</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>08:00 - 08:30</td>
+      <td class="has-task">●</td>
+      <td class="no-task">-</td>
+      <td class="has-task">●</td>
+      <td class="no-task">-</td>
+    </tr>
+    <tr>
+      <td>08:30 - 09:00</td>
+      <td class="no-task">-</td>
+      <td class="has-task">●</td>
+      <td class="no-task">-</td>
+      <td class="no-task">-</td>
+    </tr>
+    <tr>
+      <td>09:00 - 09:30</td>
+      <td class="has-task">●</td>
+      <td class="no-task">-</td>
+      <td class="no-task">-</td>
+      <td class="has-task">●</td>
+    </tr>
+    <!-- Add more time slots as needed -->
+  </tbody>
+</table>
+
+<!-- Day 2 -->
+<div class="day-header">2/9/2024 - Tuesday</div>
+<table class="day-table">
+  <thead>
+    <tr>
+      <th>TIME</th>
+      <th>SOM SAN</th>
+      <th>GOOK SAN</th>
+      <th>POOKY SAN</th>
+      <th>L SAN</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>08:00 - 08:30</td>
+      <td class="no-task">-</td>
+      <td class="has-task">●</td>
+      <td class="no-task">-</td>
+      <td class="has-task">●</td>
+    </tr>
+    <tr>
+      <td>08:30 - 09:00</td>
+      <td class="has-task">●</td>
+      <td class="no-task">-</td>
+      <td class="has-task">●</td>
+      <td class="no-task">-</td>
+    </tr>
+    <tr>
+      <td>09:00 - 09:30</td>
+      <td class="no-task">-</td>
+      <td class="has-task">●</td>
+      <td class="no-task">-</td>
+      <td class="has-task">●</td>
+    </tr>
+    <!-- Add more time slots as needed -->
+  </tbody>
+</table>
+
+<!-- Pagination buttons -->
+<div class="pagination">
+  <button id="prev7Days">Previous 7 Days</button>
+  <button id="next7Days">Next 7 Days</button>
 </div>
-
-<div class="button-group">
-  <button id="prevWeek">Previous 7 Days</button>
-  <button id="nextWeek">Next 7 Days</button>
-</div>
-
-<!-- Loading spinner -->
-<div class="spinner" id="spinner"></div>
-
-<!-- Container for day tables -->
-<div id="dayTablesContainer">
-  <!-- 7 day tables will be dynamically inserted here by JavaScript -->
-</div>
-
-<script>
-  const spinner = document.getElementById('spinner');
-  const dayTablesContainer = document.getElementById('dayTablesContainer');
-  const selectedMonth = document.getElementById('selectedMonth');
-
-  let currentDay = 1;  // Start from day 1 of the month
-  let currentMonth = 8; // August = 7 (0-based index), September = 8
-  let currentYear = 2024;
-
-  const timeSlots = [
-    '08:00 - 08:30', '08:30 - 09:00', '09:00 - 09:30', '09:30 - 10:00',
-    '10:00 - 10:30', '10:30 - 11:00', '11:00 - 11:30', '11:30 - 12:00',
-    '12:00 - 12:30', '12:30 - 13:00', '13:00 - 13:30', '13:30 - 14:00',
-    '14:00 - 14:30', '14:30 - 15:00', '15:00 - 15:30', '15:30 - 16:00',
-    '16:00 - 16:30', '16:30 - 17:00', '17:00 - 17:30', '17:30 - 18:00',
-    '18:00 - 18:30', '18:30 - 19:00', '19:00 - 19:30', '19:30 - 20:00'
-  ];
-
-  // Load data for 7 days starting from currentDay
-  function loadWeekData(startDay) {
-    spinner.style.display = 'block';
-    dayTablesContainer.innerHTML = '';  // Clear previous data
-    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=summary&startDay=${startDay}&month=${currentMonth}&year=${currentYear}`;
-
-    fetch(requestUrl)
-      .then(response => response.json())
-      .then(data => {
-        spinner.style.display = 'none';
-        for (let day = 0; day < 7; day++) {
-          const currentData = data[day];  // Data for each day (assumes data for 7 days is returned)
-          addDayTable(currentData, startDay + day);  // Add table for each day
-        }
-      })
-      .catch(error => {
-        spinner.style.display = 'none';
-        console.error('Error loading data:', error);
-      });
-  }
-
-  // Create a table for each day
-  function addDayTable(dayData, dayNumber) {
-    const dayTableDiv = document.createElement('div');
-    dayTableDiv.classList.add('day-table');
-
-    // Create header for the day
-    const dayHeader = document.createElement('div');
-    dayHeader.classList.add('day-header');
-    const date = new Date(currentYear, currentMonth, dayNumber);
-    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
-    dayHeader.textContent = `${dayNumber}/${currentMonth + 1}/${currentYear} - ${dayName}`;
-    dayTableDiv.appendChild(dayHeader);
-
-    // Create the table
-    const table = document.createElement('table');
-    table.innerHTML = `
-      <thead>
-        <tr>
-          <th>TIME</th>
-          <th>SOM SAN</th>
-          <th>GOOK SAN</th>
-          <th>POOKY SAN</th>
-          <th>L SAN</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    `;
-    dayTableDiv.appendChild(table);
-
-    // Add time slots to the table
-    const tbody = table.querySelector('tbody');
-    timeSlots.forEach(time => {
-      const newRow = document.createElement('tr');
-      const timeCell = document.createElement('td');
-      timeCell.textContent = time;
-      newRow.appendChild(timeCell);
-
-      // Insert booking data for SOM SAN, GOOK SAN, POOKY SAN, and L SAN
-      ['somSan', 'gookSan', 'pookySan', 'lSan'].forEach(translator => {
-        const cell = document.createElement('td');
-        cell.textContent = dayData[translator][time] || '-';  // Use '-' if no booking data
-        newRow.appendChild(cell);
-      });
-
-      tbody.appendChild(newRow);
-    });
-
-    dayTablesContainer.appendChild(dayTableDiv);
-  }
-
-  // Event listeners for navigation buttons
-  document.getElementById('prevWeek').addEventListener('click', () => {
-    if (currentDay > 7) {
-      currentDay -= 7;
-      loadWeekData(currentDay);
-    }
-  });
-
-  document.getElementById('nextWeek').addEventListener('click', () => {
-    if (currentDay + 7 <= 30) {  // Assuming max 30 days in a month
-      currentDay += 7;
-      loadWeekData(currentDay);
-    }
-  });
-
-  // Initial load
-  loadWeekData(currentDay);
-</script>
 
 </body>
 </html>
