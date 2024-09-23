@@ -19,7 +19,8 @@
       color: #333;
     }
     .container input[type="date"],
-    .container input[type="submit"] {
+    .container input[type="submit"],
+    .container input[type="text"] {
       padding: 10px;
       margin: 10px 0;
       border-radius: 5px;
@@ -34,6 +35,15 @@
     }
     .container input[type="submit"]:hover {
       background-color: #45a049;
+    }
+    .add-row-btn {
+      padding: 8px 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 10px;
     }
     table {
       width: 100%;
@@ -65,7 +75,14 @@
       background-color: #f44336;
       color: white;
     }
-
+    .submit-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
     /* Loading Text Styles */
     .loading-text {
       display: none;
@@ -89,6 +106,7 @@
     <input type="date" id="searchDate" name="searchDate" required>
     <input type="submit" value="Search">
   </form>
+  <button class="add-row-btn" id="addRowBtn">+ Add Row</button> <!-- ปุ่มเพิ่มบรรทัด -->
   <table id="resultTable">
     <thead>
       <tr>
@@ -112,16 +130,14 @@
 <script>
   const searchForm = document.getElementById('searchForm');
   const resultTable = document.getElementById('resultTable').querySelector('tbody');
-  const loadingText = document.getElementById('loadingText'); // Reference to the loading text
+  const loadingText = document.getElementById('loadingText'); 
+  const addRowBtn = document.getElementById('addRowBtn'); // ปุ่มเพิ่มแถว
 
   searchForm.onsubmit = function(event) {
     event.preventDefault();
     const searchDate = document.getElementById('searchDate').value;
-
-    // Clear previous data
     resultTable.innerHTML = ''; 
-
-    loadingText.style.display = 'block'; // Show loading text
+    loadingText.style.display = 'block';
 
     const requestUrl = `https://script.google.com/macros/s/AKfycbxhVD0_-g7VKhYcOKMRTCaRx_OmoxgTCoIactfbWBRvL7v-MOXKlOabsXkF40Jd263B/exec?page=somsan&date=${searchDate}`;
 
@@ -129,16 +145,67 @@
       .then(response => response.json())
       .then(data => {
         populateTable(data);
-        loadingText.style.display = 'none'; // Hide loading text after data is loaded
+        loadingText.style.display = 'none';
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        loadingText.style.display = 'none'; // Hide loading text on error
+        loadingText.style.display = 'none';
       });
   }
 
-function populateTable(data) {
-    // เรียงลำดับข้อมูลตามเวลา
+  // ฟังก์ชันเพิ่มแถวใหม่เมื่อคลิกปุ่ม +
+  addRowBtn.addEventListener('click', () => {
+    const newRow = resultTable.insertRow();
+    newRow.insertCell(0).innerHTML = `<input type="text" placeholder="Enter Date">`;
+    newRow.insertCell(1).innerHTML = `<input type="text" placeholder="Enter Time From">`;
+    newRow.insertCell(2).innerHTML = `<input type="text" placeholder="Enter Time To">`;
+    newRow.insertCell(3).innerHTML = `<input type="text" placeholder="Enter Booking By">`;
+    newRow.insertCell(4).innerHTML = `<input type="text" placeholder="Enter For Work">`;
+    const actionsCell = newRow.insertCell(5);
+    const submitButton = document.createElement('button');
+    submitButton.textContent = 'Submit';
+    submitButton.classList.add('submit-btn');
+    actionsCell.appendChild(submitButton);
+
+    // ฟังก์ชัน submit ข้อมูลใหม่
+    submitButton.onclick = () => {
+      const date = newRow.cells[0].querySelector('input').value;
+      const timeFrom = newRow.cells[1].querySelector('input').value;
+      const timeTo = newRow.cells[2].querySelector('input').value;
+      const bookingBy = newRow.cells[3].querySelector('input').value;
+      const forWork = newRow.cells[4].querySelector('input').value;
+
+      if (date && timeFrom && timeTo && bookingBy && forWork) {
+        const formData = new FormData();
+        formData.append('date', date);
+        formData.append('timeFrom', timeFrom);
+        formData.append('timeTo', timeTo);
+        formData.append('bookingBy', bookingBy);
+        formData.append('work', forWork);
+
+        fetch('https://script.google.com/macros/s/AKfycbxhVD0_-g7VKhYcOKMRTCaRx_OmoxgTCoIactfbWBRvL7v-MOXKlOabsXkF40Jd263B/exec', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            alert('Data submitted successfully');
+          } else {
+            alert('Error submitting data');
+          }
+        })
+        .catch(error => {
+          console.error('Error submitting data:', error);
+        });
+      } else {
+        alert('Please fill out all fields before submitting');
+      }
+    }
+  });
+
+  function populateTable(data) {
+    // Sort data by time
     data.sort((a, b) => {
         const timeA = a.timeFrom.split(':').map(Number);
         const timeB = b.timeFrom.split(':').map(Number);
@@ -181,7 +248,7 @@ function populateTable(data) {
       deleteButton.onclick = () => deleteRow(row, index);
       actionsCell.appendChild(deleteButton);
     });
-}
+  }
 
   function toggleEdit(forWorkInput, bookingByInput, editButton, row, index) {
     if (forWorkInput.disabled && bookingByInput.disabled) {
@@ -193,7 +260,6 @@ function populateTable(data) {
       bookingByInput.disabled = true;
       editButton.textContent = 'Edit';
 
-      // สร้าง FormData และส่งข้อมูลไปยัง Google Apps Script
       var formData = new FormData();
       formData.append('page', 'updateSomsanData');
       formData.append('row', row.row);
@@ -207,7 +273,6 @@ function populateTable(data) {
       })
       .then(response => response.json())
       .then(result => {
-        console.log('Update result:', result);
         if (result.success) {
           alert('Edit success');
         } else {
@@ -236,8 +301,7 @@ function populateTable(data) {
       .then(result => {
         if (result.success) {
           alert('Delete success');
-          resultTable.deleteRow(index); // ลบแถวจากหน้าจอ
-          console.log('Data deleted successfully:', result.message);
+          resultTable.deleteRow(index);
         } else {
           console.error('Failed to delete data:', result.message);
         }
