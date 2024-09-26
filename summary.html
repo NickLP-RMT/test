@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Calendar with Full Day Details</title>
+  <title>Booking Calendar with Embedded Tables</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -42,19 +42,18 @@
     }
     .calendar-days {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(5, 1fr); /* แสดง 5 วันต่อแถว */
       grid-gap: 5px;
     }
     .calendar-day, .day-header {
       background-color: #fff;
       border: 1px solid #ddd;
-      padding: 10px;
-      text-align: left;
+      padding: 5px;
+      text-align: center;
       position: relative;
-      cursor: pointer;
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
       border-radius: 4px;
-      height: 350px; /* เพิ่มความสูงให้พอแสดงข้อมูล */
+      height: 400px; /* ขยายความสูงเพื่อแสดงตาราง */
     }
     .calendar-day:hover {
       background-color: #e3f2fd;
@@ -68,7 +67,23 @@
     .day-header {
       background-color: #ddd;
       font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 10px; /* ขนาดฟอนต์เล็กลง */
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 5px;
       text-align: center;
+    }
+    th {
+      background-color: #2196F3;
+      color: white;
     }
     .event-dot {
       height: 8px;
@@ -76,20 +91,6 @@
       background-color: red;
       border-radius: 50%;
       display: inline-block;
-    }
-    .schedule-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 2px 0;
-      font-size: 10px; /* ปรับขนาดฟอนต์ให้เล็กลง */
-    }
-    .time-slot {
-      flex: 2;
-    }
-    .translator {
-      flex: 1;
-      text-align: center;
     }
   </style>
 </head>
@@ -102,93 +103,87 @@
     <button id="nextMonth">Next</button>
   </div>
   <div class="calendar-days">
-    <div class="day-header">SUNDAY</div>
     <div class="day-header">MONDAY</div>
     <div class="day-header">TUESDAY</div>
     <div class="day-header">WEDNESDAY</div>
     <div class="day-header">THURSDAY</div>
     <div class="day-header">FRIDAY</div>
-    <div class="day-header">SATURDAY</div>
 
-    <!-- Example Day with Event Dots -->
+    <!-- ตัวอย่างการแสดงผลวันแรกของเดือน -->
     <div class="calendar-day">
       <p>1</p>
-      <!-- SOM SAN Schedule -->
-      <div class="schedule-row">
-        <span class="time-slot">08:00 - 08:30</span>
-        <span class="translator"><span class="event-dot"></span> SOM SAN</span>
-      </div>
-      <div class="schedule-row">
-        <span class="time-slot">08:30 - 09:00</span>
-        <span class="translator"><span class="event-dot"></span> GOOK SAN</span>
-      </div>
-      <div class="schedule-row">
-        <span class="time-slot">09:00 - 09:30</span>
-        <span class="translator"><span class="event-dot"></span> POOKY SAN</span>
-      </div>
-      <div class="schedule-row">
-        <span class="time-slot">09:30 - 10:00</span>
-        <span class="translator"></span> <!-- No event -->
-      </div>
-      <!-- Continue for other time slots up to 19:30 -->
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>SOM SAN</th>
+            <th>GOOK SAN</th>
+            <th>POOKY SAN</th>
+            <th>L SAN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>08:00 - 08:30</td>
+            <td><span class="event-dot"></span></td>
+            <td></td>
+            <td><span class="event-dot"></span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>08:30 - 09:00</td>
+            <td></td>
+            <td><span class="event-dot"></span></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>09:00 - 09:30</td>
+            <td></td>
+            <td><span class="event-dot"></span></td>
+            <td></td>
+            <td><span class="event-dot"></span></td>
+          </tr>
+          <!-- เพิ่มแถวสำหรับช่วงเวลาอื่น ๆ ได้ตามต้องการ -->
+        </tbody>
+      </table>
     </div>
 
+    <!-- ตัวอย่างวันอื่น ๆ สามารถคัดลอกตารางได้ตามที่ต้องการ -->
     <div class="calendar-day">
       <p>2</p>
-      <!-- GOOK SAN Schedule -->
-      <div class="schedule-row">
-        <span class="time-slot">10:00 - 10:30</span>
-        <span class="translator"><span class="event-dot"></span> SOM SAN</span>
-      </div>
-      <div class="schedule-row">
-        <span class="time-slot">10:30 - 11:00</span>
-        <span class="translator"></span> <!-- No event -->
-      </div>
-      <!-- More time slots for the day -->
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>SOM SAN</th>
+            <th>GOOK SAN</th>
+            <th>POOKY SAN</th>
+            <th>L SAN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>08:00 - 08:30</td>
+            <td></td>
+            <td><span class="event-dot"></span></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>08:30 - 09:00</td>
+            <td><span class="event-dot"></span></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Repeat the above for each day in the month -->
+    <!-- Repeat similar structure for other days -->
   </div>
 </div>
-
-<script>
-  const calendarDays = document.getElementById('calendarDays');
-  const monthYear = document.getElementById('monthYear');
-  const prevMonth = document.getElementById('prevMonth');
-  const nextMonth = document.getElementById('nextMonth');
-  const todayButton = document.getElementById('todayButton');
-
-  function renderCalendar(month, year) {
-    calendarDays.innerHTML = '';  // Clear previous days
-
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dayCell = document.createElement('div');
-      dayCell.classList.add('calendar-day');
-
-      dayCell.innerHTML = `<p>${day}</p>`;  // Display the day number
-      
-      // Add schedule for SOM SAN as an example
-      const somSanSchedule = `
-        <div class="schedule-row">
-          <span class="time-slot">08:00 - 08:30</span>
-          <span class="translator"><span class="event-dot"></span> SOM SAN</span>
-        </div>
-        <div class="schedule-row">
-          <span class="time-slot">08:30 - 09:00</span>
-          <span class="translator"></span> <!-- No event -->
-        </div>
-        <!-- More time slots up to 20:00 -->
-      `;
-      
-      dayCell.innerHTML += somSanSchedule;  // Append schedule
-      calendarDays.appendChild(dayCell);
-    }
-  }
-
-  renderCalendar(new Date().getMonth(), new Date().getFullYear());
-</script>
 
 </body>
 </html>
