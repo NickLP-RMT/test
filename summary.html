@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Calendar with Details</title>
+  <title>Booking Calendar with Full Day Details</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f7f7f7;
     }
     .calendar {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -54,6 +54,7 @@
       cursor: pointer;
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
       border-radius: 4px;
+      height: 350px; /* เพิ่มความสูงให้พอแสดงข้อมูล */
     }
     .calendar-day:hover {
       background-color: #e3f2fd;
@@ -81,10 +82,10 @@
       justify-content: space-between;
       align-items: center;
       padding: 2px 0;
-      font-size: 12px;
+      font-size: 10px; /* ปรับขนาดฟอนต์ให้เล็กลง */
     }
     .time-slot {
-      flex: 1;
+      flex: 2;
     }
     .translator {
       flex: 1;
@@ -119,20 +120,28 @@
       </div>
       <div class="schedule-row">
         <span class="time-slot">08:30 - 09:00</span>
+        <span class="translator"><span class="event-dot"></span> GOOK SAN</span>
+      </div>
+      <div class="schedule-row">
+        <span class="time-slot">09:00 - 09:30</span>
+        <span class="translator"><span class="event-dot"></span> POOKY SAN</span>
+      </div>
+      <div class="schedule-row">
+        <span class="time-slot">09:30 - 10:00</span>
         <span class="translator"></span> <!-- No event -->
       </div>
-      <!-- More time slots for the day -->
+      <!-- Continue for other time slots up to 19:30 -->
     </div>
 
     <div class="calendar-day">
       <p>2</p>
       <!-- GOOK SAN Schedule -->
       <div class="schedule-row">
-        <span class="time-slot">09:00 - 09:30</span>
-        <span class="translator"><span class="event-dot"></span> GOOK SAN</span>
+        <span class="time-slot">10:00 - 10:30</span>
+        <span class="translator"><span class="event-dot"></span> SOM SAN</span>
       </div>
       <div class="schedule-row">
-        <span class="time-slot">09:30 - 10:00</span>
+        <span class="time-slot">10:30 - 11:00</span>
         <span class="translator"></span> <!-- No event -->
       </div>
       <!-- More time slots for the day -->
@@ -170,6 +179,7 @@
           <span class="time-slot">08:30 - 09:00</span>
           <span class="translator"></span> <!-- No event -->
         </div>
+        <!-- More time slots up to 20:00 -->
       `;
       
       dayCell.innerHTML += somSanSchedule;  // Append schedule
