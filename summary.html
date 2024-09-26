@@ -67,6 +67,7 @@
     .day-header {
       background-color: #ddd;
       font-weight: bold;
+      font-size: 14px; /* ลดขนาดฟอนต์ */
     }
     table {
       width: 100%;
@@ -123,28 +124,31 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>08:00 - 08:30</td>
-            <td><span class="event-dot"></span></td>
-            <td></td>
-            <td><span class="event-dot"></span></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>08:30 - 09:00</td>
-            <td></td>
-            <td><span class="event-dot"></span></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>09:00 - 09:30</td>
-            <td></td>
-            <td><span class="event-dot"></span></td>
-            <td></td>
-            <td><span class="event-dot"></span></td>
-          </tr>
-          <!-- เพิ่มแถวสำหรับช่วงเวลาอื่น ๆ ได้ตามต้องการ -->
+          <!-- แสดงช่วงเวลาทั้งหมดตั้งแต่ 08:00 - 08:30 ถึง 19:30 - 20:00 -->
+          <tr><td>08:00 - 08:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>08:30 - 09:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>09:00 - 09:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>09:30 - 10:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>10:00 - 10:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>10:30 - 11:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>11:00 - 11:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>11:30 - 12:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>12:00 - 12:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>12:30 - 13:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>13:00 - 13:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>13:30 - 14:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>14:00 - 14:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>14:30 - 15:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>15:00 - 15:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>15:30 - 16:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>16:00 - 16:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>16:30 - 17:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>17:00 - 17:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>17:30 - 18:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>18:00 - 18:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>18:30 - 19:00</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>19:00 - 19:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>19:30 - 20:00</td><td></td><td></td><td></td><td></td></tr>
         </tbody>
       </table>
     </div>
@@ -163,27 +167,55 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>08:00 - 08:30</td>
-            <td></td>
-            <td><span class="event-dot"></span></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>08:30 - 09:00</td>
-            <td><span class="event-dot"></span></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          <tr><td>08:00 - 08:30</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>08:30 - 09:00</td><td></td><td></td><td></td><td></td></tr>
+          <!-- เพิ่มแถวสำหรับช่วงเวลาอื่น ๆ -->
         </tbody>
       </table>
     </div>
 
-    <!-- Repeat similar structure for other days -->
   </div>
 </div>
+
+<script>
+  const calendarDays = document.getElementById('calendarDays');
+  const monthYear = document.getElementById('monthYear');
+  const prevMonth = document.getElementById('prevMonth');
+  const nextMonth = document.getElementById('nextMonth');
+
+  let currentMonth = 8; // เริ่มที่เดือนกันยายน (0-indexed)
+  let currentYear = 2024;
+
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  function renderCalendar(month, year) {
+    monthYear.textContent = `${months[month]} ${year}`;
+    // โค้ดสำหรับแสดงวันต่าง ๆ ในเดือนที่เลือก
+  }
+
+  prevMonth.addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  nextMonth.addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  renderCalendar(currentMonth, currentYear);
+</script>
 
 </body>
 </html>
