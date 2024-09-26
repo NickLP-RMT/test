@@ -3,202 +3,181 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Summary Calendar</title>
+  <title>Booking Calendar with Details</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f7f7f7;
+    }
+    .calendar {
+      max-width: 1200px;
+      margin: 0 auto;
       padding: 20px;
     }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    .day-table-container {
-      width: 18%; /* แสดง 5 วันต่อแถว */
-      margin-bottom: 20px;
-    }
-    .day-table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1px solid #ddd;
-      font-size: 10px; /* ลดขนาดฟอนต์ลง */
-    }
-    .day-table th, .day-table td {
-      border: 1px solid #ddd;
-      padding: 4px; /* ลด padding ลง */
-      text-align: center;
-    }
-    .day-table th {
-      background-color: #f4f4f4;
-    }
-    .day-header {
-      text-align: center;
-      font-weight: bold;
-      font-size: 12px;
-      margin-bottom: 5px; /* ลดขนาดฟอนต์ลง */
-    }
-    .has-task {
-      color: red;
-      font-size: 12px;
-    }
-    .no-task {
-      color: gray;
-      font-size: 12px;
-    }
-    .pagination {
+    .calendar-header {
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
+      align-items: center;
+      margin-bottom: 10px;
     }
-    .pagination button {
-      padding: 8px 16px;
+    .calendar-header h2 {
+      margin: 0;
+      color: #333;
+    }
+    .calendar-header button {
+      padding: 8px 12px;
+      cursor: pointer;
       background-color: #2196F3;
       color: white;
       border: none;
-      cursor: pointer;
-      border-radius: 5px;
-      font-size: 0.8em; /* ลดขนาดฟอนต์ปุ่มลง */
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
     }
-    .pagination button:hover {
-      background-color: #1976D2;
+    #todayButton {
+      background-color: #ffeb3b;
+      color: black;
+    }
+    #todayButton:hover {
+      background-color: #fdd835;
+    }
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-gap: 5px;
+    }
+    .calendar-day, .day-header {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 4px;
+    }
+    .calendar-day:hover {
+      background-color: #e3f2fd;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .today {
+      background-color: #ffeb3b;
+      color: #000;
+      font-weight: bold;
+    }
+    .day-header {
+      background-color: #ddd;
+      font-weight: bold;
+      text-align: center;
+    }
+    .event-dot {
+      height: 8px;
+      width: 8px;
+      background-color: red;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .schedule-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 0;
+      font-size: 12px;
+    }
+    .time-slot {
+      flex: 1;
+    }
+    .translator {
+      flex: 1;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-<h2>Summary for September 2024</h2>
+<div class="calendar">
+  <div class="calendar-header">
+    <button id="prevMonth">Previous</button>
+    <h2 id="monthYear">September 2024</h2>
+    <button id="nextMonth">Next</button>
+  </div>
+  <div class="calendar-days">
+    <div class="day-header">SUNDAY</div>
+    <div class="day-header">MONDAY</div>
+    <div class="day-header">TUESDAY</div>
+    <div class="day-header">WEDNESDAY</div>
+    <div class="day-header">THURSDAY</div>
+    <div class="day-header">FRIDAY</div>
+    <div class="day-header">SATURDAY</div>
 
-<!-- Container for 5 days in one row -->
-<div class="container" id="calendarContainer">
-  <!-- ตารางจะถูกสร้างด้วย JavaScript ที่นี่ -->
-</div>
+    <!-- Example Day with Event Dots -->
+    <div class="calendar-day">
+      <p>1</p>
+      <!-- SOM SAN Schedule -->
+      <div class="schedule-row">
+        <span class="time-slot">08:00 - 08:30</span>
+        <span class="translator"><span class="event-dot"></span> SOM SAN</span>
+      </div>
+      <div class="schedule-row">
+        <span class="time-slot">08:30 - 09:00</span>
+        <span class="translator"></span> <!-- No event -->
+      </div>
+      <!-- More time slots for the day -->
+    </div>
 
-<!-- Pagination buttons -->
-<div class="pagination">
-  <button id="prevDays">Previous 5 Days</button>
-  <button id="nextDays">Next 5 Days</button>
+    <div class="calendar-day">
+      <p>2</p>
+      <!-- GOOK SAN Schedule -->
+      <div class="schedule-row">
+        <span class="time-slot">09:00 - 09:30</span>
+        <span class="translator"><span class="event-dot"></span> GOOK SAN</span>
+      </div>
+      <div class="schedule-row">
+        <span class="time-slot">09:30 - 10:00</span>
+        <span class="translator"></span> <!-- No event -->
+      </div>
+      <!-- More time slots for the day -->
+    </div>
+
+    <!-- Repeat the above for each day in the month -->
+  </div>
 </div>
 
 <script>
-  const calendarContainer = document.getElementById('calendarContainer');
-  const prevButton = document.getElementById('prevDays');
-  const nextButton = document.getElementById('nextDays');
+  const calendarDays = document.getElementById('calendarDays');
+  const monthYear = document.getElementById('monthYear');
+  const prevMonth = document.getElementById('prevMonth');
+  const nextMonth = document.getElementById('nextMonth');
+  const todayButton = document.getElementById('todayButton');
 
-  const daysInMonth = [
-    { date: '2/9/2024', day: 'Monday' }, { date: '3/9/2024', day: 'Tuesday' }, 
-    { date: '4/9/2024', day: 'Wednesday' }, { date: '5/9/2024', day: 'Thursday' }, 
-    { date: '6/9/2024', day: 'Friday' }, { date: '9/9/2024', day: 'Monday' },
-    { date: '10/9/2024', day: 'Tuesday' }, { date: '11/9/2024', day: 'Wednesday' },
-    { date: '12/9/2024', day: 'Thursday' }, { date: '13/9/2024', day: 'Friday' },
-    { date: '16/9/2024', day: 'Monday' }, { date: '17/9/2024', day: 'Tuesday' },
-    { date: '18/9/2024', day: 'Wednesday' }, { date: '19/9/2024', day: 'Thursday' },
-    { date: '20/9/2024', day: 'Friday' }, { date: '23/9/2024', day: 'Monday' },
-    { date: '24/9/2024', day: 'Tuesday' }, { date: '25/9/2024', day: 'Wednesday' },
-    { date: '26/9/2024', day: 'Thursday' }, { date: '27/9/2024', day: 'Friday' },
-    { date: '30/9/2024', day: 'Monday' }
-  ];
+  function renderCalendar(month, year) {
+    calendarDays.innerHTML = '';  // Clear previous days
 
-  let currentPage = 0;
-  const daysPerPage = 5;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  function createTableForDay(dayData) {
-    const dayContainer = document.createElement('div');
-    dayContainer.classList.add('day-table-container');
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayCell = document.createElement('div');
+      dayCell.classList.add('calendar-day');
 
-    const dayHeader = document.createElement('div');
-    dayHeader.classList.add('day-header');
-    dayHeader.textContent = `${dayData.date} - ${dayData.day}`;
-    dayContainer.appendChild(dayHeader);
-
-    const table = document.createElement('table');
-    table.classList.add('day-table');
-
-    const tableHead = document.createElement('thead');
-    const headRow = document.createElement('tr');
-    ['TIME', 'SOM SAN', 'GOOK SAN', 'POOKY SAN', 'L SAN'].forEach(text => {
-      const th = document.createElement('th');
-      th.textContent = text;
-      headRow.appendChild(th);
-    });
-    tableHead.appendChild(headRow);
-    table.appendChild(tableHead);
-
-    const tableBody = document.createElement('tbody');
-
-    const times = [
-      '08:00 - 08:30', '08:30 - 09:00', '09:00 - 09:30', '09:30 - 10:00', 
-      '10:00 - 10:30', '10:30 - 11:00', '11:00 - 11:30', '11:30 - 12:00', 
-      '12:00 - 12:30', '12:30 - 13:00', '13:00 - 13:30', '13:30 - 14:00', 
-      '14:00 - 14:30', '14:30 - 15:00', '15:00 - 15:30', '15:30 - 16:00', 
-      '16:00 - 16:30', '16:30 - 17:00', '17:00 - 17:30', '17:30 - 18:00', 
-      '18:00 - 18:30', '18:30 - 19:00', '19:00 - 19:30', '19:30 - 20:00'
-    ];
-
-    times.forEach(time => {
-      const row = document.createElement('tr');
-
-      const timeCell = document.createElement('td');
-      timeCell.textContent = time;
-      row.appendChild(timeCell);
-
-      const somSanCell = document.createElement('td');
-      somSanCell.classList.add('has-task'); // จุดสีแดงแทนการมีงาน
-      somSanCell.textContent = '●';
-      row.appendChild(somSanCell);
-
-      const gookSanCell = document.createElement('td');
-      gookSanCell.classList.add('no-task'); // ไม่มีงาน
-      gookSanCell.textContent = '-';
-      row.appendChild(gookSanCell);
-
-      const pookySanCell = document.createElement('td');
-      pookySanCell.classList.add('has-task');
-      pookySanCell.textContent = '●';
-      row.appendChild(pookySanCell);
-
-      const lSanCell = document.createElement('td');
-      lSanCell.classList.add('no-task');
-      lSanCell.textContent = '-';
-      row.appendChild(lSanCell);
-
-      tableBody.appendChild(row);
-    });
-
-    table.appendChild(tableBody);
-    dayContainer.appendChild(table);
-
-    return dayContainer;
-  }
-
-  function displayDays() {
-    calendarContainer.innerHTML = '';
-    const start = currentPage * daysPerPage;
-    const end = Math.min(start + daysPerPage, daysInMonth.length);
-
-    for (let i = start; i < end; i++) {
-      const dayData = daysInMonth[i];
-      const table = createTableForDay(dayData);
-      calendarContainer.appendChild(table);
+      dayCell.innerHTML = `<p>${day}</p>`;  // Display the day number
+      
+      // Add schedule for SOM SAN as an example
+      const somSanSchedule = `
+        <div class="schedule-row">
+          <span class="time-slot">08:00 - 08:30</span>
+          <span class="translator"><span class="event-dot"></span> SOM SAN</span>
+        </div>
+        <div class="schedule-row">
+          <span class="time-slot">08:30 - 09:00</span>
+          <span class="translator"></span> <!-- No event -->
+        </div>
+      `;
+      
+      dayCell.innerHTML += somSanSchedule;  // Append schedule
+      calendarDays.appendChild(dayCell);
     }
   }
 
-  prevButton.addEventListener('click', () => {
-    if (currentPage > 0) {
-      currentPage--;
-      displayDays();
-    }
-  });
-
-  nextButton.addEventListener('click', () => {
-    if ((currentPage + 1) * daysPerPage < daysInMonth.length) {
-      currentPage++;
-      displayDays();
-    }
-  });
-
-  displayDays();
+  renderCalendar(new Date().getMonth(), new Date().getFullYear());
 </script>
 
 </body>
