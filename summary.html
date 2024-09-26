@@ -68,6 +68,7 @@
       background-color: #ddd;
       font-weight: bold;
       font-size: 14px; /* ลดขนาดฟอนต์ */
+      text-align: center;
     }
     table {
       width: 100%;
@@ -103,9 +104,18 @@
     <h2 id="monthYear">September 2024</h2>
     <button id="nextMonth">Next</button>
   </div>
-  <div class="calendar-days" id="calendarDays">
-    <!-- ช่องวันจะถูกสร้างโดย JavaScript -->
+
+  <!-- เพิ่มหัวข้อสำหรับวันต่าง ๆ -->
+  <div class="calendar-days">
+    <div class="day-header">MONDAY</div>
+    <div class="day-header">TUESDAY</div>
+    <div class="day-header">WEDNESDAY</div>
+    <div class="day-header">THURSDAY</div>
+    <div class="day-header">FRIDAY</div>
   </div>
+
+  <!-- ช่องวันจะถูกสร้างโดย JavaScript -->
+  <div class="calendar-days" id="calendarDays"></div>
 </div>
 
 <script>
@@ -121,8 +131,6 @@
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
-
-  const daysInWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   function renderCalendar(month, year) {
     calendarDays.innerHTML = ''; // ล้างตารางเดิม
@@ -181,7 +189,6 @@
           </tbody>
         </table>`;
         calendarDays.appendChild(dayCell);
-        dayCount++;
       }
     }
   }
