@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Summary with Red Dots</title>
+  <title>Summary Calendar</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -16,14 +16,14 @@
       justify-content: space-between;
     }
     .day-table-container {
-      width: 18%; /* กำหนดขนาดให้แต่ละวันแสดงเป็น 1/5 ของความกว้าง */
-      margin-bottom: 30px;
+      width: 18%; /* แสดง 5 วันต่อแถว */
+      margin-bottom: 20px;
     }
     .day-table {
       width: 100%;
       border-collapse: collapse;
       border: 1px solid #ddd;
-      font-size: 12px; /* ลดขนาดฟอนต์ลง */
+      font-size: 12px;
     }
     .day-table th, .day-table td {
       border: 1px solid #ddd;
@@ -68,180 +68,138 @@
 </head>
 <body>
 
-<h2>Summary of September</h2>
+<h2>Summary for September 2024</h2>
 
 <!-- Container for 5 days in one row -->
-<div class="container">
-  
-  <!-- Day 1 -->
-  <div class="day-table-container">
-    <div class="day-header">1/9/2024 - Monday</div>
-    <table class="day-table">
-      <thead>
-        <tr>
-          <th>TIME</th>
-          <th>SOM SAN</th>
-          <th>GOOK SAN</th>
-          <th>POOKY SAN</th>
-          <th>L SAN</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>08:00 - 08:30</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-        </tr>
-        <!-- Repeat till 19:30 - 20:00 -->
-        <tr>
-          <td>19:30 - 20:00</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Day 2 -->
-  <div class="day-table-container">
-    <div class="day-header">2/9/2024 - Tuesday</div>
-    <table class="day-table">
-      <thead>
-        <tr>
-          <th>TIME</th>
-          <th>SOM SAN</th>
-          <th>GOOK SAN</th>
-          <th>POOKY SAN</th>
-          <th>L SAN</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>08:00 - 08:30</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-        </tr>
-        <!-- Repeat till 19:30 - 20:00 -->
-        <tr>
-          <td>19:30 - 20:00</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Day 3 -->
-  <div class="day-table-container">
-    <div class="day-header">3/9/2024 - Wednesday</div>
-    <table class="day-table">
-      <thead>
-        <tr>
-          <th>TIME</th>
-          <th>SOM SAN</th>
-          <th>GOOK SAN</th>
-          <th>POOKY SAN</th>
-          <th>L SAN</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>08:00 - 08:30</td>
-          <td class="no-task">-</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-        </tr>
-        <tr>
-          <td>19:30 - 20:00</td>
-          <td class="has-task">●</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-          <td class="no-task">-</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Day 4 -->
-  <div class="day-table-container">
-    <div class="day-header">4/9/2024 - Thursday</div>
-    <table class="day-table">
-      <thead>
-        <tr>
-          <th>TIME</th>
-          <th>SOM SAN</th>
-          <th>GOOK SAN</th>
-          <th>POOKY SAN</th>
-          <th>L SAN</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>08:00 - 08:30</td>
-          <td class="no-task">-</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-          <td class="has-task">●</td>
-        </tr>
-        <tr>
-          <td>19:30 - 20:00</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Day 5 -->
-  <div class="day-table-container">
-    <div class="day-header">5/9/2024 - Friday</div>
-    <table class="day-table">
-      <thead>
-        <tr>
-          <th>TIME</th>
-          <th>SOM SAN</th>
-          <th>GOOK SAN</th>
-          <th>POOKY SAN</th>
-          <th>L SAN</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>08:00 - 08:30</td>
-          <td class="has-task">●</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-          <td class="no-task">-</td>
-        </tr>
-        <tr>
-          <td>19:30 - 20:00</td>
-          <td class="has-task">●</td>
-          <td class="no-task">-</td>
-          <td class="no-task">-</td>
-          <td class="has-task">●</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
+<div class="container" id="calendarContainer">
+  <!-- ตารางจะถูกสร้างด้วย JavaScript ที่นี่ -->
 </div>
 
 <!-- Pagination buttons -->
 <div class="pagination">
-  <button id="prev5Days">Previous 5 Days</button>
-  <button id="next5Days">Next 5 Days</button>
+  <button id="prevDays">Previous 5 Days</button>
+  <button id="nextDays">Next 5 Days</button>
 </div>
+
+<script>
+  const calendarContainer = document.getElementById('calendarContainer');
+  const prevButton = document.getElementById('prevDays');
+  const nextButton = document.getElementById('nextDays');
+
+  const daysInMonth = [
+    { date: '2/9/2024', day: 'Monday' }, { date: '3/9/2024', day: 'Tuesday' }, 
+    { date: '4/9/2024', day: 'Wednesday' }, { date: '5/9/2024', day: 'Thursday' }, 
+    { date: '6/9/2024', day: 'Friday' }, { date: '9/9/2024', day: 'Monday' },
+    { date: '10/9/2024', day: 'Tuesday' }, { date: '11/9/2024', day: 'Wednesday' },
+    { date: '12/9/2024', day: 'Thursday' }, { date: '13/9/2024', day: 'Friday' },
+    { date: '16/9/2024', day: 'Monday' }, { date: '17/9/2024', day: 'Tuesday' },
+    { date: '18/9/2024', day: 'Wednesday' }, { date: '19/9/2024', day: 'Thursday' },
+    { date: '20/9/2024', day: 'Friday' }, { date: '23/9/2024', day: 'Monday' },
+    { date: '24/9/2024', day: 'Tuesday' }, { date: '25/9/2024', day: 'Wednesday' },
+    { date: '26/9/2024', day: 'Thursday' }, { date: '27/9/2024', day: 'Friday' },
+    { date: '30/9/2024', day: 'Monday' }
+  ];
+
+  let currentPage = 0;
+  const daysPerPage = 5;
+
+  function createTableForDay(dayData) {
+    const dayContainer = document.createElement('div');
+    dayContainer.classList.add('day-table-container');
+
+    const dayHeader = document.createElement('div');
+    dayHeader.classList.add('day-header');
+    dayHeader.textContent = `${dayData.date} - ${dayData.day}`;
+    dayContainer.appendChild(dayHeader);
+
+    const table = document.createElement('table');
+    table.classList.add('day-table');
+
+    const tableHead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    ['TIME', 'SOM SAN', 'GOOK SAN', 'POOKY SAN', 'L SAN'].forEach(text => {
+      const th = document.createElement('th');
+      th.textContent = text;
+      headRow.appendChild(th);
+    });
+    tableHead.appendChild(headRow);
+    table.appendChild(tableHead);
+
+    const tableBody = document.createElement('tbody');
+
+    const times = [
+      '08:00 - 08:30', '08:30 - 09:00', '09:00 - 09:30', '09:30 - 10:00', 
+      '10:00 - 10:30', '10:30 - 11:00', '11:00 - 11:30', '11:30 - 12:00', 
+      '12:00 - 12:30', '12:30 - 13:00', '13:00 - 13:30', '13:30 - 14:00', 
+      '14:00 - 14:30', '14:30 - 15:00', '15:00 - 15:30', '15:30 - 16:00', 
+      '16:00 - 16:30', '16:30 - 17:00', '17:00 - 17:30', '17:30 - 18:00', 
+      '18:00 - 18:30', '18:30 - 19:00', '19:00 - 19:30', '19:30 - 20:00'
+    ];
+
+    times.forEach(time => {
+      const row = document.createElement('tr');
+
+      const timeCell = document.createElement('td');
+      timeCell.textContent = time;
+      row.appendChild(timeCell);
+
+      const somSanCell = document.createElement('td');
+      somSanCell.classList.add('has-task'); // จุดสีแดงแทนการมีงาน
+      somSanCell.textContent = '●';
+      row.appendChild(somSanCell);
+
+      const gookSanCell = document.createElement('td');
+      gookSanCell.classList.add('no-task'); // ไม่มีงาน
+      gookSanCell.textContent = '-';
+      row.appendChild(gookSanCell);
+
+      const pookySanCell = document.createElement('td');
+      pookySanCell.classList.add('has-task');
+      pookySanCell.textContent = '●';
+      row.appendChild(pookySanCell);
+
+      const lSanCell = document.createElement('td');
+      lSanCell.classList.add('no-task');
+      lSanCell.textContent = '-';
+      row.appendChild(lSanCell);
+
+      tableBody.appendChild(row);
+    });
+
+    table.appendChild(tableBody);
+    dayContainer.appendChild(table);
+
+    return dayContainer;
+  }
+
+  function displayDays() {
+    calendarContainer.innerHTML = '';
+    const start = currentPage * daysPerPage;
+    const end = Math.min(start + daysPerPage, daysInMonth.length);
+
+    for (let i = start; i < end; i++) {
+      const dayData = daysInMonth[i];
+      const table = createTableForDay(dayData);
+      calendarContainer.appendChild(table);
+    }
+  }
+
+  prevButton.addEventListener('click', () => {
+    if (currentPage > 0) {
+      currentPage--;
+      displayDays();
+    }
+  });
+
+  nextButton.addEventListener('click', () => {
+    if ((currentPage + 1) * daysPerPage < daysInMonth.length) {
+      currentPage++;
+      displayDays();
+    }
+  });
+
+  displayDays();
+</script>
 
 </body>
 </html>
