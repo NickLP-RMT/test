@@ -40,6 +40,12 @@
     #todayButton:hover {
       background-color: #fdd835;
     }
+    .time-slot {
+      font-size: 11px;
+    }
+    .bold-text {
+      font-weight: bold;
+    }
     .calendar-days {
       display: grid;
       grid-template-columns: repeat(5, 1fr); /* แสดง 5 วันต่อแถว */
@@ -67,8 +73,10 @@
     .day-header {
       background-color: #ddd;
       font-weight: bold;
-      font-size: 14px; /* ลดขนาดฟอนต์ */
+      font-size: 14px; /* ขนาดฟอนต์ */
       text-align: center;
+      padding: 5px 0; /* ปรับ padding เพื่อให้ความสูงเท่ากับขนาดฟอนต์ */
+      height: auto; /* ปรับความสูงให้เท่ากับขนาดฟอนต์ */
     }
     table {
       width: 100%;
@@ -190,6 +198,7 @@
         </table>`;
         calendarDays.appendChild(dayCell);
       }
+      dayCount++;
     }
   }
 
