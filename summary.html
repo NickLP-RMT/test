@@ -103,77 +103,8 @@
     <h2 id="monthYear">September 2024</h2>
     <button id="nextMonth">Next</button>
   </div>
-  <div class="calendar-days">
-    <div class="day-header">MONDAY</div>
-    <div class="day-header">TUESDAY</div>
-    <div class="day-header">WEDNESDAY</div>
-    <div class="day-header">THURSDAY</div>
-    <div class="day-header">FRIDAY</div>
-
-    <!-- ตัวอย่างการแสดงผลวันแรกของเดือน -->
-    <div class="calendar-day">
-      <p>1</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>SOM SAN</th>
-            <th>GOOK SAN</th>
-            <th>POOKY SAN</th>
-            <th>L SAN</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- แสดงช่วงเวลาทั้งหมดตั้งแต่ 08:00 - 08:30 ถึง 19:30 - 20:00 -->
-          <tr><td>08:00 - 08:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>08:30 - 09:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>09:00 - 09:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>09:30 - 10:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>10:00 - 10:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>10:30 - 11:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>11:00 - 11:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>11:30 - 12:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>12:00 - 12:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>12:30 - 13:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>13:00 - 13:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>13:30 - 14:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>14:00 - 14:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>14:30 - 15:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>15:00 - 15:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>15:30 - 16:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>16:00 - 16:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>16:30 - 17:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>17:00 - 17:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>17:30 - 18:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>18:00 - 18:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>18:30 - 19:00</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>19:00 - 19:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>19:30 - 20:00</td><td></td><td></td><td></td><td></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- ตัวอย่างวันอื่น ๆ สามารถคัดลอกตารางได้ตามที่ต้องการ -->
-    <div class="calendar-day">
-      <p>2</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>SOM SAN</th>
-            <th>GOOK SAN</th>
-            <th>POOKY SAN</th>
-            <th>L SAN</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>08:00 - 08:30</td><td></td><td></td><td></td><td></td></tr>
-          <tr><td>08:30 - 09:00</td><td></td><td></td><td></td><td></td></tr>
-          <!-- เพิ่มแถวสำหรับช่วงเวลาอื่น ๆ -->
-        </tbody>
-      </table>
-    </div>
-
+  <div class="calendar-days" id="calendarDays">
+    <!-- ช่องวันจะถูกสร้างโดย JavaScript -->
   </div>
 </div>
 
@@ -183,17 +114,76 @@
   const prevMonth = document.getElementById('prevMonth');
   const nextMonth = document.getElementById('nextMonth');
 
-  let currentMonth = 8; // เริ่มที่เดือนกันยายน (0-indexed)
-  let currentYear = 2024;
+  let currentMonth = new Date().getMonth(); // เริ่มที่เดือนปัจจุบัน
+  let currentYear = new Date().getFullYear();
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  const daysInWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
   function renderCalendar(month, year) {
+    calendarDays.innerHTML = ''; // ล้างตารางเดิม
     monthYear.textContent = `${months[month]} ${year}`;
-    // โค้ดสำหรับแสดงวันต่าง ๆ ในเดือนที่เลือก
+
+    // หาจำนวนวันในเดือนนั้น
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // แสดงเฉพาะวันจันทร์ถึงวันศุกร์
+    let dayCount = 1;
+    for (let i = 1; i <= daysInMonth; i++) {
+      const day = new Date(year, month, i);
+      const dayOfWeek = day.getDay();
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) { // ไม่แสดงวันเสาร์และอาทิตย์
+        const dayCell = document.createElement('div');
+        dayCell.classList.add('calendar-day');
+        if (dayCount === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
+          dayCell.classList.add('today');
+        }
+        dayCell.innerHTML = `<p>${i}</p><table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>SOM SAN</th>
+              <th>GOOK SAN</th>
+              <th>POOKY SAN</th>
+              <th>L SAN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>08:00 - 08:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>08:30 - 09:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>09:00 - 09:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>09:30 - 10:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>10:00 - 10:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>10:30 - 11:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>11:00 - 11:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>11:30 - 12:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>12:00 - 12:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>12:30 - 13:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>13:00 - 13:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>13:30 - 14:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>14:00 - 14:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>14:30 - 15:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>15:00 - 15:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>15:30 - 16:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>16:00 - 16:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>16:30 - 17:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>17:00 - 17:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>17:30 - 18:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>18:00 - 18:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>18:30 - 19:00</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>19:00 - 19:30</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>19:30 - 20:00</td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>`;
+        calendarDays.appendChild(dayCell);
+        dayCount++;
+      }
+    }
   }
 
   prevMonth.addEventListener('click', () => {
