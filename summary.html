@@ -10,33 +10,42 @@
       background-color: #f7f7f7;
       padding: 20px;
     }
-    .day-table {
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .day-table-container {
+      width: 18%; /* กำหนดขนาดให้แต่ละวันแสดงเป็น 1/5 ของความกว้าง */
       margin-bottom: 30px;
+    }
+    .day-table {
       width: 100%;
       border-collapse: collapse;
       border: 1px solid #ddd;
+      font-size: 12px; /* ลดขนาดฟอนต์ลง */
     }
     .day-table th, .day-table td {
       border: 1px solid #ddd;
-      padding: 8px;
+      padding: 6px;
       text-align: center;
     }
     .day-table th {
       background-color: #f4f4f4;
     }
     .day-header {
-      text-align: left;
+      text-align: center;
       font-weight: bold;
-      font-size: 1.2em;
+      font-size: 14px;
       margin-bottom: 10px;
     }
     .has-task {
       color: red;
-      font-size: 24px;
+      font-size: 16px;
     }
     .no-task {
       color: gray;
-      font-size: 24px;
+      font-size: 16px;
     }
     .pagination {
       display: flex;
@@ -61,243 +70,177 @@
 
 <h2>Summary of September</h2>
 
-<!-- Day 1 -->
-<div class="day-header">1/9/2024 - Monday</div>
-<table class="day-table">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Repeat this block for each time slot -->
-    <tr>
-      <td>08:00 - 08:30</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-    </tr>
-    <tr>
-      <td>08:30 - 09:00</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-    </tr>
-    <!-- Repeat for all time slots till 19:30 - 20:00 -->
-    <tr>
-      <td>19:30 - 20:00</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-    </tr>
-  </tbody>
-</table>
+<!-- Container for 5 days in one row -->
+<div class="container">
+  
+  <!-- Day 1 -->
+  <div class="day-table-container">
+    <div class="day-header">1/9/2024 - Monday</div>
+    <table class="day-table">
+      <thead>
+        <tr>
+          <th>TIME</th>
+          <th>SOM SAN</th>
+          <th>GOOK SAN</th>
+          <th>POOKY SAN</th>
+          <th>L SAN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>08:00 - 08:30</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+        </tr>
+        <!-- Repeat till 19:30 - 20:00 -->
+        <tr>
+          <td>19:30 - 20:00</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<!-- Day 2 -->
-<div class="day-header">2/9/2024 - Tuesday</div>
-<table class="day-table">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>08:00 - 08:30</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-    </tr>
-    <tr>
-      <td>08:30 - 09:00</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-    </tr>
-    <!-- Repeat till 19:30 - 20:00 -->
-    <tr>
-      <td>19:30 - 20:00</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-    </tr>
-  </tbody>
-</table>
+  <!-- Day 2 -->
+  <div class="day-table-container">
+    <div class="day-header">2/9/2024 - Tuesday</div>
+    <table class="day-table">
+      <thead>
+        <tr>
+          <th>TIME</th>
+          <th>SOM SAN</th>
+          <th>GOOK SAN</th>
+          <th>POOKY SAN</th>
+          <th>L SAN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>08:00 - 08:30</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+        </tr>
+        <!-- Repeat till 19:30 - 20:00 -->
+        <tr>
+          <td>19:30 - 20:00</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<!-- Repeat the same structure for 7 days -->
-<!-- Day 3 -->
-<div class="day-header">3/9/2024 - Wednesday</div>
-<table class="day-table">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Repeat time slots from 08:00 - 20:00 -->
-    <tr>
-      <td>08:00 - 08:30</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-    </tr>
-    <tr>
-      <td>19:30 - 20:00</td>
-      <td class="has-task">●</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-    </tr>
-  </tbody>
-</table>
+  <!-- Day 3 -->
+  <div class="day-table-container">
+    <div class="day-header">3/9/2024 - Wednesday</div>
+    <table class="day-table">
+      <thead>
+        <tr>
+          <th>TIME</th>
+          <th>SOM SAN</th>
+          <th>GOOK SAN</th>
+          <th>POOKY SAN</th>
+          <th>L SAN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>08:00 - 08:30</td>
+          <td class="no-task">-</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+        </tr>
+        <tr>
+          <td>19:30 - 20:00</td>
+          <td class="has-task">●</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+          <td class="no-task">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<!-- Day 4 -->
-<div class="day-header">4/9/2024 - Thursday</div>
-<table class="day-table">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Repeat time slots from 08:00 - 20:00 -->
-    <tr>
-      <td>08:00 - 08:30</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="has-task">●</td>
-    </tr>
-    <tr>
-      <td>19:30 - 20:00</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-    </tr>
-  </tbody>
-</table>
+  <!-- Day 4 -->
+  <div class="day-table-container">
+    <div class="day-header">4/9/2024 - Thursday</div>
+    <table class="day-table">
+      <thead>
+        <tr>
+          <th>TIME</th>
+          <th>SOM SAN</th>
+          <th>GOOK SAN</th>
+          <th>POOKY SAN</th>
+          <th>L SAN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>08:00 - 08:30</td>
+          <td class="no-task">-</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+          <td class="has-task">●</td>
+        </tr>
+        <tr>
+          <td>19:30 - 20:00</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<!-- Day 5 -->
-<div class="day-header">5/9/2024 - Friday</div>
-<table class="day-table">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Repeat time slots from 08:00 - 20:00 -->
-    <tr>
-      <td>08:00 - 08:30</td>
-      <td class="has-task">●</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-    </tr>
-    <tr>
-      <td>19:30 - 20:00</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-    </tr>
-  </tbody>
-</table>
+  <!-- Day 5 -->
+  <div class="day-table-container">
+    <div class="day-header">5/9/2024 - Friday</div>
+    <table class="day-table">
+      <thead>
+        <tr>
+          <th>TIME</th>
+          <th>SOM SAN</th>
+          <th>GOOK SAN</th>
+          <th>POOKY SAN</th>
+          <th>L SAN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>08:00 - 08:30</td>
+          <td class="has-task">●</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+          <td class="no-task">-</td>
+        </tr>
+        <tr>
+          <td>19:30 - 20:00</td>
+          <td class="has-task">●</td>
+          <td class="no-task">-</td>
+          <td class="no-task">-</td>
+          <td class="has-task">●</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<!-- Day 6 -->
-<div class="day-header">6/9/2024 - Saturday</div>
-<table class="day-table">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Repeat time slots from 08:00 - 20:00 -->
-    <tr>
-      <td>08:00 - 08:30</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-    </tr>
-    <tr>
-      <td>19:30 - 20:00</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- Day 7 -->
-<div class="day-header">7/9/2024 - Sunday</div>
-<table class="day-table">
-  <thead>
-    <tr>
-      <th>TIME</th>
-      <th>SOM SAN</th>
-      <th>GOOK SAN</th>
-      <th>POOKY SAN</th>
-      <th>L SAN</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Repeat time slots from 08:00 - 20:00 -->
-    <tr>
-      <td>08:00 - 08:30</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-    </tr>
-    <tr>
-      <td>19:30 - 20:00</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-      <td class="has-task">●</td>
-      <td class="no-task">-</td>
-    </tr>
-  </tbody>
-</table>
+</div>
 
 <!-- Pagination buttons -->
 <div class="pagination">
-  <button id="prev7Days">Previous 7 Days</button>
-  <button id="next7Days">Next 7 Days</button>
+  <button id="prev5Days">Previous 5 Days</button>
+  <button id="next5Days">Next 5 Days</button>
 </div>
 
 </body>
