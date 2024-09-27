@@ -41,16 +41,16 @@
       background-color: #fdd835;
     }
     .time-slot {
-      font-size: 7px; /* ลดขนาดฟอนต์ลง */
-      white-space: nowrap; /* บังคับให้ข้อความอยู่ในบรรทัดเดียว */
-      padding: 2px 0; /* ปรับ padding เพื่อลดความสูงของบรรทัด */
+      font-size: 7px;
+      white-space: nowrap;
+      padding: 2px 0;
     }
     .bold-text {
       font-weight: bold;
     }
     .calendar-days {
       display: grid;
-      grid-template-columns: repeat(7, 1fr); /* ทำให้แถวมี 7 ช่อง */
+      grid-template-columns: repeat(7, 1fr);
       grid-gap: 5px;
     }
     .calendar-day, .day-header {
@@ -61,7 +61,7 @@
       position: relative;
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
       border-radius: 4px;
-      height: 400px; /* ขยายความสูงเพื่อแสดงตาราง */
+      height: 400px;
     }
     .calendar-day:hover {
       background-color: #e3f2fd;
@@ -78,16 +78,16 @@
       align-items: center;
       background-color: #ddd;
       font-weight: bold;
-      font-size: 14px; /* ขนาดฟอนต์ */
+      font-size: 14px;
       text-align: center;
-      padding: 5px 0; /* ปรับ padding เพื่อให้ความสูงเท่ากับขนาดฟอนต์ */
-      height: auto; /* ปรับความสูงให้เท่ากับขนาดฟอนต์ */
+      padding: 5px 0;
+      height: auto;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
-      font-size: 10px; /* ขนาดฟอนต์เล็กลง */
+      font-size: 10px;
     }
     table, th, td {
       border: 1px solid #ddd;
@@ -99,7 +99,7 @@
     th {
       background-color: #2196F3;
       color: white;
-      font-size: 8px; /* ลดขนาดฟอนต์ที่นี่ */
+      font-size: 8px;
       padding: 5px;
     }
     .event-dot {
@@ -117,13 +117,10 @@
   <div class="calendar-header">
     <button id="prevMonth">Previous</button>
     <h2 id="monthYear">September 2024</h2>
-    <div>
-      <button id="todayButton">Today</button> <!-- ปุ่ม Today อยู่ที่นี่ -->
-      <button id="nextMonth">Next</button>
-    </div>
+    <button id="todayButton">Today</button>
+    <button id="nextMonth">Next</button>
   </div>
 
-  <!-- เพิ่มหัวข้อสำหรับวันต่าง ๆ -->
   <div class="calendar-days">
     <div class="day-header">SUNDAY</div>
     <div class="day-header">MONDAY</div>
@@ -134,7 +131,6 @@
     <div class="day-header">SATURDAY</div>
   </div>
 
-  <!-- ช่องวันจะถูกสร้างโดย JavaScript -->
   <div class="calendar-days" id="calendarDays"></div>
 </div>
 
@@ -143,9 +139,9 @@
   const monthYear = document.getElementById('monthYear');
   const prevMonth = document.getElementById('prevMonth');
   const nextMonth = document.getElementById('nextMonth');
-  const todayButton = document.getElementById('todayButton'); // ปุ่ม Today
+  const todayButton = document.getElementById('todayButton');
 
-  let currentMonth = new Date().getMonth(); // เริ่มที่เดือนปัจจุบัน
+  let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
 
   const months = [
@@ -153,74 +149,82 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  function loadEventDataForDay(date) {
+    const requestUrl = `https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?page=calendar&date=${date}`;
+
+    fetch(requestUrl)
+      .then(response => response.json())
+      .then(data => {
+        clearTableData();
+        data.forEach(event => {
+          const timeSlot = event.timeFrom.replace(':', '');
+          if (event.translator === 'SOM SAN') {
+            document.getElementById(`somSan_${timeSlot}`).textContent = event.work;
+          } else if (event.translator === 'GOOK SAN') {
+            document.getElementById(`gookSan_${timeSlot}`).textContent = event.work;
+          } else if (event.translator === 'POOKY SAN') {
+            document.getElementById(`pookySan_${timeSlot}`).textContent = event.work;
+          } else if (event.translator === 'L SAN') {
+            document.getElementById(`lSan_${timeSlot}`).textContent = event.work;
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  }
+
+  function clearTableData() {
+    document.querySelectorAll('.time-slot').forEach(slot => {
+      slot.textContent = '';
+    });
+  }
+
   function renderCalendar(month, year) {
-    calendarDays.innerHTML = ''; // ล้างตารางเดิม
+    calendarDays.innerHTML = '';
     monthYear.textContent = `${months[month]} ${year}`;
 
-    // หาวันแรกของเดือน
-    const firstDayOfMonth = new Date(year, month, 1).getDay(); 
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    // เพิ่มช่องว่างก่อนวันที่ 1 เพื่อให้วันแรกตรงกับปฏิทิน
     for (let i = 0; i < firstDayOfMonth; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.classList.add('calendar-day');
-        emptyCell.innerHTML = ''; // ช่องว่างก่อนวันที่ 1
-        calendarDays.appendChild(emptyCell);
+      const emptyCell = document.createElement('div');
+      emptyCell.classList.add('calendar-day');
+      emptyCell.innerHTML = '';
+      calendarDays.appendChild(emptyCell);
     }
 
-    // เพิ่มวันที่ 1 ถึงวันสุดท้ายของเดือน
     for (let i = 1; i <= daysInMonth; i++) {
-        const day = new Date(year, month, i);
-        const dayCell = document.createElement('div');
-        dayCell.classList.add('calendar-day');
-        
-        // เพิ่มคลาส .today ถ้าวันนั้นตรงกับวันปัจจุบัน
-        if (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
-            dayCell.classList.add('today');
-        }
+      const day = new Date(year, month, i);
+      const dayCell = document.createElement('div');
+      dayCell.classList.add('calendar-day');
+      
+      if (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
+        dayCell.classList.add('today');
+      }
 
-        // เพิ่มข้อมูลในช่องวันที่
-        dayCell.innerHTML = `<p>${i}</p><table>
-          <thead>
-            <tr>
-              <th>TIME</th>
-              <th>SOM SAN</th>
-              <th>GOOK SAN</th>
-              <th>POOKY SAN</th>
-              <th>L SAN</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td class="time-slot">08:00 - 08:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">08:30 - 09:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">09:00 - 09:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">09:30 - 10:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">10:00 - 10:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">10:30 - 11:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">11:00 - 11:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">11:30 - 12:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">12:00 - 12:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">12:30 - 13:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">13:00 - 13:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">13:30 - 14:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">14:00 - 14:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">14:30 - 15:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">15:00 - 15:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">15:30 - 16:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">16:00 - 16:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">16:30 - 17:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">17:00 - 17:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">17:30 - 18:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">18:00 - 18:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">18:30 - 19:00</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">19:00 - 19:30</td><td></td><td></td><td></td><td></td></tr>
-            <tr><td class="time-slot">19:30 - 20:00</td><td></td><td></td><td></td><td></td></tr>
-          </tbody>
-        </table>`;
-        calendarDays.appendChild(dayCell);
+      const formattedDate = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + i).slice(-2)}`;
+
+      dayCell.innerHTML = `<p>${i}</p><table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>SOM SAN</th>
+            <th>GOOK SAN</th>
+            <th>POOKY SAN</th>
+            <th>L SAN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="time-slot">08:00 - 08:30</td><td id="somSan_0800"></td><td id="gookSan_0800"></td><td id="pookySan_0800"></td><td id="lSan_0800"></td></tr>
+          <tr><td class="time-slot">08:30 - 09:00</td><td id="somSan_0830"></td><td id="gookSan_0830"></td><td id="pookySan_0830"></td><td id="lSan_0830"></td></tr>
+          <!-- เพิ่มบรรทัดอื่นๆ ในตาราง -->
+        </tbody>
+      </table>`;
+
+      dayCell.addEventListener('click', () => loadEventDataForDay(formattedDate));
+
+      calendarDays.appendChild(dayCell);
     }
-}
+  }
 
   prevMonth.addEventListener('click', () => {
     currentMonth--;
@@ -240,7 +244,6 @@
     renderCalendar(currentMonth, currentYear);
   });
 
-  // ฟังก์ชันสำหรับปุ่ม Today
   todayButton.addEventListener('click', () => {
     currentMonth = new Date().getMonth();
     currentYear = new Date().getFullYear();
