@@ -49,9 +49,9 @@
       font-weight: bold;
     }
     .calendar-days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* ทำให้แถวมี 7 ช่อง */
-    grid-gap: 5px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr); /* ทำให้แถวมี 7 ช่อง */
+      grid-gap: 5px;
     }
     .calendar-day, .day-header {
       background-color: #fff;
@@ -73,15 +73,15 @@
       font-weight: bold;
     }
     .day-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #ddd;
-    font-weight: bold;
-    font-size: 14px; /* ขนาดฟอนต์ */
-    text-align: center;
-    padding: 5px 0; /* ปรับ padding เพื่อให้ความสูงเท่ากับขนาดฟอนต์ */
-    height: auto; /* ปรับความสูงให้เท่ากับขนาดฟอนต์ */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ddd;
+      font-weight: bold;
+      font-size: 14px; /* ขนาดฟอนต์ */
+      text-align: center;
+      padding: 5px 0; /* ปรับ padding เพื่อให้ความสูงเท่ากับขนาดฟอนต์ */
+      height: auto; /* ปรับความสูงให้เท่ากับขนาดฟอนต์ */
     }
     table {
       width: 100%;
@@ -117,7 +117,10 @@
   <div class="calendar-header">
     <button id="prevMonth">Previous</button>
     <h2 id="monthYear">September 2024</h2>
-    <button id="nextMonth">Next</button>
+    <div>
+      <button id="todayButton">Today</button> <!-- ปุ่ม Today อยู่ที่นี่ -->
+      <button id="nextMonth">Next</button>
+    </div>
   </div>
 
   <!-- เพิ่มหัวข้อสำหรับวันต่าง ๆ -->
@@ -140,6 +143,7 @@
   const monthYear = document.getElementById('monthYear');
   const prevMonth = document.getElementById('prevMonth');
   const nextMonth = document.getElementById('nextMonth');
+  const todayButton = document.getElementById('todayButton'); // ปุ่ม Today
 
   let currentMonth = new Date().getMonth(); // เริ่มที่เดือนปัจจุบัน
   let currentYear = new Date().getFullYear();
@@ -180,7 +184,7 @@
         dayCell.innerHTML = `<p>${i}</p><table>
           <thead>
             <tr>
-              <th>TIME</th>
+              <th>Time</th>
               <th>SOM SAN</th>
               <th>GOOK SAN</th>
               <th>POOKY SAN</th>
@@ -233,6 +237,13 @@
       currentMonth = 0;
       currentYear++;
     }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  // ฟังก์ชันสำหรับปุ่ม Today
+  todayButton.addEventListener('click', () => {
+    currentMonth = new Date().getMonth();
+    currentYear = new Date().getFullYear();
     renderCalendar(currentMonth, currentYear);
   });
 
