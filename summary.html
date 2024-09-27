@@ -50,7 +50,7 @@
     }
     .calendar-days {
       display: grid;
-      grid-template-columns: repeat(5, 1fr); /* แสดง 5 วันต่อแถว */
+      grid-template-columns: repeat(7, 1fr); /* แสดง 7 วันต่อแถว */
       grid-gap: 5px;
     }
     .calendar-day, .day-header {
@@ -117,11 +117,13 @@
 
   <!-- เพิ่มหัวข้อสำหรับวันต่าง ๆ -->
   <div class="calendar-days">
+    <div class="day-header">SUNDAY</div>
     <div class="day-header">MONDAY</div>
     <div class="day-header">TUESDAY</div>
     <div class="day-header">WEDNESDAY</div>
     <div class="day-header">THURSDAY</div>
     <div class="day-header">FRIDAY</div>
+    <div class="day-header">SATURDAY</div>
   </div>
 
   <!-- ช่องวันจะถูกสร้างโดย JavaScript -->
@@ -142,7 +144,7 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
- function renderCalendar(month, year) {
+  function renderCalendar(month, year) {
     calendarDays.innerHTML = ''; // ล้างตารางเดิม
     monthYear.textContent = `${months[month]} ${year}`;
 
