@@ -40,9 +40,20 @@
     #todayButton:hover {
       background-color: #fdd835;
     }
+
+    /* เพิ่มหัววันที่ด้านบน */
+    .day-header {
+      background-color: #2196F3;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+
     .calendar-days {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, 1fr); /* 7 วัน */
       grid-gap: 8px;
     }
     .calendar-day {
@@ -113,6 +124,17 @@
     <button id="nextMonth">Next</button>
   </div>
 
+  <!-- เพิ่มส่วนหัวของวัน -->
+  <div class="calendar-days">
+    <div class="day-header">Sunday</div>
+    <div class="day-header">Monday</div>
+    <div class="day-header">Tuesday</div>
+    <div class="day-header">Wednesday</div>
+    <div class="day-header">Thursday</div>
+    <div class="day-header">Friday</div>
+    <div class="day-header">Saturday</div>
+  </div>
+
   <div class="calendar-days" id="calendarDays"></div>
 </div>
 
@@ -124,6 +146,7 @@
 </div>
 
 <script>
+  // โค้ดส่วนของการแสดงปฏิทินและดึงข้อมูล
   const calendarDays = document.getElementById('calendarDays');
   const monthYear = document.getElementById('monthYear');
   const prevMonth = document.getElementById('prevMonth');
@@ -149,6 +172,7 @@
     '19:00 - 19:30', '19:30 - 20:00'
   ];
 
+  // Function เพิ่ม 1 นาที
   function addOneMinute(time) {
     const [hours, minutes] = time.split(':').map(Number);
     const newMinutes = minutes + 1;
@@ -160,6 +184,7 @@
     }
   }
 
+  // Convert เวลาเป็นนาที
   function timeToMinutes(time) {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
@@ -263,7 +288,6 @@
                             event.translator === 'POOKY SAN' ? 3 :
                             event.translator === 'L SAN' ? 4 : -1;
               if (index > -1) {
-                // แสดงจุดแดงและข้อมูล tooltip
                 row.cells[index].innerHTML = `<span class="red-dot" data-tooltip="${event.work}"></span>`;
               }
             }
