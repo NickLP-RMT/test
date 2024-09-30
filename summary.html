@@ -178,7 +178,7 @@
 
   function loadEventDataForDay(date) {
     const formattedDate = date.split('-').reverse().join('/');
-    const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date='${formattedDate}`;
+    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date='${formattedDate}`;
 
     return fetch(requestUrl)
       .then(response => response.json())
