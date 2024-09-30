@@ -191,13 +191,13 @@
     });
   }
 
-  function showLoadingModal() {
-    loadingModal.style.display = 'flex';
-  }
+function showLoadingModal() {
+    loadingModal.style.display = 'flex'; // แสดง modal
+}
 
-  function hideLoadingModal() {
-    loadingModal.style.display = 'none';
-  }
+function hideLoadingModal() {
+    loadingModal.style.display = 'none'; // ซ่อน modal
+}
 
   function renderCalendar(month, year) {
     showLoadingModal(); // Show modal while loading
@@ -265,14 +265,19 @@
         </tbody>
       </table>`;
 
-      promises.push(loadEventDataForDay(formattedDate).then(data => {
-        data.forEach(event => {
-          const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
-          const elementId = `${event.translator.toLowerCase().replace(/\s/g, '')}_${timeSlot}_${i}`;
+    promises.push(loadEventDataForDay(formattedDate).then(data => {
+    data.forEach(event => {
+        const timeSlot = event.timeFrom.replace(':', '').slice(0, 4); 
+        const translatorId = event.translator.toLowerCase().replace(/\s/g, ''); 
+        const elementId = `${translatorId}_${timeSlot}_${formattedDate}`; // ดึง formattedDate ที่ถูกต้องแทน i
 
-          document.getElementById(elementId).innerHTML = '<span class="event-dot"></span>';
-        });
-      }));
+        // ตรวจสอบว่า elementId ตรงกับ element ในตารางหรือไม่
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.innerHTML = '<span class="event-dot"></span>'; // แสดงจุดสีแดง
+        }
+    });
+    }));
 
       calendarDays.appendChild(dayCell);
     }
