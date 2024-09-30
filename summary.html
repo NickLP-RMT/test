@@ -188,36 +188,31 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  function formatDate(dateString) {
-    // Remove leading apostrophe and format the date as yyyy-mm-dd
-    let date = dateString.replace(/'/g, '');
-    let [day, month, year] = date.split('/');
-    return `${year}-${month}-${day}`;
-  }
-
   function loadEventDataForDay(date) {
     const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${date}`;
 
     // Show the loading modal
     loadingModal.style.display = 'block';
 
-    return fetch(requestUrl)
+    fetch(requestUrl)
       .then(response => response.json())
-      .then(data => data)
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        return []; // Return empty array if there's an error
+      .then(data => {
+        data.forEach(event => {
+          const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
+          const formattedDate = event.date;
+          const elementId = `${event.translator.toLowerCase().replace(/\s/g, '')}_${formattedDate}_${timeSlot}`;
+          const element = document.getElementById(elementId);
+
+          if (element) {
+            element.innerHTML = '<span class="event-dot"></span>';
+          }
+        });
       })
+      .catch(error => console.error('Error fetching data:', error))
       .finally(() => {
         // Hide the loading modal after data is loaded
         loadingModal.style.display = 'none';
       });
-  }
-
-  function clearTableData() {
-    document.querySelectorAll('.time-slot').forEach(slot => {
-      slot.innerHTML = '';
-    });
   }
 
   function renderCalendar(month, year) {
@@ -234,8 +229,6 @@
       calendarDays.appendChild(emptyCell);
     }
 
-    let promises = [];
-
     for (let i = 1; i <= daysInMonth; i++) {
       const day = new Date(year, month, i);
       const dayCell = document.createElement('div');
@@ -245,7 +238,7 @@
         dayCell.classList.add('today');
       }
 
-      const formattedDate = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + i).slice(-2)}`;
+      const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`;
 
       dayCell.innerHTML = `<p>${i}</p><table>
         <thead>
@@ -283,23 +276,13 @@
         <tr><td class="time-slot">19:00 - 19:30</td><td id="somSan_${formattedDate}_1900"></td><td id="gookSan_${formattedDate}_1900"></td><td id="pookySan_${formattedDate}_1900"></td><td id="lSan_${formattedDate}_1900"></td></tr>
         <tr><td class="time-slot">19:30 - 20:00</td><td id="somSan_${formattedDate}_1930"></td><td id="gookSan_${formattedDate}_1930"></td><td id="pookySan_${formattedDate}_1930"></td><td id="lSan_${formattedDate}_1930"></td></tr>
         </tbody>
-      </table>`;
-
-      promises.push(loadEventDataForDay(formattedDate).then(data => {
-        data.forEach(event => {
-          const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
-          const elementId = `${event.translator.toLowerCase().replace(/\s/g, '')}_${timeSlot}`;
-
-          document.getElementById(elementId).innerHTML = '<span class="event-dot"></span>';
-        });
-      }));
+        </table>`;
 
       calendarDays.appendChild(dayCell);
-    }
 
-    Promise.all(promises).then(() => {
-      hideLoadingModal(); // Hide modal when all data is loaded
-    });
+      // Automatically load events for this day
+      loadEventDataForDay(formattedDate);
+    }
   }
 
   prevMonth.addEventListener('click', () => {
