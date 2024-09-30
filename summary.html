@@ -163,7 +163,10 @@
 
     return fetch(requestUrl)
       .then(response => response.json())
-      .then(data => data)
+      .then(data => {
+        console.log("Fetched data:", data); // ตรวจสอบข้อมูลที่ดึงมา
+        return data;
+      })
       .catch(error => console.error('Error fetching data:', error));
   }
 
@@ -233,15 +236,19 @@
           const timeFrom = event.timeFrom.replace("'", "").trim(); // ลบเครื่องหมาย ' จาก timeFrom
           const timeTo = addOneMinute(event.timeTo.replace("'", "").trim()); // ลบ ' และบวก 1 นาทีให้ timeTo
 
+          console.log("Matching time slot:", timeFrom, "-", timeTo); // ตรวจสอบเวลาที่จะจับคู่
+          
           const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === `${timeFrom} - ${timeTo}`);
           if (row) {
-            const index = event.translator === 'SOM' ? 1 :
-                          event.translator === 'GOOK' ? 2 :
-                          event.translator === 'POOKY' ? 3 :
-                          event.translator === 'L' ? 4 : -1;
+            const index = event.translator === 'SOM SAN' ? 1 :
+                          event.translator === 'GOOK SAN' ? 2 :
+                          event.translator === 'POOKY SAN' ? 3 :
+                          event.translator === 'L SAN' ? 4 : -1;
             if (index > -1) {
               row.cells[index].textContent = 'x'; // แสดง 'x' สำหรับเวลาที่มีการจอง
             }
+          } else {
+            console.warn("No matching time slot found for:", timeFrom, "-", timeTo);
           }
         });
 
