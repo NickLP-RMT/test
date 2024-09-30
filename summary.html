@@ -112,8 +112,14 @@
     // แสดงจุดสีแดงถ้ามีงาน
     events.forEach(event => {
       const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
-      const elementId = `${event.translator.toLowerCase().replace(/\s/g, '')}_${timeSlot}`;
-      document.getElementById(elementId).innerHTML = '<span class="event-dot"></span>';
+      const translator = event.translator.toLowerCase().replace(/\s/g, '');
+
+      // เพิ่มจุดแดงในช่องเวลาที่มีงาน
+      const elementId = `${translator}_${timeSlot}`;
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.innerHTML = '<span class="event-dot"></span>';
+      }
     });
   }
 
