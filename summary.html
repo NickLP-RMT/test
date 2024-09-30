@@ -143,6 +143,18 @@
     '19:00 - 19:30', '19:30 - 20:00'
   ];
 
+  // ฟังก์ชันเพิ่ม 1 นาทีให้กับ Time To
+  function addOneMinute(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    const newMinutes = minutes + 1;
+
+    if (newMinutes >= 60) {
+      return `${('0' + (hours + 1)).slice(-2)}:00`;
+    } else {
+      return `${('0' + hours).slice(-2)}:${('0' + newMinutes).slice(-2)}`;
+    }
+  }
+
   // โหลดข้อมูลจาก API
   function loadEventDataForDay(date) {
     const [day, month, year] = date.split('/');
@@ -218,7 +230,10 @@
 
         // เติมข้อมูลการจอง
         data.forEach(event => {
-          const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === `${event.timeFrom} - ${event.timeTo}`);
+          const timeFrom = event.timeFrom.replace("'", "").trim(); // ลบเครื่องหมาย ' จาก timeFrom
+          const timeTo = addOneMinute(event.timeTo.replace("'", "").trim()); // ลบ ' และบวก 1 นาทีให้ timeTo
+
+          const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === `${timeFrom} - ${timeTo}`);
           if (row) {
             const index = event.translator === 'SOM' ? 1 :
                           event.translator === 'GOOK' ? 2 :
