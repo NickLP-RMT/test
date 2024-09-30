@@ -108,6 +108,13 @@
       background-color: red;
       border-radius: 50%;
       display: inline-block;
+      position: relative;
+      top: 50%; /* จัดให้อยู่ตรงกลาง */
+      transform: translateY(-50%);
+    }
+    /* เพิ่ม padding ใน td เพื่อให้จุดไม่ถูกครอบคลุม */
+    td {
+      padding: 10px;
     }
     /* Styles for loading modal */
     .modal {
@@ -178,7 +185,7 @@
 
   function loadEventDataForDay(date) {
     const formattedDate = date.split('-').reverse().join('/');
-    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${formattedDate}`; // แก้ไข: เอา single quote ออก
+    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${formattedDate}`;
 
     return fetch(requestUrl)
       .then(response => response.json())
@@ -239,39 +246,38 @@
           </tr>
         </thead>
         <tbody>
-        <tr><td class="time-slot">08:00 - 08:30</td><td id="somSan_${formattedDate}_0800"></td><td id="gookSan_${formattedDate}_0800"></td><td id="pookySan_${formattedDate}_0800"></td><td id="lSan_${formattedDate}_0800"></td></tr>
-        <tr><td class="time-slot">08:30 - 09:00</td><td id="somSan_${formattedDate}_0830"></td><td id="gookSan_${formattedDate}_0830"></td><td id="pookySan_${formattedDate}_0830"></td><td id="lSan_${formattedDate}_0830"></td></tr>
-        <tr><td class="time-slot">09:00 - 09:30</td><td id="somSan_${formattedDate}_0900"></td><td id="gookSan_${formattedDate}_0900"></td><td id="pookySan_${formattedDate}_0900"></td><td id="lSan_${formattedDate}_0900"></td></tr>
-        <tr><td class="time-slot">09:30 - 10:00</td><td id="somSan_${formattedDate}_0930"></td><td id="gookSan_${formattedDate}_0930"></td><td id="pookySan_${formattedDate}_0930"></td><td id="lSan_${formattedDate}_0930"></td></tr>
-        <tr><td class="time-slot">10:00 - 10:30</td><td id="somSan_${formattedDate}_1000"></td><td id="gookSan_${formattedDate}_1000"></td><td id="pookySan_${formattedDate}_1000"></td><td id="lSan_${formattedDate}_1000"></td></tr>
-        <tr><td class="time-slot">10:30 - 11:00</td><td id="somSan_${formattedDate}_1030"></td><td id="gookSan_${formattedDate}_1030"></td><td id="pookySan_${formattedDate}_1030"></td><td id="lSan_${formattedDate}_1030"></td></tr>
-        <tr><td class="time-slot">11:00 - 11:30</td><td id="somSan_${formattedDate}_1100"></td><td id="gookSan_${formattedDate}_1100"></td><td id="pookySan_${formattedDate}_1100"></td><td id="lSan_${formattedDate}_1100"></td></tr>
-        <tr><td class="time-slot">11:30 - 12:00</td><td id="somSan_${formattedDate}_1130"></td><td id="gookSan_${formattedDate}_1130"></td><td id="pookySan_${formattedDate}_1130"></td><td id="lSan_${formattedDate}_1130"></td></tr>
-        <tr><td class="time-slot">12:00 - 12:30</td><td id="somSan_${formattedDate}_1200"></td><td id="gookSan_${formattedDate}_1200"></td><td id="pookySan_${formattedDate}_1200"></td><td id="lSan_${formattedDate}_1200"></td></tr>
-        <tr><td class="time-slot">12:30 - 13:00</td><td id="somSan_${formattedDate}_1230"></td><td id="gookSan_${formattedDate}_1230"></td><td id="pookySan_${formattedDate}_1230"></td><td id="lSan_${formattedDate}_1230"></td></tr>
-        <tr><td class="time-slot">13:00 - 13:30</td><td id="somSan_${formattedDate}_1300"></td><td id="gookSan_${formattedDate}_1300"></td><td id="pookySan_${formattedDate}_1300"></td><td id="lSan_${formattedDate}_1300"></td></tr>
-        <tr><td class="time-slot">13:30 - 14:00</td><td id="somSan_${formattedDate}_1330"></td><td id="gookSan_${formattedDate}_1330"></td><td id="pookySan_${formattedDate}_1330"></td><td id="lSan_${formattedDate}_1330"></td></tr>
-        <tr><td class="time-slot">14:00 - 14:30</td><td id="somSan_${formattedDate}_1400"></td><td id="gookSan_${formattedDate}_1400"></td><td id="pookySan_${formattedDate}_1400"></td><td id="lSan_${formattedDate}_1400"></td></tr>
-        <tr><td class="time-slot">14:30 - 15:00</td><td id="somSan_${formattedDate}_1430"></td><td id="gookSan_${formattedDate}_1430"></td><td id="pookySan_${formattedDate}_1430"></td><td id="lSan_${formattedDate}_1430"></td></tr>
-        <tr><td class="time-slot">15:00 - 15:30</td><td id="somSan_${formattedDate}_1500"></td><td id="gookSan_${formattedDate}_1500"></td><td id="pookySan_${formattedDate}_1500"></td><td id="lSan_${formattedDate}_1500"></td></tr>
-        <tr><td class="time-slot">15:30 - 16:00</td><td id="somSan_${formattedDate}_1530"></td><td id="gookSan_${formattedDate}_1530"></td><td id="pookySan_${formattedDate}_1530"></td><td id="lSan_${formattedDate}_1530"></td></tr>
-        <tr><td class="time-slot">16:00 - 16:30</td><td id="somSan_${formattedDate}_1600"></td><td id="gookSan_${formattedDate}_1600"></td><td id="pookySan_${formattedDate}_1600"></td><td id="lSan_${formattedDate}_1600"></td></tr>
-        <tr><td class="time-slot">16:30 - 17:00</td><td id="somSan_${formattedDate}_1630"></td><td id="gookSan_${formattedDate}_1630"></td><td id="pookySan_${formattedDate}_1630"></td><td id="lSan_${formattedDate}_1630"></td></tr>
-        <tr><td class="time-slot">17:00 - 17:30</td><td id="somSan_${formattedDate}_1700"></td><td id="gookSan_${formattedDate}_1700"></td><td id="pookySan_${formattedDate}_1700"></td><td id="lSan_${formattedDate}_1700"></td></tr>
-        <tr><td class="time-slot">17:30 - 18:00</td><td id="somSan_${formattedDate}_1730"></td><td id="gookSan_${formattedDate}_1730"></td><td id="pookySan_${formattedDate}_1730"></td><td id="lSan_${formattedDate}_1730"></td></tr>
-        <tr><td class="time-slot">18:00 - 18:30</td><td id="somSan_${formattedDate}_1800"></td><td id="gookSan_${formattedDate}_1800"></td><td id="pookySan_${formattedDate}_1800"></td><td id="lSan_${formattedDate}_1800"></td></tr>
-        <tr><td class="time-slot">18:30 - 19:00</td><td id="somSan_${formattedDate}_1830"></td><td id="gookSan_${formattedDate}_1830"></td><td id="pookySan_${formattedDate}_1830"></td><td id="lSan_${formattedDate}_1830"></td></tr>
-        <tr><td class="time-slot">19:00 - 19:30</td><td id="somSan_${formattedDate}_1900"></td><td id="gookSan_${formattedDate}_1900"></td><td id="pookySan_${formattedDate}_1900"></td><td id="lSan_${formattedDate}_1900"></td></tr>
-        <tr><td class="time-slot">19:30 - 20:00</td><td id="somSan_${formattedDate}_1930"></td><td id="gookSan_${formattedDate}_1930"></td><td id="pookySan_${formattedDate}_1930"></td><td id="lSan_${formattedDate}_1930"></td></tr>
+          <tr><td class="time-slot">08:00 - 08:30</td><td id="somSan_${formattedDate}_0800"></td><td id="gookSan_${formattedDate}_0800"></td><td id="pookySan_${formattedDate}_0800"></td><td id="lSan_${formattedDate}_0800"></td></tr>
+          <tr><td class="time-slot">08:30 - 09:00</td><td id="somSan_${formattedDate}_0830"></td><td id="gookSan_${formattedDate}_0830"></td><td id="pookySan_${formattedDate}_0830"></td><td id="lSan_${formattedDate}_0830"></td></tr>
+          <tr><td class="time-slot">09:00 - 09:30</td><td id="somSan_${formattedDate}_0900"></td><td id="gookSan_${formattedDate}_0900"></td><td id="pookySan_${formattedDate}_0900"></td><td id="lSan_${formattedDate}_0900"></td></tr>
+          <tr><td class="time-slot">09:30 - 10:00</td><td id="somSan_${formattedDate}_0930"></td><td id="gookSan_${formattedDate}_0930"></td><td id="pookySan_${formattedDate}_0930"></td><td id="lSan_${formattedDate}_0930"></td></tr>
+          <tr><td class="time-slot">10:00 - 10:30</td><td id="somSan_${formattedDate}_1000"></td><td id="gookSan_${formattedDate}_1000"></td><td id="pookySan_${formattedDate}_1000"></td><td id="lSan_${formattedDate}_1000"></td></tr>
+          <tr><td class="time-slot">10:30 - 11:00</td><td id="somSan_${formattedDate}_1030"></td><td id="gookSan_${formattedDate}_1030"></td><td id="pookySan_${formattedDate}_1030"></td><td id="lSan_${formattedDate}_1030"></td></tr>
+          <tr><td class="time-slot">11:00 - 11:30</td><td id="somSan_${formattedDate}_1100"></td><td id="gookSan_${formattedDate}_1100"></td><td id="pookySan_${formattedDate}_1100"></td><td id="lSan_${formattedDate}_1100"></td></tr>
+          <tr><td class="time-slot">11:30 - 12:00</td><td id="somSan_${formattedDate}_1130"></td><td id="gookSan_${formattedDate}_1130"></td><td id="pookySan_${formattedDate}_1130"></td><td id="lSan_${formattedDate}_1130"></td></tr>
+          <tr><td class="time-slot">12:00 - 12:30</td><td id="somSan_${formattedDate}_1200"></td><td id="gookSan_${formattedDate}_1200"></td><td id="pookySan_${formattedDate}_1200"></td><td id="lSan_${formattedDate}_1200"></td></tr>
+          <tr><td class="time-slot">12:30 - 13:00</td><td id="somSan_${formattedDate}_1230"></td><td id="gookSan_${formattedDate}_1230"></td><td id="pookySan_${formattedDate}_1230"></td><td id="lSan_${formattedDate}_1230"></td></tr>
+          <tr><td class="time-slot">13:00 - 13:30</td><td id="somSan_${formattedDate}_1300"></td><td id="gookSan_${formattedDate}_1300"></td><td id="pookySan_${formattedDate}_1300"></td><td id="lSan_${formattedDate}_1300"></td></tr>
+          <tr><td class="time-slot">13:30 - 14:00</td><td id="somSan_${formattedDate}_1330"></td><td id="gookSan_${formattedDate}_1330"></td><td id="pookySan_${formattedDate}_1330"></td><td id="lSan_${formattedDate}_1330"></td></tr>
+          <tr><td class="time-slot">14:00 - 14:30</td><td id="somSan_${formattedDate}_1400"></td><td id="gookSan_${formattedDate}_1400"></td><td id="pookySan_${formattedDate}_1400"></td><td id="lSan_${formattedDate}_1400"></td></tr>
+          <tr><td class="time-slot">14:30 - 15:00</td><td id="somSan_${formattedDate}_1430"></td><td id="gookSan_${formattedDate}_1430"></td><td id="pookySan_${formattedDate}_1430"></td><td id="lSan_${formattedDate}_1430"></td></tr>
+          <tr><td class="time-slot">15:00 - 15:30</td><td id="somSan_${formattedDate}_1500"></td><td id="gookSan_${formattedDate}_1500"></td><td id="pookySan_${formattedDate}_1500"></td><td id="lSan_${formattedDate}_1500"></td></tr>
+          <tr><td class="time-slot">15:30 - 16:00</td><td id="somSan_${formattedDate}_1530"></td><td id="gookSan_${formattedDate}_1530"></td><td id="pookySan_${formattedDate}_1530"></td><td id="lSan_${formattedDate}_1530"></td></tr>
+          <tr><td class="time-slot">16:00 - 16:30</td><td id="somSan_${formattedDate}_1600"></td><td id="gookSan_${formattedDate}_1600"></td><td id="pookySan_${formattedDate}_1600"></td><td id="lSan_${formattedDate}_1600"></td></tr>
+          <tr><td class="time-slot">16:30 - 17:00</td><td id="somSan_${formattedDate}_1630"></td><td id="gookSan_${formattedDate}_1630"></td><td id="pookySan_${formattedDate}_1630"></td><td id="lSan_${formattedDate}_1630"></td></tr>
+          <tr><td class="time-slot">17:00 - 17:30</td><td id="somSan_${formattedDate}_1700"></td><td id="gookSan_${formattedDate}_1700"></td><td id="pookySan_${formattedDate}_1700"></td><td id="lSan_${formattedDate}_1700"></td></tr>
+          <tr><td class="time-slot">17:30 - 18:00</td><td id="somSan_${formattedDate}_1730"></td><td id="gookSan_${formattedDate}_1730"></td><td id="pookySan_${formattedDate}_1730"></td><td id="lSan_${formattedDate}_1730"></td></tr>
+          <tr><td class="time-slot">18:00 - 18:30</td><td id="somSan_${formattedDate}_1800"></td><td id="gookSan_${formattedDate}_1800"></td><td id="pookySan_${formattedDate}_1800"></td><td id="lSan_${formattedDate}_1800"></td></tr>
+          <tr><td class="time-slot">18:30 - 19:00</td><td id="somSan_${formattedDate}_1830"></td><td id="gookSan_${formattedDate}_1830"></td><td id="pookySan_${formattedDate}_1830"></td><td id="lSan_${formattedDate}_1830"></td></tr>
+          <tr><td class="time-slot">19:00 - 19:30</td><td id="somSan_${formattedDate}_1900"></td><td id="gookSan_${formattedDate}_1900"></td><td id="pookySan_${formattedDate}_1900"></td><td id="lSan_${formattedDate}_1900"></td></tr>
+          <tr><td class="time-slot">19:30 - 20:00</td><td id="somSan_${formattedDate}_1930"></td><td id="gookSan_${formattedDate}_1930"></td><td id="pookySan_${formattedDate}_1930"></td><td id="lSan_${formattedDate}_1930"></td></tr>
         </tbody>
-        </table>`;
+      </table>`;
 
       promises.push(loadEventDataForDay(formattedDate).then(data => {
         data.forEach(event => {
           const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
-          const translatorName = event.translator.toLowerCase().replace(/\s/g, ''); // แก้ไข: ใช้ชื่อ translator ที่ถูกต้อง
+          const translatorName = event.translator.toLowerCase().replace(/\s/g, ''); // ใช้ชื่อ translator ที่ถูกต้อง
           const elementId = `${translatorName}_${formattedDate}_${timeSlot}`;
-
           const element = document.getElementById(elementId);
           if (element) {
             element.innerHTML = '<span class="event-dot"></span>';
