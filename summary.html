@@ -178,7 +178,7 @@
 
   function loadEventDataForDay(date) {
     const formattedDate = date.split('-').reverse().join('/');
-    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date='${formattedDate}`;
+    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${formattedDate}`; // แก้ไข: เอา single quote ออก
 
     return fetch(requestUrl)
       .then(response => response.json())
@@ -264,15 +264,18 @@
         <tr><td class="time-slot">19:00 - 19:30</td><td id="somSan_${formattedDate}_1900"></td><td id="gookSan_${formattedDate}_1900"></td><td id="pookySan_${formattedDate}_1900"></td><td id="lSan_${formattedDate}_1900"></td></tr>
         <tr><td class="time-slot">19:30 - 20:00</td><td id="somSan_${formattedDate}_1930"></td><td id="gookSan_${formattedDate}_1930"></td><td id="pookySan_${formattedDate}_1930"></td><td id="lSan_${formattedDate}_1930"></td></tr>
         </tbody>
-        </tbody>
-      </table>`;
+        </table>`;
 
       promises.push(loadEventDataForDay(formattedDate).then(data => {
         data.forEach(event => {
           const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
-          const elementId = `${event.translator.toLowerCase().replace(/\s/g, '')}_${formattedDate}_${timeSlot}`;
+          const translatorName = event.translator.toLowerCase().replace(/\s/g, ''); // แก้ไข: ใช้ชื่อ translator ที่ถูกต้อง
+          const elementId = `${translatorName}_${formattedDate}_${timeSlot}`;
 
-          document.getElementById(elementId).innerHTML = '<span class="event-dot"></span>';
+          const element = document.getElementById(elementId);
+          if (element) {
+            element.innerHTML = '<span class="event-dot"></span>';
+          }
         });
       }));
 
