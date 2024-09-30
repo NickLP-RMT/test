@@ -109,6 +109,29 @@
       border-radius: 50%;
       display: inline-block;
     }
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .loading-text {
+      font-size: 18px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -134,12 +157,20 @@
   <div class="calendar-days" id="calendarDays"></div>
 </div>
 
+<!-- Modal for loading -->
+<div id="loadingModal" class="modal">
+  <div class="modal-content">
+    <p class="loading-text">Loading data, please wait...</p>
+  </div>
+</div>
+
 <script>
   const calendarDays = document.getElementById('calendarDays');
   const monthYear = document.getElementById('monthYear');
   const prevMonth = document.getElementById('prevMonth');
   const nextMonth = document.getElementById('nextMonth');
   const todayButton = document.getElementById('todayButton');
+  const loadingModal = document.getElementById('loadingModal');
 
   let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
@@ -149,28 +180,42 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  function showLoadingModal() {
+    loadingModal.style.display = 'flex';
+  }
+
+  function hideLoadingModal() {
+    loadingModal.style.display = 'none';
+  }
+
   function loadAllEventDataForMonth(year, month) {
-    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&month=${year}-${('0' + (month + 1)).slice(-2)}`;
+    showLoadingModal();  // Show loading modal
+
+    const requestUrl = `https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?page=calendar&month=${year}-${('0' + (month + 1)).slice(-2)}`;
 
     fetch(requestUrl)
       .then(response => response.json())
       .then(data => {
         data.forEach(event => {
-          const date = event.date.split('/').reverse().join('-'); // Format DD/MM/YYYY to YYYY-MM-DD
+          const date = event.date.split('/').reverse().join('-');
           const timeSlot = event.timeFrom.replace(':', '');
 
           if (event.translator === 'SOM SAN') {
-            document.getElementById(`somSan_${date}_${timeSlot}`).textContent = event.work;
+            document.getElementById(`somSan_${date}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
           } else if (event.translator === 'GOOK SAN') {
-            document.getElementById(`gookSan_${date}_${timeSlot}`).textContent = event.work;
+            document.getElementById(`gookSan_${date}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
           } else if (event.translator === 'POOKY SAN') {
-            document.getElementById(`pookySan_${date}_${timeSlot}`).textContent = event.work;
+            document.getElementById(`pookySan_${date}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
           } else if (event.translator === 'L SAN') {
-            document.getElementById(`lSan_${date}_${timeSlot}`).textContent = event.work;
+            document.getElementById(`lSan_${date}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
           }
         });
+        hideLoadingModal();  // Hide loading modal after data is loaded
       })
-      .catch(error => console.error('Error fetching data:', error));
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        hideLoadingModal();  // Hide modal even if there is an error
+      });
   }
 
   function renderCalendar(month, year) {
@@ -191,7 +236,7 @@
       const day = new Date(year, month, i);
       const dayCell = document.createElement('div');
       dayCell.classList.add('calendar-day');
-
+      
       if (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
         dayCell.classList.add('today');
       }
@@ -239,7 +284,7 @@
       calendarDays.appendChild(dayCell);
     }
 
-    loadAllEventDataForMonth(year, month);
+    loadAllEventDataForMonth(year, month);  // Load all events for the month
   }
 
   prevMonth.addEventListener('click', () => {
