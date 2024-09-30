@@ -109,7 +109,7 @@
       border-radius: 50%;
       display: inline-block;
     }
-    /* Modal styling */
+    /* Styles for loading modal */
     .modal {
       display: none;
       position: fixed;
@@ -123,14 +123,10 @@
       align-items: center;
     }
     .modal-content {
-      background-color: white;
       padding: 20px;
+      background-color: white;
       border-radius: 5px;
       text-align: center;
-    }
-    .loading-text {
-      font-size: 18px;
-      font-weight: bold;
     }
   </style>
 </head>
@@ -158,9 +154,9 @@
 </div>
 
 <!-- Modal for loading -->
-<div id="loadingModal" class="modal">
+<div class="modal" id="loadingModal">
   <div class="modal-content">
-    <p class="loading-text">Loading data, please wait...</p>
+    <p>Loading, please wait...</p>
   </div>
 </div>
 
@@ -180,6 +176,21 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  function loadEventDataForDay(date) {
+    const requestUrl = `https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?page=calendar&date=${date}`;
+
+    return fetch(requestUrl)
+      .then(response => response.json())
+      .then(data => data)
+      .catch(error => console.error('Error fetching data:', error));
+  }
+
+  function clearTableData() {
+    document.querySelectorAll('.time-slot').forEach(slot => {
+      slot.innerHTML = '';
+    });
+  }
+
   function showLoadingModal() {
     loadingModal.style.display = 'flex';
   }
@@ -188,37 +199,8 @@
     loadingModal.style.display = 'none';
   }
 
-  function loadAllEventDataForMonth(year, month) {
-    showLoadingModal();  // Show loading modal
-
-    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&month=${year}-${('0' + (month + 1)).slice(-2)}`;
-
-    fetch(requestUrl)
-      .then(response => response.json())
-      .then(data => {
-        data.forEach(event => {
-          const date = event.date.split('/').reverse().join('-');
-          const timeSlot = event.timeFrom.replace(':', '');
-
-          if (event.translator === 'SOM SAN') {
-            document.getElementById(`somSan_${date}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
-          } else if (event.translator === 'GOOK SAN') {
-            document.getElementById(`gookSan_${date}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
-          } else if (event.translator === 'POOKY SAN') {
-            document.getElementById(`pookySan_${date}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
-          } else if (event.translator === 'L SAN') {
-            document.getElementById(`lSan_${date}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
-          }
-        });
-        hideLoadingModal();  // Hide loading modal after data is loaded
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        hideLoadingModal();  // Hide modal even if there is an error
-      });
-  }
-
   function renderCalendar(month, year) {
+    showLoadingModal(); // Show modal while loading
     calendarDays.innerHTML = '';
     monthYear.textContent = `${months[month]} ${year}`;
 
@@ -231,6 +213,8 @@
       emptyCell.innerHTML = '';
       calendarDays.appendChild(emptyCell);
     }
+
+    let promises = [];
 
     for (let i = 1; i <= daysInMonth; i++) {
       const day = new Date(year, month, i);
@@ -279,12 +263,23 @@
         <tr><td class="time-slot">19:00 - 19:30</td><td id="somSan_${formattedDate}_1900"></td><td id="gookSan_${formattedDate}_1900"></td><td id="pookySan_${formattedDate}_1900"></td><td id="lSan_${formattedDate}_1900"></td></tr>
         <tr><td class="time-slot">19:30 - 20:00</td><td id="somSan_${formattedDate}_1930"></td><td id="gookSan_${formattedDate}_1930"></td><td id="pookySan_${formattedDate}_1930"></td><td id="lSan_${formattedDate}_1930"></td></tr>
         </tbody>
-        </table>`;
+      </table>`;
+
+      promises.push(loadEventDataForDay(formattedDate).then(data => {
+        data.forEach(event => {
+          const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
+          const elementId = `${event.translator.toLowerCase().replace(/\s/g, '')}_${timeSlot}_${i}`;
+
+          document.getElementById(elementId).innerHTML = '<span class="event-dot"></span>';
+        });
+      }));
 
       calendarDays.appendChild(dayCell);
     }
 
-    loadAllEventDataForMonth(year, month);  // Load all events for the month
+    Promise.all(promises).then(() => {
+      hideLoadingModal(); // Hide modal when all data is loaded
+    });
   }
 
   prevMonth.addEventListener('click', () => {
