@@ -41,27 +41,15 @@
       background-color: #fdd835;
     }
 
-    /* เพิ่มสีพาสเทลให้แต่ละวัน */
-    .day-header:nth-child(1) { /* Sunday */
-      background-color: #ffcccc; /* พาสเทลสีแดงอ่อน */
-    }
-    .day-header:nth-child(2) { /* Monday */
-      background-color: #ffe6cc; /* พาสเทลสีส้มอ่อน */
-    }
-    .day-header:nth-child(3) { /* Tuesday */
-      background-color: #ffffcc; /* พาสเทลสีเหลืองอ่อน */
-    }
-    .day-header:nth-child(4) { /* Wednesday */
-      background-color: #e6ffcc; /* พาสเทลสีเขียวอ่อน */
-    }
-    .day-header:nth-child(5) { /* Thursday */
-      background-color: #ccffff; /* พาสเทลสีน้ำเงินอ่อน */
-    }
-    .day-header:nth-child(6) { /* Friday */
-      background-color: #cce6ff; /* พาสเทลสีฟ้าอ่อน */
-    }
-    .day-header:nth-child(7) { /* Saturday */
-      background-color: #e6ccff; /* พาสเทลสีม่วงอ่อน */
+    /* เพิ่มหัววันที่ด้านบน */
+    .day-header {
+      background-color: #2196F3;
+      color: white;
+      padding: 8px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 4px;
+      width: 315px;
     }
 
     .calendar-days {
@@ -159,6 +147,7 @@
 </div>
 
 <script>
+  // โค้ดส่วนของการแสดงปฏิทินและดึงข้อมูล
   const calendarDays = document.getElementById('calendarDays');
   const monthYear = document.getElementById('monthYear');
   const prevMonth = document.getElementById('prevMonth');
@@ -184,6 +173,7 @@
     '19:00 - 19:30', '19:30 - 20:00'
   ];
 
+  // Function เพิ่ม 1 นาที
   function addOneMinute(time) {
     const [hours, minutes] = time.split(':').map(Number);
     const newMinutes = minutes + 1;
@@ -195,6 +185,7 @@
     }
   }
 
+  // Convert เวลาเป็นนาที
   function timeToMinutes(time) {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
