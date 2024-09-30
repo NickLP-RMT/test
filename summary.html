@@ -10,7 +10,7 @@
       background-color: #f7f7f7;
     }
     .calendar {
-      max-width: 1400px; /* เพิ่มความกว้างสูงสุดของปฏิทิน */
+      max-width: 1400px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -42,19 +42,19 @@
     }
     .calendar-days {
       display: grid;
-      grid-template-columns: repeat(7, 1fr); /* แบ่งเป็น 7 คอลัมน์ */
-      grid-gap: 15px; /* เพิ่มช่องว่างระหว่างแต่ละช่อง */
+      grid-template-columns: repeat(7, 1fr);
+      grid-gap: 15px;
     }
     .calendar-day {
       background-color: #fff;
       border: 1px solid #ddd;
-      padding: 15px; /* เพิ่ม padding เพื่อให้ข้อมูลห่างจากขอบ */
+      padding: 15px;
       border-radius: 4px;
       text-align: center;
-      height: 300px; /* เพิ่มความสูงของแต่ละช่อง */
-      width: 150px; /* เพิ่มความกว้างของแต่ละช่อง */
+      height: 300px;
+      width: 150px;
       position: relative;
-      overflow-y: auto; /* เพิ่ม scroll เพื่อให้ข้อมูลไม่ถูกตัด */
+      overflow-y: auto;
     }
     .today {
       background-color: #ffeb3b;
@@ -66,12 +66,11 @@
       padding: 10px;
       background-color: #f0f0f0;
       border-radius: 4px;
-      font-size: 14px; /* ขนาดของข้อความใน event */
+      font-size: 14px;
     }
     .event-list div {
-      margin-bottom: 10px; /* เพิ่มระยะห่างระหว่างข้อมูล */
+      margin-bottom: 10px;
     }
-    /* Styles for loading modal */
     .modal {
       display: none;
       position: fixed;
@@ -105,7 +104,6 @@
   <div class="calendar-days" id="calendarDays"></div>
 </div>
 
-<!-- Modal for loading -->
 <div class="modal" id="loadingModal">
   <div class="modal-content">
     <p>Loading, please wait...</p>
@@ -172,7 +170,7 @@
         dayCell.classList.add('today');
       }
 
-      const formattedDate = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + i).slice(-2)}`;
+      const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`; // แก้ไขรูปแบบเป็น DD/MM/YYYY
       dayCell.innerHTML = `<p>${i}</p><div class="event-list" id="events_${formattedDate}">Loading...</div>`;
 
       promises.push(loadEventDataForDay(formattedDate).then(data => {
@@ -185,7 +183,7 @@
             eventList.appendChild(eventDiv);
           });
         } else {
-          eventList.innerHTML = 'No events';  // แสดงว่าไม่มีข้อมูลในวันนั้น
+          eventList.innerHTML = 'No events';  
         }
       }));
 
