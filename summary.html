@@ -188,32 +188,38 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  function loadEventDataForDay(date) {
-    const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${date}`;
+function loadEventDataForDay(date) {
+  // Convert the date to match the Google Sheets format (e.g., 'dd/MM/yyyy)
+  const formattedDate = `'${date.split('-').reverse().join('/')}`;  // Converts yyyy-MM-dd to 'dd/MM/yyyy'
 
-    // Show the loading modal
-    loadingModal.style.display = 'block';
+  const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${formattedDate}`;
 
-    fetch(requestUrl)
-      .then(response => response.json())
-      .then(data => {
-        data.forEach(event => {
-          const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
-          const formattedDate = event.date;
-          const elementId = `${event.translator.toLowerCase().replace(/\s/g, '')}_${formattedDate}_${timeSlot}`;
-          const element = document.getElementById(elementId);
+  // Show the loading modal
+  loadingModal.style.display = 'block';
 
-          if (element) {
-            element.innerHTML = '<span class="event-dot"></span>';
-          }
-        });
-      })
-      .catch(error => console.error('Error fetching data:', error))
-      .finally(() => {
-        // Hide the loading modal after data is loaded
-        loadingModal.style.display = 'none';
+  fetch(requestUrl)
+    .then(response => response.json())
+    .then(data => {
+      clearTableData();
+      data.forEach(event => {
+        const timeSlot = event.timeFrom.replace(':', '');
+        if (event.translator === 'SOM SAN') {
+          document.getElementById(`somSan_${formattedDate}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
+        } else if (event.translator === 'GOOK SAN') {
+          document.getElementById(`gookSan_${formattedDate}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
+        } else if (event.translator === 'POOKY SAN') {
+          document.getElementById(`pookySan_${formattedDate}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
+        } else if (event.translator === 'L SAN') {
+          document.getElementById(`lSan_${formattedDate}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
+        }
       });
-  }
+    })
+    .catch(error => console.error('Error fetching data:', error))
+    .finally(() => {
+      // Hide the loading modal after data is loaded
+      loadingModal.style.display = 'none';
+    });
+}
 
   function renderCalendar(month, year) {
     calendarDays.innerHTML = '';
