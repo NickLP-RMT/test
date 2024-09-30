@@ -23,35 +23,50 @@
       min-height: 100vh;
     }
 
-    /* Form Container */
-    .form-container {
-      background-color: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
-      max-width: 450px;
-      width: 100%;
+    /* Book-like Form Container */
+    .form-book {
       position: relative;
+      width: 450px;
+      max-width: 100%;
+      height: auto;
+      background-color: #f7f7f7;
+      border-radius: 5px;
       overflow: hidden;
+      box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
+      transform: rotate(-1deg); /* ลักษณะเหมือนหนังสือที่เปิด */
     }
 
-    .form-container::before {
+    .form-book:before, .form-book:after {
       content: '';
-      background-image: url('https://source.unsplash.com/1600x900/?nature,water');
-      background-size: cover;
-      background-position: center;
       position: absolute;
-      top: -50px;
-      right: -50px;
-      width: 150px;
-      height: 150px;
-      opacity: 0.2;
-      border-radius: 50%;
+      background: #ffffff;
+      width: 50%;
+      height: 100%;
+      top: 0;
       z-index: 1;
+      box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-book:before {
+      left: 0;
+      transform: rotate(-1deg);
+    }
+
+    .form-book:after {
+      right: 0;
+      transform: rotate(1deg);
+      background: #f0f0f0;
+    }
+
+    .form-content {
+      position: relative;
+      padding: 20px 30px;
+      z-index: 2;
+      background-color: transparent;
     }
 
     /* Title Styling */
-    .form-container h2 {
+    .form-content h2 {
       text-align: center;
       margin-bottom: 20px;
       color: #333;
@@ -61,7 +76,7 @@
       z-index: 2;
     }
 
-    .form-container h2::before {
+    .form-content h2::before {
       content: '\1F4C5'; /* Calendar Icon */
       font-size: 30px;
       position: absolute;
@@ -71,7 +86,7 @@
       color: #74ebd5;
     }
 
-    .form-container h2::after {
+    .form-content h2::after {
       content: '';
       position: absolute;
       left: 50%;
@@ -255,7 +270,7 @@
 
     /* Responsive Design */
     @media (max-width: 768px) {
-      .form-container {
+      .form-book {
         max-width: 90%;
       }
     }
@@ -264,45 +279,47 @@
 </head>
 <body>
 
-  <div class="form-container">
-    <h2>Booking Form</h2>
-    <form id="myForm">
-      <!-- Form Fields -->
-      <label for="date">Date:</label>
-      <input type="date" id="date" name="date" required>
+  <div class="form-book">
+    <div class="form-content">
+      <h2>Booking Form</h2>
+      <form id="myForm">
+        <!-- Form Fields -->
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
 
-      <label for="translatorName">Translator Name:</label>
-      <select id="translatorName" name="translatorName" required>
-        <option value="" disabled selected>Select Translator</option>
-        <option value="SOM SAN">SOM SAN</option>
-        <option value="GOOK SAN">GOOK SAN</option>
-        <option value="POOKY SAN">POOKY SAN</option>
-        <option value="L SAN">L SAN</option>
-      </select>
+        <label for="translatorName">Translator Name:</label>
+        <select id="translatorName" name="translatorName" required>
+          <option value="" disabled selected>Select Translator</option>
+          <option value="SOM SAN">SOM SAN</option>
+          <option value="GOOK SAN">GOOK SAN</option>
+          <option value="POOKY SAN">POOKY SAN</option>
+          <option value="L SAN">L SAN</option>
+        </select>
 
-      <label for="bookingBy">Booking By:</label>
-      <input type="text" id="bookingBy" name="bookingBy" required>
+        <label for="bookingBy">Booking By:</label>
+        <input type="text" id="bookingBy" name="bookingBy" required>
 
-      <label for="timeFrom">Time From:</label>
-      <select id="timeFrom" name="timeFrom" required>
-        <option value="" disabled selected>HH:MM</option>
-        <!-- Add more time options here -->
-      </select>
+        <label for="timeFrom">Time From:</label>
+        <select id="timeFrom" name="timeFrom" required>
+          <option value="" disabled selected>HH:MM</option>
+          <!-- Add more time options here -->
+        </select>
 
-      <label for="timeTo">Time To:</label>
-      <select id="timeTo" name="timeTo" required>
-        <option value="" disabled selected>HH:MM</option>
-        <!-- Add more time options here -->
-      </select>
+        <label for="timeTo">Time To:</label>
+        <select id="timeTo" name="timeTo" required>
+          <option value="" disabled selected>HH:MM</option>
+          <!-- Add more time options here -->
+        </select>
 
-      <label for="forWork">For work?</label>
-      <textarea id="forWork" name="forWork" required></textarea>
+        <label for="forWork">For work?</label>
+        <textarea id="forWork" name="forWork" required></textarea>
 
-      <input type="submit" value="Submit">
-    </form>
+        <input type="submit" value="Submit">
+      </form>
 
-    <a href="calendar.html" class="calendar-btn" target="_blank">View Calendar</a>
-    <a href="loginv2.html" class="translator-btn" target="_blank">Translator Only</a>
+      <a href="calendar.html" class="calendar-btn" target="_blank">View Calendar</a>
+      <a href="loginv2.html" class="translator-btn" target="_blank">Translator Only</a>
+    </div>
   </div>
 
   <!-- Spinner modal -->
