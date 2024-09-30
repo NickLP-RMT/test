@@ -1,3 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summary Booking Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+    }
+    .calendar {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .calendar-header h2 {
+      margin: 0;
+      color: #333;
+    }
+    .calendar-header button {
+      padding: 8px 12px;
+      cursor: pointer;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    #todayButton {
+      background-color: #ffeb3b;
+      color: black;
+    }
+    #todayButton:hover {
+      background-color: #fdd835;
+    }
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-gap: 15px;
+    }
+    .calendar-day {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 4px;
+      text-align: center;
+      height: 500px;
+      width: 300px;
+      position: relative;
+      overflow-y: auto;
+    }
+    .today {
+      background-color: #ffeb3b;
+      color: black;
+      font-weight: bold;
+    }
+    .event-list table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+    .event-list th, .event-list td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    .event-list th {
+      background-color: #2196F3;
+      color: white;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      padding: 20px;
+      background-color: white;
+      border-radius: 5px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calendar">
+  <div class="calendar-header">
+    <button id="prevMonth">Previous</button>
+    <h2 id="monthYear">September 2024</h2>
+    <button id="todayButton">Today</button>
+    <button id="nextMonth">Next</button>
+  </div>
+
+  <div class="calendar-days" id="calendarDays"></div>
+</div>
+
+<!-- Modal for loading -->
+<div class="modal" id="loadingModal">
+  <div class="modal-content">
+    <p>Loading, please wait...</p>
+  </div>
+</div>
+
 <script>
   // ฟังก์ชันแปลงเวลาให้อยู่ในช่วงของ timeSlots
   function matchTimeToSlot(timeFrom, timeTo) {
@@ -168,3 +286,6 @@
 
   renderCalendar(currentMonth, currentYear);
 </script>
+
+</body>
+</html>
