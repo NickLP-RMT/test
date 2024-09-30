@@ -132,19 +132,35 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  // กำหนดช่วงเวลา
-  const timeSlots = [
-    '07:00 - 07:30', '07:30 - 08:00', '08:00 - 08:30', '08:30 - 09:00',
-    '09:00 - 09:30', '09:30 - 10:00', '10:00 - 10:30', '10:30 - 11:00',
-    '11:00 - 11:30', '11:30 - 12:00', '12:00 - 12:30', '12:30 - 13:00',
-    '13:00 - 13:30', '13:30 - 14:00', '14:00 - 14:30', '14:30 - 15:00',
-    '15:00 - 15:30', '15:30 - 16:00', '16:00 - 16:30', '16:30 - 17:00',
-    '17:00 - 17:30', '17:30 - 18:00', '18:00 - 18:30', '18:30 - 19:00',
-    '19:00 - 19:30', '19:30 - 20:00'
-  ];
+ // ฟังก์ชันแปลงเวลาให้อยู่ในช่วงของ timeSlots
+function matchTimeToSlot(timeFrom, timeTo) {
+    const timeSlots = [
+      '07:00 - 07:30', '07:30 - 08:00', '08:00 - 08:30', '08:30 - 09:00',
+      '09:00 - 09:30', '09:30 - 10:00', '10:00 - 10:30', '10:30 - 11:00',
+      '11:00 - 11:30', '11:30 - 12:00', '12:00 - 12:30', '12:30 - 13:00',
+      '13:00 - 13:30', '13:30 - 14:00', '14:00 - 14:30', '14:30 - 15:00',
+      '15:00 - 15:30', '15:30 - 16:00', '16:00 - 16:30', '16:30 - 17:00',
+      '17:00 - 17:30', '17:30 - 18:00', '18:00 - 18:30', '18:30 - 19:00',
+      '19:00 - 19:30', '19:30 - 20:00'
+    ];
 
-  // ฟังก์ชันเพิ่ม 1 นาทีให้กับ Time To
-  function addOneMinute(time) {
+    const startMinutes = timeToMinutes(timeFrom);
+    const endMinutes = timeToMinutes(timeTo);
+
+    // วนลูปเช็คทุกช่วงเวลาของ timeSlots
+    return timeSlots.filter(slot => {
+        const [start, end] = slot.split(' - ');
+        const slotStartMinutes = timeToMinutes(start);
+        const slotEndMinutes = timeToMinutes(end);
+
+        // คืนค่าสล็อตที่อยู่ในช่วงเวลา
+        return (slotStartMinutes >= startMinutes && slotEndMinutes <= endMinutes);
+    });
+}
+
+
+// ฟังก์ชันบวก 1 นาทีให้ timeTo
+function addOneMinute(time) {
     const [hours, minutes] = time.split(':').map(Number);
     const newMinutes = minutes + 1;
 
@@ -153,13 +169,17 @@
     } else {
       return `${('0' + hours).slice(-2)}:${('0' + newMinutes).slice(-2)}`;
     }
-  }
-
-  // โหลดข้อมูลจาก API
-  function loadEventDataForDay(date) {
+}
+// ฟังก์ชันแปลงเวลาเป็นนาที
+function timeToMinutes(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+// ฟังก์ชันโหลดข้อมูลจาก API
+function loadEventDataForDay(date) {
     const [day, month, year] = date.split('/');
     const formattedDate = `${month}/${day}/${year}`; // เปลี่ยนเป็น MM/DD/YYYY สำหรับ API
-    const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${formattedDate}`;
+    const requestUrl = `https://script.google.com/macros/s/YOUR_SCRIPT_URL/exec?page=calendar&date=${formattedDate}`;
 
     return fetch(requestUrl)
       .then(response => response.json())
@@ -168,7 +188,7 @@
         return data;
       })
       .catch(error => console.error('Error fetching data:', error));
-  }
+}
 
   function showLoadingModal() {
     loadingModal.style.display = 'flex';
@@ -178,8 +198,8 @@
     loadingModal.style.display = 'none';
   }
 
-  // ฟังก์ชันแสดงปฏิทิน
-  function renderCalendar(month, year) {
+// ฟังก์ชันแสดงผลปฏิทิน
+function renderCalendar(month, year) {
     showLoadingModal();
     calendarDays.innerHTML = '';
     monthYear.textContent = `${months[month]} ${year}`;
@@ -197,70 +217,70 @@
     let promises = [];
 
     for (let i = 1; i <= daysInMonth; i++) {
-      const day = new Date(year, month, i);
-      const dayCell = document.createElement('div');
-      dayCell.classList.add('calendar-day');
-      
-      if (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
-        dayCell.classList.add('today');
-      }
-
-      const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`; // แสดงผล DD/MM/YYYY
-      dayCell.innerHTML = `<p>${i}</p><div class="event-list" id="events_${formattedDate}">Loading...</div>`;
-
-      // ดึงข้อมูลจาก API
-      promises.push(loadEventDataForDay(formattedDate).then(data => {
-        const eventList = document.getElementById(`events_${formattedDate}`);
+        const day = new Date(year, month, i);
+        const dayCell = document.createElement('div');
+        dayCell.classList.add('calendar-day');
         
-        // สร้างตารางสำหรับแสดงผลข้อมูล
-        eventList.innerHTML = `
-          <table>
-            <thead>
-              <tr><th>Time</th><th>SOM</th><th>GOOK</th><th>POOKY</th><th>L</th></tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        `;
+        if (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
+            dayCell.classList.add('today');
+        }
 
-        const tbody = eventList.querySelector('tbody');
+        const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`; // แสดงผล DD/MM/YYYY
+        dayCell.innerHTML = `<p>${i}</p><div class="event-list" id="events_${formattedDate}">Loading...</div>`;
 
-        // วนลูปสำหรับทุกช่วงเวลา
-        timeSlots.forEach(slot => {
-          const row = document.createElement('tr');
-          row.innerHTML = `<td>${slot}</td><td></td><td></td><td></td><td></td>`; // กำหนดให้ค่าว่างเป็นค่าเริ่มต้น
-          tbody.appendChild(row);
-        });
+        // ดึงข้อมูลจาก API
+        promises.push(loadEventDataForDay(formattedDate).then(data => {
+            const eventList = document.getElementById(`events_${formattedDate}`);
+            
+            // สร้างตารางสำหรับแสดงผลข้อมูล
+            eventList.innerHTML = `
+                <table>
+                    <thead>
+                        <tr><th>Time</th><th>SOM</th><th>GOOK</th><th>POOKY</th><th>L</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            `;
 
-        // เติมข้อมูลการจอง
-        data.forEach(event => {
-          const timeFrom = event.timeFrom.replace("'", "").trim(); // ลบเครื่องหมาย ' จาก timeFrom
-          const timeTo = addOneMinute(event.timeTo.replace("'", "").trim()); // ลบ ' และบวก 1 นาทีให้ timeTo
+            const tbody = eventList.querySelector('tbody');
 
-          console.log("Matching time slot:", timeFrom, "-", timeTo); // ตรวจสอบเวลาที่จะจับคู่
-          
-          const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === `${timeFrom} - ${timeTo}`);
-          if (row) {
-            const index = event.translator === 'SOM SAN' ? 1 :
-                          event.translator === 'GOOK SAN' ? 2 :
-                          event.translator === 'POOKY SAN' ? 3 :
-                          event.translator === 'L SAN' ? 4 : -1;
-            if (index > -1) {
-              row.cells[index].textContent = 'x'; // แสดง 'x' สำหรับเวลาที่มีการจอง
-            }
-          } else {
-            console.warn("No matching time slot found for:", timeFrom, "-", timeTo);
-          }
-        });
+            // วนลูปสำหรับทุกช่วงเวลา
+            timeSlots.forEach(slot => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${slot}</td><td></td><td></td><td></td><td></td>`; // กำหนดให้ค่าว่างเป็นค่าเริ่มต้น
+                tbody.appendChild(row);
+            });
 
-      }));
+            // เติมข้อมูลการจอง
+            data.forEach(event => {
+                const timeFrom = event.timeFrom.replace("'", "").trim(); // ลบเครื่องหมาย ' จาก timeFrom
+                const timeTo = addOneMinute(event.timeTo.replace("'", "").trim()); // ลบ ' และบวก 1 นาทีให้ timeTo
 
-      calendarDays.appendChild(dayCell);
+                const matchingSlots = matchTimeToSlot(timeFrom, timeTo); // หา slot ที่ตรงกับช่วงเวลา
+
+                matchingSlots.forEach(slot => {
+                    const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === slot);
+                    if (row) {
+                        const index = event.translator === 'SOM SAN' ? 1 :
+                                      event.translator === 'GOOK SAN' ? 2 :
+                                      event.translator === 'POOKY SAN' ? 3 :
+                                      event.translator === 'L SAN' ? 4 : -1;
+                        if (index > -1) {
+                            row.cells[index].textContent = 'x'; // แสดง 'x' สำหรับเวลาที่มีการจอง
+                        }
+                    }
+                });
+            });
+
+        }));
+
+        calendarDays.appendChild(dayCell);
     }
 
     Promise.all(promises).then(() => {
-      hideLoadingModal();
+        hideLoadingModal();
     });
-  }
+}
 
   prevMonth.addEventListener('click', () => {
     currentMonth--;
