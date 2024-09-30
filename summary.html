@@ -179,7 +179,7 @@ function timeToMinutes(time) {
 function loadEventDataForDay(date) {
     const [day, month, year] = date.split('/');
     const formattedDate = `${month}/${day}/${year}`; // เปลี่ยนเป็น MM/DD/YYYY สำหรับ API
-    const requestUrl = `https://script.google.com/macros/s/YOUR_SCRIPT_URL/exec?page=calendar&date=${formattedDate}`;
+    const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${formattedDate}`;
 
     return fetch(requestUrl)
       .then(response => response.json())
