@@ -132,6 +132,7 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  // กำหนดช่วงเวลา
   const timeSlots = [
     '07:00 - 07:30', '07:30 - 08:00', '08:00 - 08:30', '08:30 - 09:00',
     '09:00 - 09:30', '09:30 - 10:00', '10:00 - 10:30', '10:30 - 11:00',
@@ -142,9 +143,10 @@
     '19:00 - 19:30', '19:30 - 20:00'
   ];
 
+  // โหลดข้อมูลจาก API
   function loadEventDataForDay(date) {
     const [day, month, year] = date.split('/');
-    const formattedDate = `${month}/${day}/${year}`; // MM/DD/YYYY
+    const formattedDate = `${month}/${day}/${year}`; // เปลี่ยนเป็น MM/DD/YYYY สำหรับ API
     const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${formattedDate}`;
 
     return fetch(requestUrl)
@@ -161,6 +163,7 @@
     loadingModal.style.display = 'none';
   }
 
+  // ฟังก์ชันแสดงปฏิทิน
   function renderCalendar(month, year) {
     showLoadingModal();
     calendarDays.innerHTML = '';
@@ -187,32 +190,42 @@
         dayCell.classList.add('today');
       }
 
-      const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`; // DD/MM/YYYY
+      const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`; // แสดงผล DD/MM/YYYY
       dayCell.innerHTML = `<p>${i}</p><div class="event-list" id="events_${formattedDate}">Loading...</div>`;
 
+      // ดึงข้อมูลจาก API
       promises.push(loadEventDataForDay(formattedDate).then(data => {
         const eventList = document.getElementById(`events_${formattedDate}`);
         
-        // สร้างตารางสำหรับแสดงข้อมูล
-        eventList.innerHTML = '<table><thead><tr><th>Time</th><th>SOM</th><th>GOOK</th><th>POOKY</th><th>L</th></tr></thead><tbody></tbody></table>';
+        // สร้างตารางสำหรับแสดงผลข้อมูล
+        eventList.innerHTML = `
+          <table>
+            <thead>
+              <tr><th>Time</th><th>SOM</th><th>GOOK</th><th>POOKY</th><th>L</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        `;
+
         const tbody = eventList.querySelector('tbody');
-        
+
+        // วนลูปสำหรับทุกช่วงเวลา
         timeSlots.forEach(slot => {
           const row = document.createElement('tr');
-          row.innerHTML = `<td>${slot}</td><td></td><td></td><td></td><td></td>`; // ค่าดีฟอลต์คือค่าว่าง
+          row.innerHTML = `<td>${slot}</td><td></td><td></td><td></td><td></td>`; // กำหนดให้ค่าว่างเป็นค่าเริ่มต้น
           tbody.appendChild(row);
         });
 
-        // จับคู่ข้อมูลที่ได้จาก API กับช่วงเวลาในตาราง
+        // เติมข้อมูลการจอง
         data.forEach(event => {
           const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === `${event.timeFrom} - ${event.timeTo}`);
           if (row) {
-            const index = event.translator === 'SOM' ? 1 : 
-                          event.translator === 'GOOK' ? 2 : 
-                          event.translator === 'POOKY' ? 3 : 
+            const index = event.translator === 'SOM' ? 1 :
+                          event.translator === 'GOOK' ? 2 :
+                          event.translator === 'POOKY' ? 3 :
                           event.translator === 'L' ? 4 : -1;
             if (index > -1) {
-              row.cells[index].textContent = 'Booked'; // แสดงว่าเวลานี้ถูกจองแล้ว
+              row.cells[index].textContent = 'x'; // แสดง 'x' สำหรับเวลาที่มีการจอง
             }
           }
         });
