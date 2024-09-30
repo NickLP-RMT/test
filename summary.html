@@ -68,10 +68,21 @@
       border-radius: 4px;
       font-size: 14px;
     }
-    .event-list div {
-      margin-bottom: 10px;
+    .event-list table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 12px;
     }
-    /* Styles for loading modal */
+    .event-list th, .event-list td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    .event-list th {
+      background-color: #2196F3;
+      color: white;
+    }
     .modal {
       display: none;
       position: fixed;
@@ -129,7 +140,6 @@
   ];
 
   function loadEventDataForDay(date) {
-    // เปลี่ยนรูปแบบวันที่เป็น MM/DD/YYYY สำหรับส่งไปยัง API
     const [day, month, year] = date.split('/');
     const formattedDate = `${month}/${day}/${year}`; // MM/DD/YYYY
     const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${formattedDate}`;
@@ -174,19 +184,18 @@
         dayCell.classList.add('today');
       }
 
-      // แสดงวันที่ในรูปแบบ DD/MM/YYYY
       const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`; // DD/MM/YYYY
       dayCell.innerHTML = `<p>${i}</p><div class="event-list" id="events_${formattedDate}">Loading...</div>`;
 
-      // ดึงข้อมูลโดยส่งวันที่แบบ MM/DD/YYYY ไปยัง API
       promises.push(loadEventDataForDay(formattedDate).then(data => {
         const eventList = document.getElementById(`events_${formattedDate}`);
         if (data.length > 0) {
-          eventList.innerHTML = '';
+          eventList.innerHTML = '<table><thead><tr><th>Time</th><th>Translator</th></tr></thead><tbody></tbody></table>';
+          const tbody = eventList.querySelector('tbody');
           data.forEach(event => {
-            const eventDiv = document.createElement('div');
-            eventDiv.textContent = `${event.translator}: ${event.timeFrom} - ${event.timeTo}`;
-            eventList.appendChild(eventDiv);
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${event.timeFrom} - ${event.timeTo}</td><td>${event.translator}</td>`;
+            tbody.appendChild(row);
           });
         } else {
           eventList.innerHTML = 'No events';  
