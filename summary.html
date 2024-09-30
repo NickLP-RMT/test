@@ -1,149 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Summary Booking Calendar</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-    }
-    .calendar {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .calendar-header h2 {
-      margin: 0;
-      color: #333;
-    }
-    .calendar-header button {
-      padding: 8px 12px;
-      cursor: pointer;
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-    }
-    #todayButton {
-      background-color: #ffeb3b;
-      color: black;
-    }
-    #todayButton:hover {
-      background-color: #fdd835;
-    }
-    .calendar-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      grid-gap: 15px;
-    }
-    .calendar-day {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      padding: 15px;
-      border-radius: 4px;
-      text-align: center;
-      height: 500px;
-      width: 300px;
-      position: relative;
-      overflow-y: auto;
-    }
-    .today {
-      background-color: #ffeb3b;
-      color: black;
-      font-weight: bold;
-    }
-    .event-list table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 12px;
-    }
-    .event-list th, .event-list td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: center;
-    }
-    .event-list th {
-      background-color: #2196F3;
-      color: white;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      padding: 20px;
-      background-color: white;
-      border-radius: 5px;
-      text-align: center;
-    }
-  </style>
-</head>
-<body>
-
-<div class="calendar">
-  <div class="calendar-header">
-    <button id="prevMonth">Previous</button>
-    <h2 id="monthYear">September 2024</h2>
-    <button id="todayButton">Today</button>
-    <button id="nextMonth">Next</button>
-  </div>
-
-  <div class="calendar-days" id="calendarDays"></div>
-</div>
-
-<!-- Modal for loading -->
-<div class="modal" id="loadingModal">
-  <div class="modal-content">
-    <p>Loading, please wait...</p>
-  </div>
-</div>
-
 <script>
-  const calendarDays = document.getElementById('calendarDays');
-  const monthYear = document.getElementById('monthYear');
-  const prevMonth = document.getElementById('prevMonth');
-  const nextMonth = document.getElementById('nextMonth');
-  const todayButton = document.getElementById('todayButton');
-  const loadingModal = document.getElementById('loadingModal');
+  // ฟังก์ชันแปลงเวลาให้อยู่ในช่วงของ timeSlots
+  function matchTimeToSlot(timeFrom, timeTo) {
+    const timeSlots = [
+      '07:00 - 07:30', '07:30 - 08:00', '08:00 - 08:30', '08:30 - 09:00',
+      '09:00 - 09:30', '09:30 - 10:00', '10:00 - 10:30', '10:30 - 11:00',
+      '11:00 - 11:30', '11:30 - 12:00', '12:00 - 12:30', '12:30 - 13:00',
+      '13:00 - 13:30', '13:30 - 14:00', '14:00 - 14:30', '14:30 - 15:00',
+      '15:00 - 15:30', '15:30 - 16:00', '16:00 - 16:30', '16:30 - 17:00',
+      '17:00 - 17:30', '17:30 - 18:00', '18:00 - 18:30', '18:30 - 19:00',
+      '19:00 - 19:30', '19:30 - 20:00'
+    ];
 
-  let currentMonth = new Date().getMonth();
-  let currentYear = new Date().getFullYear();
+    const startMinutes = timeToMinutes(timeFrom);
+    const endMinutes = timeToMinutes(timeTo);
 
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
+    // วนลูปเช็คทุกช่วงเวลาของ timeSlots
+    return timeSlots.filter(slot => {
+      const [start, end] = slot.split(' - ');
+      const slotStartMinutes = timeToMinutes(start);
+      const slotEndMinutes = timeToMinutes(end);
 
-  // กำหนดช่วงเวลา
-  const timeSlots = [
-    '07:00 - 07:30', '07:30 - 08:00', '08:00 - 08:30', '08:30 - 09:00',
-    '09:00 - 09:30', '09:30 - 10:00', '10:00 - 10:30', '10:30 - 11:00',
-    '11:00 - 11:30', '11:30 - 12:00', '12:00 - 12:30', '12:30 - 13:00',
-    '13:00 - 13:30', '13:30 - 14:00', '14:00 - 14:30', '14:30 - 15:00',
-    '15:00 - 15:30', '15:30 - 16:00', '16:00 - 16:30', '16:30 - 17:00',
-    '17:00 - 17:30', '17:30 - 18:00', '18:00 - 18:30', '18:30 - 19:00',
-    '19:00 - 19:30', '19:30 - 20:00'
-  ];
+      // คืนค่าสล็อตที่อยู่ในช่วงเวลา
+      return (slotStartMinutes >= startMinutes && slotEndMinutes <= endMinutes);
+    });
+  }
 
-  // ฟังก์ชันเพิ่ม 1 นาทีให้กับ Time To
+  // ฟังก์ชันแปลงเวลาเป็นนาที
+  function timeToMinutes(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+  // ฟังก์ชันบวก 1 นาทีให้ timeTo
   function addOneMinute(time) {
     const [hours, minutes] = time.split(':').map(Number);
     const newMinutes = minutes + 1;
@@ -170,15 +58,7 @@
       .catch(error => console.error('Error fetching data:', error));
   }
 
-  function showLoadingModal() {
-    loadingModal.style.display = 'flex';
-  }
-
-  function hideLoadingModal() {
-    loadingModal.style.display = 'none';
-  }
-
-  // ฟังก์ชันแสดงปฏิทิน
+  // ฟังก์ชันแสดงผลปฏิทิน
   function renderCalendar(month, year) {
     showLoadingModal();
     calendarDays.innerHTML = '';
@@ -236,20 +116,20 @@
           const timeFrom = event.timeFrom.replace("'", "").trim(); // ลบเครื่องหมาย ' จาก timeFrom
           const timeTo = addOneMinute(event.timeTo.replace("'", "").trim()); // ลบ ' และบวก 1 นาทีให้ timeTo
 
-          console.log("Matching time slot:", timeFrom, "-", timeTo); // ตรวจสอบเวลาที่จะจับคู่
-          
-          const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === `${timeFrom} - ${timeTo}`);
-          if (row) {
-            const index = event.translator === 'SOM SAN' ? 1 :
-                          event.translator === 'GOOK SAN' ? 2 :
-                          event.translator === 'POOKY SAN' ? 3 :
-                          event.translator === 'L SAN' ? 4 : -1;
-            if (index > -1) {
-              row.cells[index].textContent = 'x'; // แสดง 'x' สำหรับเวลาที่มีการจอง
+          const matchingSlots = matchTimeToSlot(timeFrom, timeTo); // หา slot ที่ตรงกับช่วงเวลา
+
+          matchingSlots.forEach(slot => {
+            const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === slot);
+            if (row) {
+              const index = event.translator === 'SOM SAN' ? 1 :
+                            event.translator === 'GOOK SAN' ? 2 :
+                            event.translator === 'POOKY SAN' ? 3 :
+                            event.translator === 'L SAN' ? 4 : -1;
+              if (index > -1) {
+                row.cells[index].textContent = 'x'; // แสดง 'x' สำหรับเวลาที่มีการจอง
+              }
             }
-          } else {
-            console.warn("No matching time slot found for:", timeFrom, "-", timeTo);
-          }
+          });
         });
 
       }));
@@ -288,6 +168,3 @@
 
   renderCalendar(currentMonth, currentYear);
 </script>
-
-</body>
-</html>
