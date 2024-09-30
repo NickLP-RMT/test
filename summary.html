@@ -117,39 +117,33 @@
 </div>
 
 <script>
-  // ฟังก์ชันแปลงเวลาให้อยู่ในช่วงของ timeSlots
-  function matchTimeToSlot(timeFrom, timeTo) {
-    const timeSlots = [
-      '07:00 - 07:30', '07:30 - 08:00', '08:00 - 08:30', '08:30 - 09:00',
-      '09:00 - 09:30', '09:30 - 10:00', '10:00 - 10:30', '10:30 - 11:00',
-      '11:00 - 11:30', '11:30 - 12:00', '12:00 - 12:30', '12:30 - 13:00',
-      '13:00 - 13:30', '13:30 - 14:00', '14:00 - 14:30', '14:30 - 15:00',
-      '15:00 - 15:30', '15:30 - 16:00', '16:00 - 16:30', '16:30 - 17:00',
-      '17:00 - 17:30', '17:30 - 18:00', '18:00 - 18:30', '18:30 - 19:00',
-      '19:00 - 19:30', '19:30 - 20:00'
-    ];
+  const calendarDays = document.getElementById('calendarDays');
+  const monthYear = document.getElementById('monthYear');
+  const prevMonth = document.getElementById('prevMonth');
+  const nextMonth = document.getElementById('nextMonth');
+  const todayButton = document.getElementById('todayButton');
+  const loadingModal = document.getElementById('loadingModal');
 
-    const startMinutes = timeToMinutes(timeFrom);
-    const endMinutes = timeToMinutes(timeTo);
+  let currentMonth = new Date().getMonth();
+  let currentYear = new Date().getFullYear();
 
-    // วนลูปเช็คทุกช่วงเวลาของ timeSlots
-    return timeSlots.filter(slot => {
-      const [start, end] = slot.split(' - ');
-      const slotStartMinutes = timeToMinutes(start);
-      const slotEndMinutes = timeToMinutes(end);
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
 
-      // คืนค่าสล็อตที่อยู่ในช่วงเวลา
-      return (slotStartMinutes >= startMinutes && slotEndMinutes <= endMinutes);
-    });
-  }
+  // กำหนดช่วงเวลา
+  const timeSlots = [
+    '07:00 - 07:30', '07:30 - 08:00', '08:00 - 08:30', '08:30 - 09:00',
+    '09:00 - 09:30', '09:30 - 10:00', '10:00 - 10:30', '10:30 - 11:00',
+    '11:00 - 11:30', '11:30 - 12:00', '12:00 - 12:30', '12:30 - 13:00',
+    '13:00 - 13:30', '13:30 - 14:00', '14:00 - 14:30', '14:30 - 15:00',
+    '15:00 - 15:30', '15:30 - 16:00', '16:00 - 16:30', '16:30 - 17:00',
+    '17:00 - 17:30', '17:30 - 18:00', '18:00 - 18:30', '18:30 - 19:00',
+    '19:00 - 19:30', '19:30 - 20:00'
+  ];
 
-  // ฟังก์ชันแปลงเวลาเป็นนาที
-  function timeToMinutes(time) {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  }
-
-  // ฟังก์ชันบวก 1 นาทีให้ timeTo
+  // ฟังก์ชันเพิ่ม 1 นาทีให้กับ Time To
   function addOneMinute(time) {
     const [hours, minutes] = time.split(':').map(Number);
     const newMinutes = minutes + 1;
@@ -176,7 +170,15 @@
       .catch(error => console.error('Error fetching data:', error));
   }
 
-  // ฟังก์ชันแสดงผลปฏิทิน
+  function showLoadingModal() {
+    loadingModal.style.display = 'flex';
+  }
+
+  function hideLoadingModal() {
+    loadingModal.style.display = 'none';
+  }
+
+  // ฟังก์ชันแสดงปฏิทิน
   function renderCalendar(month, year) {
     showLoadingModal();
     calendarDays.innerHTML = '';
@@ -234,20 +236,20 @@
           const timeFrom = event.timeFrom.replace("'", "").trim(); // ลบเครื่องหมาย ' จาก timeFrom
           const timeTo = addOneMinute(event.timeTo.replace("'", "").trim()); // ลบ ' และบวก 1 นาทีให้ timeTo
 
-          const matchingSlots = matchTimeToSlot(timeFrom, timeTo); // หา slot ที่ตรงกับช่วงเวลา
-
-          matchingSlots.forEach(slot => {
-            const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === slot);
-            if (row) {
-              const index = event.translator === 'SOM SAN' ? 1 :
-                            event.translator === 'GOOK SAN' ? 2 :
-                            event.translator === 'POOKY SAN' ? 3 :
-                            event.translator === 'L SAN' ? 4 : -1;
-              if (index > -1) {
-                row.cells[index].textContent = 'x'; // แสดง 'x' สำหรับเวลาที่มีการจอง
-              }
+          console.log("Matching time slot:", timeFrom, "-", timeTo); // ตรวจสอบเวลาที่จะจับคู่
+          
+          const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === `${timeFrom} - ${timeTo}`);
+          if (row) {
+            const index = event.translator === 'SOM SAN' ? 1 :
+                          event.translator === 'GOOK SAN' ? 2 :
+                          event.translator === 'POOKY SAN' ? 3 :
+                          event.translator === 'L SAN' ? 4 : -1;
+            if (index > -1) {
+              row.cells[index].textContent = 'x'; // แสดง 'x' สำหรับเวลาที่มีการจอง
             }
-          });
+          } else {
+            console.warn("No matching time slot found for:", timeFrom, "-", timeTo);
+          }
         });
 
       }));
