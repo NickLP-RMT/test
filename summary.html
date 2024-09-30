@@ -71,6 +71,7 @@
     .event-list div {
       margin-bottom: 10px;
     }
+    /* Styles for loading modal */
     .modal {
       display: none;
       position: fixed;
@@ -104,6 +105,7 @@
   <div class="calendar-days" id="calendarDays"></div>
 </div>
 
+<!-- Modal for loading -->
 <div class="modal" id="loadingModal">
   <div class="modal-content">
     <p>Loading, please wait...</p>
@@ -127,7 +129,9 @@
   ];
 
   function loadEventDataForDay(date) {
-    const formattedDate = date.split('-').reverse().join('/');
+    // เปลี่ยนรูปแบบวันที่เป็น MM/DD/YYYY สำหรับส่งไปยัง API
+    const [day, month, year] = date.split('/');
+    const formattedDate = `${month}/${day}/${year}`; // MM/DD/YYYY
     const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${formattedDate}`;
 
     return fetch(requestUrl)
@@ -170,9 +174,11 @@
         dayCell.classList.add('today');
       }
 
-      const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`; // แก้ไขรูปแบบเป็น DD/MM/YYYY
+      // แสดงวันที่ในรูปแบบ DD/MM/YYYY
+      const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`; // DD/MM/YYYY
       dayCell.innerHTML = `<p>${i}</p><div class="event-list" id="events_${formattedDate}">Loading...</div>`;
 
+      // ดึงข้อมูลโดยส่งวันที่แบบ MM/DD/YYYY ไปยัง API
       promises.push(loadEventDataForDay(formattedDate).then(data => {
         const eventList = document.getElementById(`events_${formattedDate}`);
         if (data.length > 0) {
