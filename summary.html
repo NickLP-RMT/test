@@ -201,7 +201,7 @@
 
   function loadEventDataForDay(date) {
     showLoadingModal();  // Show loading modal
-    const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${date}`;
+    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${date}`;
 
     fetch(requestUrl)
       .then(response => response.json())
