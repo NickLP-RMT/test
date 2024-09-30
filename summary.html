@@ -191,7 +191,7 @@
   function loadAllEventDataForMonth(year, month) {
     showLoadingModal();  // Show loading modal
 
-    const requestUrl = `https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?page=calendar&month=${year}-${('0' + (month + 1)).slice(-2)}`;
+    const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&month=${year}-${('0' + (month + 1)).slice(-2)}`;
 
     fetch(requestUrl)
       .then(response => response.json())
