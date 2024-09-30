@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Calendar with Embedded Tables</title>
+  <title>Summary Calendar</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -40,14 +40,6 @@
     #todayButton:hover {
       background-color: #fdd835;
     }
-    .time-slot {
-      font-size: 7px;
-      white-space: nowrap;
-      padding: 2px 0;
-    }
-    .bold-text {
-      font-weight: bold;
-    }
     .calendar-days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -56,7 +48,7 @@
     .calendar-day, .day-header {
       background-color: #fff;
       border: 1px solid #ddd;
-      padding: 5px;
+      padding: 10px;
       text-align: center;
       position: relative;
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -72,36 +64,6 @@
       color: #000;
       font-weight: bold;
     }
-    .day-header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #ddd;
-      font-weight: bold;
-      font-size: 14px;
-      text-align: center;
-      padding: 5px 0;
-      height: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 10px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 5px;
-      text-align: center;
-    }
-    th {
-      background-color: #2196F3;
-      color: white;
-      font-size: 8px;
-      padding: 5px;
-    }
     .event-dot {
       height: 8px;
       width: 8px;
@@ -109,56 +71,17 @@
       border-radius: 50%;
       display: inline-block;
     }
-    /* Modal for loading spinner */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-    .modal-content {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
-    .spinner {
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 120px;
-      height: 120px;
-      animation: spin 2s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
   </style>
 </head>
 <body>
 
-<!-- Modal for loading spinner -->
-<div id="loadingModal" class="modal">
-  <div class="modal-content">
-    <div class="spinner"></div>
-    <p>Loading...</p>
-  </div>
-</div>
-
 <div class="calendar">
   <div class="calendar-header">
     <button id="prevMonth">Previous</button>
-    <h2 id="monthYear">September 2024</h2>
+    <h2 id="monthYear"></h2>
     <button id="todayButton">Today</button>
     <button id="nextMonth">Next</button>
   </div>
-
   <div class="calendar-days">
     <div class="day-header">SUNDAY</div>
     <div class="day-header">MONDAY</div>
@@ -168,7 +91,6 @@
     <div class="day-header">FRIDAY</div>
     <div class="day-header">SATURDAY</div>
   </div>
-
   <div class="calendar-days" id="calendarDays"></div>
 </div>
 
@@ -178,7 +100,6 @@
   const prevMonth = document.getElementById('prevMonth');
   const nextMonth = document.getElementById('nextMonth');
   const todayButton = document.getElementById('todayButton');
-  const loadingModal = document.getElementById('loadingModal');
 
   let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
@@ -188,39 +109,6 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-function loadEventDataForDay(date) {
-  // Convert the date to match the Google Sheets format (e.g., 'dd/MM/yyyy)
-  const formattedDate = `'${date.split('-').reverse().join('/')}`;  // Converts yyyy-MM-dd to 'dd/MM/yyyy'
-
-  const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${formattedDate}`;
-
-  // Show the loading modal
-  loadingModal.style.display = 'block';
-
-  fetch(requestUrl)
-    .then(response => response.json())
-    .then(data => {
-      clearTableData();
-      data.forEach(event => {
-        const timeSlot = event.timeFrom.replace(':', '');
-        if (event.translator === 'SOM SAN') {
-          document.getElementById(`somSan_${formattedDate}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
-        } else if (event.translator === 'GOOK SAN') {
-          document.getElementById(`gookSan_${formattedDate}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
-        } else if (event.translator === 'POOKY SAN') {
-          document.getElementById(`pookySan_${formattedDate}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
-        } else if (event.translator === 'L SAN') {
-          document.getElementById(`lSan_${formattedDate}_${timeSlot}`).innerHTML = '<span class="event-dot"></span>';
-        }
-      });
-    })
-    .catch(error => console.error('Error fetching data:', error))
-    .finally(() => {
-      // Hide the loading modal after data is loaded
-      loadingModal.style.display = 'none';
-    });
-}
-
   function renderCalendar(month, year) {
     calendarDays.innerHTML = '';
     monthYear.textContent = `${months[month]} ${year}`;
@@ -228,67 +116,46 @@ function loadEventDataForDay(date) {
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
+    // Create empty cells for days before the first day of the month
     for (let i = 0; i < firstDayOfMonth; i++) {
       const emptyCell = document.createElement('div');
       emptyCell.classList.add('calendar-day');
-      emptyCell.innerHTML = '';
       calendarDays.appendChild(emptyCell);
     }
 
+    // Create day cells and load event data
     for (let i = 1; i <= daysInMonth; i++) {
       const day = new Date(year, month, i);
       const dayCell = document.createElement('div');
       dayCell.classList.add('calendar-day');
-      
+
+      // Highlight today
       if (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
         dayCell.classList.add('today');
       }
 
       const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`;
 
-      dayCell.innerHTML = `<p>${i}</p><table>
-        <thead>
-          <tr>
-            <th>TIME</th>
-            <th>SOM SAN</th>
-            <th>GOOK SAN</th>
-            <th>POOKY SAN</th>
-            <th>L SAN</th>
-          </tr>
-        </thead>
-        <tbody>
-        <tr><td class="time-slot">08:00 - 08:30</td><td id="somSan_${formattedDate}_0800"></td><td id="gookSan_${formattedDate}_0800"></td><td id="pookySan_${formattedDate}_0800"></td><td id="lSan_${formattedDate}_0800"></td></tr>
-        <tr><td class="time-slot">08:30 - 09:00</td><td id="somSan_${formattedDate}_0830"></td><td id="gookSan_${formattedDate}_0830"></td><td id="pookySan_${formattedDate}_0830"></td><td id="lSan_${formattedDate}_0830"></td></tr>
-        <tr><td class="time-slot">09:00 - 09:30</td><td id="somSan_${formattedDate}_0900"></td><td id="gookSan_${formattedDate}_0900"></td><td id="pookySan_${formattedDate}_0900"></td><td id="lSan_${formattedDate}_0900"></td></tr>
-        <tr><td class="time-slot">09:30 - 10:00</td><td id="somSan_${formattedDate}_0930"></td><td id="gookSan_${formattedDate}_0930"></td><td id="pookySan_${formattedDate}_0930"></td><td id="lSan_${formattedDate}_0930"></td></tr>
-        <tr><td class="time-slot">10:00 - 10:30</td><td id="somSan_${formattedDate}_1000"></td><td id="gookSan_${formattedDate}_1000"></td><td id="pookySan_${formattedDate}_1000"></td><td id="lSan_${formattedDate}_1000"></td></tr>
-        <tr><td class="time-slot">10:30 - 11:00</td><td id="somSan_${formattedDate}_1030"></td><td id="gookSan_${formattedDate}_1030"></td><td id="pookySan_${formattedDate}_1030"></td><td id="lSan_${formattedDate}_1030"></td></tr>
-        <tr><td class="time-slot">11:00 - 11:30</td><td id="somSan_${formattedDate}_1100"></td><td id="gookSan_${formattedDate}_1100"></td><td id="pookySan_${formattedDate}_1100"></td><td id="lSan_${formattedDate}_1100"></td></tr>
-        <tr><td class="time-slot">11:30 - 12:00</td><td id="somSan_${formattedDate}_1130"></td><td id="gookSan_${formattedDate}_1130"></td><td id="pookySan_${formattedDate}_1130"></td><td id="lSan_${formattedDate}_1130"></td></tr>
-        <tr><td class="time-slot">12:00 - 12:30</td><td id="somSan_${formattedDate}_1200"></td><td id="gookSan_${formattedDate}_1200"></td><td id="pookySan_${formattedDate}_1200"></td><td id="lSan_${formattedDate}_1200"></td></tr>
-        <tr><td class="time-slot">12:30 - 13:00</td><td id="somSan_${formattedDate}_1230"></td><td id="gookSan_${formattedDate}_1230"></td><td id="pookySan_${formattedDate}_1230"></td><td id="lSan_${formattedDate}_1230"></td></tr>
-        <tr><td class="time-slot">13:00 - 13:30</td><td id="somSan_${formattedDate}_1300"></td><td id="gookSan_${formattedDate}_1300"></td><td id="pookySan_${formattedDate}_1300"></td><td id="lSan_${formattedDate}_1300"></td></tr>
-        <tr><td class="time-slot">13:30 - 14:00</td><td id="somSan_${formattedDate}_1330"></td><td id="gookSan_${formattedDate}_1330"></td><td id="pookySan_${formattedDate}_1330"></td><td id="lSan_${formattedDate}_1330"></td></tr>
-        <tr><td class="time-slot">14:00 - 14:30</td><td id="somSan_${formattedDate}_1400"></td><td id="gookSan_${formattedDate}_1400"></td><td id="pookySan_${formattedDate}_1400"></td><td id="lSan_${formattedDate}_1400"></td></tr>
-        <tr><td class="time-slot">14:30 - 15:00</td><td id="somSan_${formattedDate}_1430"></td><td id="gookSan_${formattedDate}_1430"></td><td id="pookySan_${formattedDate}_1430"></td><td id="lSan_${formattedDate}_1430"></td></tr>
-        <tr><td class="time-slot">15:00 - 15:30</td><td id="somSan_${formattedDate}_1500"></td><td id="gookSan_${formattedDate}_1500"></td><td id="pookySan_${formattedDate}_1500"></td><td id="lSan_${formattedDate}_1500"></td></tr>
-        <tr><td class="time-slot">15:30 - 16:00</td><td id="somSan_${formattedDate}_1530"></td><td id="gookSan_${formattedDate}_1530"></td><td id="pookySan_${formattedDate}_1530"></td><td id="lSan_${formattedDate}_1530"></td></tr>
-        <tr><td class="time-slot">16:00 - 16:30</td><td id="somSan_${formattedDate}_1600"></td><td id="gookSan_${formattedDate}_1600"></td><td id="pookySan_${formattedDate}_1600"></td><td id="lSan_${formattedDate}_1600"></td></tr>
-        <tr><td class="time-slot">16:30 - 17:00</td><td id="somSan_${formattedDate}_1630"></td><td id="gookSan_${formattedDate}_1630"></td><td id="pookySan_${formattedDate}_1630"></td><td id="lSan_${formattedDate}_1630"></td></tr>
-        <tr><td class="time-slot">17:00 - 17:30</td><td id="somSan_${formattedDate}_1700"></td><td id="gookSan_${formattedDate}_1700"></td><td id="pookySan_${formattedDate}_1700"></td><td id="lSan_${formattedDate}_1700"></td></tr>
-        <tr><td class="time-slot">17:30 - 18:00</td><td id="somSan_${formattedDate}_1730"></td><td id="gookSan_${formattedDate}_1730"></td><td id="pookySan_${formattedDate}_1730"></td><td id="lSan_${formattedDate}_1730"></td></tr>
-        <tr><td class="time-slot">18:00 - 18:30</td><td id="somSan_${formattedDate}_1800"></td><td id="gookSan_${formattedDate}_1800"></td><td id="pookySan_${formattedDate}_1800"></td><td id="lSan_${formattedDate}_1800"></td></tr>
-        <tr><td class="time-slot">18:30 - 19:00</td><td id="somSan_${formattedDate}_1830"></td><td id="gookSan_${formattedDate}_1830"></td><td id="pookySan_${formattedDate}_1830"></td><td id="lSan_${formattedDate}_1830"></td></tr>
-        <tr><td class="time-slot">19:00 - 19:30</td><td id="somSan_${formattedDate}_1900"></td><td id="gookSan_${formattedDate}_1900"></td><td id="pookySan_${formattedDate}_1900"></td><td id="lSan_${formattedDate}_1900"></td></tr>
-        <tr><td class="time-slot">19:30 - 20:00</td><td id="somSan_${formattedDate}_1930"></td><td id="gookSan_${formattedDate}_1930"></td><td id="pookySan_${formattedDate}_1930"></td><td id="lSan_${formattedDate}_1930"></td></tr>
-        </tbody>
-        </table>`;
+      dayCell.innerHTML = `<p>${i}</p>`;
+
+      loadEventDataForDay(formattedDate, dayCell); // Load event data for each day
 
       calendarDays.appendChild(dayCell);
-
-      // Automatically load events for this day
-      loadEventDataForDay(formattedDate);
     }
+  }
+
+  function loadEventDataForDay(date, dayCell) {
+    const requestUrl = `https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?page=calendar&date=${date}`;
+
+    fetch(requestUrl)
+      .then(response => response.json())
+      .then(data => {
+        if (data.length > 0) {
+          // Add a red dot to the day if there are events
+          dayCell.innerHTML += '<span class="event-dot"></span>';
+        }
+      })
+      .catch(error => console.error('Error fetching data:', error));
   }
 
   prevMonth.addEventListener('click', () => {
