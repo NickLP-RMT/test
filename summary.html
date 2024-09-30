@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Calendar with Embedded Tables</title>
+  <title>Booking Calendar Test</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,93 +14,13 @@
       margin: 0 auto;
       padding: 20px;
     }
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .calendar-header h2 {
-      margin: 0;
-      color: #333;
-    }
-    .calendar-header button {
-      padding: 8px 12px;
-      cursor: pointer;
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-    }
-    #todayButton {
-      background-color: #ffeb3b;
-      color: black;
-    }
-    #todayButton:hover {
-      background-color: #fdd835;
-    }
-    .time-slot {
-      font-size: 7px;
-      white-space: nowrap;
-      padding: 2px 0;
-    }
-    .bold-text {
-      font-weight: bold;
-    }
-    .calendar-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      grid-gap: 5px;
-    }
-    .calendar-day, .day-header {
+    .calendar-day {
       background-color: #fff;
       border: 1px solid #ddd;
       padding: 5px;
       text-align: center;
-      position: relative;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
       border-radius: 4px;
       height: 400px;
-    }
-    .calendar-day:hover {
-      background-color: #e3f2fd;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .today {
-      background-color: #ffeb3b;
-      color: #000;
-      font-weight: bold;
-    }
-    .day-header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #ddd;
-      font-weight: bold;
-      font-size: 14px;
-      text-align: center;
-      padding: 5px 0;
-      height: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 10px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 5px;
-      text-align: center;
-    }
-    th {
-      background-color: #2196F3;
-      color: white;
-      font-size: 8px;
-      padding: 5px;
     }
     .event-dot {
       height: 8px;
@@ -109,7 +29,6 @@
       border-radius: 50%;
       display: inline-block;
     }
-    /* Styles for loading modal */
     .modal {
       display: none;
       position: fixed;
@@ -133,24 +52,8 @@
 <body>
 
 <div class="calendar">
-  <div class="calendar-header">
-    <button id="prevMonth">Previous</button>
-    <h2 id="monthYear">September 2024</h2>
-    <button id="todayButton">Today</button>
-    <button id="nextMonth">Next</button>
-  </div>
-
-  <div class="calendar-days">
-    <div class="day-header">SUNDAY</div>
-    <div class="day-header">MONDAY</div>
-    <div class="day-header">TUESDAY</div>
-    <div class="day-header">WEDNESDAY</div>
-    <div class="day-header">THURSDAY</div>
-    <div class="day-header">FRIDAY</div>
-    <div class="day-header">SATURDAY</div>
-  </div>
-
-  <div class="calendar-days" id="calendarDays"></div>
+  <h2 id="dateHeading">03/09/2024</h2>
+  <div id="calendarDay" class="calendar-day"></div>
 </div>
 
 <!-- Modal for loading -->
@@ -161,73 +64,33 @@
 </div>
 
 <script>
-  const calendarDays = document.getElementById('calendarDays');
-  const monthYear = document.getElementById('monthYear');
-  const prevMonth = document.getElementById('prevMonth');
-  const nextMonth = document.getElementById('nextMonth');
-  const todayButton = document.getElementById('todayButton');
+  const calendarDay = document.getElementById('calendarDay');
   const loadingModal = document.getElementById('loadingModal');
-
-  let currentMonth = new Date().getMonth();
-  let currentYear = new Date().getFullYear();
-
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
+  const date = "2024-09-03"; // กำหนดวันที่ที่ต้องการแสดงข้อมูล
 
   function loadEventDataForDay(date) {
-    const requestUrl = `https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${date}`;
+    const requestUrl = `https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?page=calendar&date=${date}`;
 
-    return fetch(requestUrl)
+    // แสดง modal ขณะโหลดข้อมูล
+    showLoadingModal();
+
+    fetch(requestUrl)
       .then(response => response.json())
-      .then(data => data)
-      .catch(error => console.error('Error fetching data:', error));
+      .then(data => {
+        console.log(data); // ตรวจสอบข้อมูลที่ได้มา
+        renderDayData(data);
+        hideLoadingModal(); // ซ่อน modal เมื่อโหลดเสร็จ
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        hideLoadingModal(); // ซ่อน modal หากเกิดข้อผิดพลาด
+      });
   }
 
-  function clearTableData() {
-    document.querySelectorAll('.time-slot').forEach(slot => {
-      slot.innerHTML = '';
-    });
-  }
-
-function showLoadingModal() {
-    loadingModal.style.display = 'flex'; // แสดง modal
-}
-
-function hideLoadingModal() {
-    loadingModal.style.display = 'none'; // ซ่อน modal
-}
-
-  function renderCalendar(month, year) {
-    showLoadingModal(); // Show modal while loading
-    calendarDays.innerHTML = '';
-    monthYear.textContent = `${months[month]} ${year}`;
-
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      const emptyCell = document.createElement('div');
-      emptyCell.classList.add('calendar-day');
-      emptyCell.innerHTML = '';
-      calendarDays.appendChild(emptyCell);
-    }
-
-    let promises = [];
-
-    for (let i = 1; i <= daysInMonth; i++) {
-      const day = new Date(year, month, i);
-      const dayCell = document.createElement('div');
-      dayCell.classList.add('calendar-day');
-      
-      if (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
-        dayCell.classList.add('today');
-      }
-
-      const formattedDate = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + i).slice(-2)}`;
-
-      dayCell.innerHTML = `<p>${i}</p><table>
+  function renderDayData(events) {
+    // ล้างข้อมูลในช่องวันที่
+    calendarDay.innerHTML = `
+      <table>
         <thead>
           <tr>
             <th>TIME</th>
@@ -238,80 +101,32 @@ function hideLoadingModal() {
           </tr>
         </thead>
         <tbody>
-        <tr><td class="time-slot">08:00 - 08:30</td><td id="somSan_${formattedDate}_0800"></td><td id="gookSan_${formattedDate}_0800"></td><td id="pookySan_${formattedDate}_0800"></td><td id="lSan_${formattedDate}_0800"></td></tr>
-        <tr><td class="time-slot">08:30 - 09:00</td><td id="somSan_${formattedDate}_0830"></td><td id="gookSan_${formattedDate}_0830"></td><td id="pookySan_${formattedDate}_0830"></td><td id="lSan_${formattedDate}_0830"></td></tr>
-        <tr><td class="time-slot">09:00 - 09:30</td><td id="somSan_${formattedDate}_0900"></td><td id="gookSan_${formattedDate}_0900"></td><td id="pookySan_${formattedDate}_0900"></td><td id="lSan_${formattedDate}_0900"></td></tr>
-        <tr><td class="time-slot">09:30 - 10:00</td><td id="somSan_${formattedDate}_0930"></td><td id="gookSan_${formattedDate}_0930"></td><td id="pookySan_${formattedDate}_0930"></td><td id="lSan_${formattedDate}_0930"></td></tr>
-        <tr><td class="time-slot">10:00 - 10:30</td><td id="somSan_${formattedDate}_1000"></td><td id="gookSan_${formattedDate}_1000"></td><td id="pookySan_${formattedDate}_1000"></td><td id="lSan_${formattedDate}_1000"></td></tr>
-        <tr><td class="time-slot">10:30 - 11:00</td><td id="somSan_${formattedDate}_1030"></td><td id="gookSan_${formattedDate}_1030"></td><td id="pookySan_${formattedDate}_1030"></td><td id="lSan_${formattedDate}_1030"></td></tr>
-        <tr><td class="time-slot">11:00 - 11:30</td><td id="somSan_${formattedDate}_1100"></td><td id="gookSan_${formattedDate}_1100"></td><td id="pookySan_${formattedDate}_1100"></td><td id="lSan_${formattedDate}_1100"></td></tr>
-        <tr><td class="time-slot">11:30 - 12:00</td><td id="somSan_${formattedDate}_1130"></td><td id="gookSan_${formattedDate}_1130"></td><td id="pookySan_${formattedDate}_1130"></td><td id="lSan_${formattedDate}_1130"></td></tr>
-        <tr><td class="time-slot">12:00 - 12:30</td><td id="somSan_${formattedDate}_1200"></td><td id="gookSan_${formattedDate}_1200"></td><td id="pookySan_${formattedDate}_1200"></td><td id="lSan_${formattedDate}_1200"></td></tr>
-        <tr><td class="time-slot">12:30 - 13:00</td><td id="somSan_${formattedDate}_1230"></td><td id="gookSan_${formattedDate}_1230"></td><td id="pookySan_${formattedDate}_1230"></td><td id="lSan_${formattedDate}_1230"></td></tr>
-        <tr><td class="time-slot">13:00 - 13:30</td><td id="somSan_${formattedDate}_1300"></td><td id="gookSan_${formattedDate}_1300"></td><td id="pookySan_${formattedDate}_1300"></td><td id="lSan_${formattedDate}_1300"></td></tr>
-        <tr><td class="time-slot">13:30 - 14:00</td><td id="somSan_${formattedDate}_1330"></td><td id="gookSan_${formattedDate}_1330"></td><td id="pookySan_${formattedDate}_1330"></td><td id="lSan_${formattedDate}_1330"></td></tr>
-        <tr><td class="time-slot">14:00 - 14:30</td><td id="somSan_${formattedDate}_1400"></td><td id="gookSan_${formattedDate}_1400"></td><td id="pookySan_${formattedDate}_1400"></td><td id="lSan_${formattedDate}_1400"></td></tr>
-        <tr><td class="time-slot">14:30 - 15:00</td><td id="somSan_${formattedDate}_1430"></td><td id="gookSan_${formattedDate}_1430"></td><td id="pookySan_${formattedDate}_1430"></td><td id="lSan_${formattedDate}_1430"></td></tr>
-        <tr><td class="time-slot">15:00 - 15:30</td><td id="somSan_${formattedDate}_1500"></td><td id="gookSan_${formattedDate}_1500"></td><td id="pookySan_${formattedDate}_1500"></td><td id="lSan_${formattedDate}_1500"></td></tr>
-        <tr><td class="time-slot">15:30 - 16:00</td><td id="somSan_${formattedDate}_1530"></td><td id="gookSan_${formattedDate}_1530"></td><td id="pookySan_${formattedDate}_1530"></td><td id="lSan_${formattedDate}_1530"></td></tr>
-        <tr><td class="time-slot">16:00 - 16:30</td><td id="somSan_${formattedDate}_1600"></td><td id="gookSan_${formattedDate}_1600"></td><td id="pookySan_${formattedDate}_1600"></td><td id="lSan_${formattedDate}_1600"></td></tr>
-        <tr><td class="time-slot">16:30 - 17:00</td><td id="somSan_${formattedDate}_1630"></td><td id="gookSan_${formattedDate}_1630"></td><td id="pookySan_${formattedDate}_1630"></td><td id="lSan_${formattedDate}_1630"></td></tr>
-        <tr><td class="time-slot">17:00 - 17:30</td><td id="somSan_${formattedDate}_1700"></td><td id="gookSan_${formattedDate}_1700"></td><td id="pookySan_${formattedDate}_1700"></td><td id="lSan_${formattedDate}_1700"></td></tr>
-        <tr><td class="time-slot">17:30 - 18:00</td><td id="somSan_${formattedDate}_1730"></td><td id="gookSan_${formattedDate}_1730"></td><td id="pookySan_${formattedDate}_1730"></td><td id="lSan_${formattedDate}_1730"></td></tr>
-        <tr><td class="time-slot">18:00 - 18:30</td><td id="somSan_${formattedDate}_1800"></td><td id="gookSan_${formattedDate}_1800"></td><td id="pookySan_${formattedDate}_1800"></td><td id="lSan_${formattedDate}_1800"></td></tr>
-        <tr><td class="time-slot">18:30 - 19:00</td><td id="somSan_${formattedDate}_1830"></td><td id="gookSan_${formattedDate}_1830"></td><td id="pookySan_${formattedDate}_1830"></td><td id="lSan_${formattedDate}_1830"></td></tr>
-        <tr><td class="time-slot">19:00 - 19:30</td><td id="somSan_${formattedDate}_1900"></td><td id="gookSan_${formattedDate}_1900"></td><td id="pookySan_${formattedDate}_1900"></td><td id="lSan_${formattedDate}_1900"></td></tr>
-        <tr><td class="time-slot">19:30 - 20:00</td><td id="somSan_${formattedDate}_1930"></td><td id="gookSan_${formattedDate}_1930"></td><td id="pookySan_${formattedDate}_1930"></td><td id="lSan_${formattedDate}_1930"></td></tr>
+          <tr><td class="time-slot">08:00 - 08:30</td><td id="somSan_0800"></td><td id="gookSan_0800"></td><td id="pookySan_0800"></td><td id="lSan_0800"></td></tr>
+          <tr><td class="time-slot">08:30 - 09:00</td><td id="somSan_0830"></td><td id="gookSan_0830"></td><td id="pookySan_0830"></td><td id="lSan_0830"></td></tr>
+          <tr><td class="time-slot">09:00 - 09:30</td><td id="somSan_0900"></td><td id="gookSan_0900"></td><td id="pookySan_0900"></td><td id="lSan_0900"></td></tr>
+          <tr><td class="time-slot">09:30 - 10:00</td><td id="somSan_0930"></td><td id="gookSan_0930"></td><td id="pookySan_0930"></td><td id="lSan_0930"></td></tr>
+          <tr><td class="time-slot">10:00 - 10:30</td><td id="somSan_1000"></td><td id="gookSan_1000"></td><td id="pookySan_1000"></td><td id="lSan_1000"></td></tr>
         </tbody>
       </table>`;
 
-    promises.push(loadEventDataForDay(formattedDate).then(data => {
-    data.forEach(event => {
-        const timeSlot = event.timeFrom.replace(':', '').slice(0, 4); 
-        const translatorId = event.translator.toLowerCase().replace(/\s/g, ''); 
-        const elementId = `${translatorId}_${timeSlot}_${formattedDate}`; // ดึง formattedDate ที่ถูกต้องแทน i
-
-        // ตรวจสอบว่า elementId ตรงกับ element ในตารางหรือไม่
-        const element = document.getElementById(elementId);
-        if (element) {
-            element.innerHTML = '<span class="event-dot"></span>'; // แสดงจุดสีแดง
-        }
-    });
-    }));
-
-      calendarDays.appendChild(dayCell);
-    }
-
-    Promise.all(promises).then(() => {
-      hideLoadingModal(); // Hide modal when all data is loaded
+    // แสดงจุดสีแดงถ้ามีงาน
+    events.forEach(event => {
+      const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
+      const elementId = `${event.translator.toLowerCase().replace(/\s/g, '')}_${timeSlot}`;
+      document.getElementById(elementId).innerHTML = '<span class="event-dot"></span>';
     });
   }
 
-  prevMonth.addEventListener('click', () => {
-    currentMonth--;
-    if (currentMonth < 0) {
-      currentMonth = 11;
-      currentYear--;
-    }
-    renderCalendar(currentMonth, currentYear);
-  });
+  function showLoadingModal() {
+    loadingModal.style.display = 'flex';
+  }
 
-  nextMonth.addEventListener('click', () => {
-    currentMonth++;
-    if (currentMonth > 11) {
-      currentMonth = 0;
-      currentYear++;
-    }
-    renderCalendar(currentMonth, currentYear);
-  });
+  function hideLoadingModal() {
+    loadingModal.style.display = 'none';
+  }
 
-  todayButton.addEventListener('click', () => {
-    currentMonth = new Date().getMonth();
-    currentYear = new Date().getFullYear();
-    renderCalendar(currentMonth, currentYear);
-  });
-
-  renderCalendar(currentMonth, currentYear);
+  // โหลดข้อมูลสำหรับวันที่ที่เลือกไว้
+  loadEventDataForDay(date);
 </script>
 
 </body>
