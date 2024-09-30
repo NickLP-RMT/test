@@ -43,7 +43,7 @@
     .calendar-days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      grid-gap: 5px;
+      grid-gap: 10px;
     }
     .calendar-day {
       background-color: #fff;
@@ -94,6 +94,15 @@
       border-radius: 5px;
       text-align: center;
     }
+
+    /* จุดสีแดง */
+    .red-dot {
+      height: 10px;
+      width: 10px;
+      background-color: red;
+      border-radius: 50%;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
@@ -132,7 +141,6 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  // กำหนดช่วงเวลา
   const timeSlots = [
     '07:00 - 07:30', '07:30 - 08:00', '08:00 - 08:30', '08:30 - 09:00',
     '09:00 - 09:30', '09:30 - 10:00', '10:00 - 10:30', '10:30 - 11:00',
@@ -143,7 +151,6 @@
     '19:00 - 19:30', '19:30 - 20:00'
   ];
 
-  // ฟังก์ชันเพิ่ม 1 นาทีให้กับ Time To
   function addOneMinute(time) {
     const [hours, minutes] = time.split(':').map(Number);
     const newMinutes = minutes + 1;
@@ -155,13 +162,11 @@
     }
   }
 
-  // ฟังก์ชันแปลงเวลาเป็นนาที
   function timeToMinutes(time) {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
   }
 
-  // ฟังก์ชันแปลงเวลาให้อยู่ในช่วงของ timeSlots
   function matchTimeToSlot(timeFrom, timeTo) {
     const startMinutes = timeToMinutes(timeFrom);
     const endMinutes = timeToMinutes(timeTo);
@@ -175,16 +180,15 @@
     });
   }
 
-  // โหลดข้อมูลจาก API
   function loadEventDataForDay(date) {
     const [day, month, year] = date.split('/');
-    const formattedDate = `${month}/${day}/${year}`; // เปลี่ยนเป็น MM/DD/YYYY สำหรับ API
+    const formattedDate = `${month}/${day}/${year}`;
     const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${formattedDate}`;
 
     return fetch(requestUrl)
       .then(response => response.json())
       .then(data => {
-        console.log("Fetched data:", data); // ตรวจสอบข้อมูลที่ดึงมา
+        console.log("Fetched data:", data);
         return data;
       })
       .catch(error => console.error('Error fetching data:', error));
@@ -198,7 +202,6 @@
     loadingModal.style.display = 'none';
   }
 
-  // ฟังก์ชันแสดงปฏิทิน
   function renderCalendar(month, year) {
     showLoadingModal();
     calendarDays.innerHTML = '';
@@ -225,14 +228,12 @@
         dayCell.classList.add('today');
       }
 
-      const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`; // แสดงผล DD/MM/YYYY
+      const formattedDate = `${('0' + i).slice(-2)}/${('0' + (month + 1)).slice(-2)}/${year}`;
       dayCell.innerHTML = `<p>${i}</p><div class="event-list" id="events_${formattedDate}">Loading...</div>`;
 
-      // ดึงข้อมูลจาก API
       promises.push(loadEventDataForDay(formattedDate).then(data => {
         const eventList = document.getElementById(`events_${formattedDate}`);
         
-        // สร้างตารางสำหรับแสดงผลข้อมูล
         eventList.innerHTML = `
           <table>
             <thead>
@@ -244,19 +245,17 @@
 
         const tbody = eventList.querySelector('tbody');
 
-        // วนลูปสำหรับทุกช่วงเวลา
         timeSlots.forEach(slot => {
           const row = document.createElement('tr');
-          row.innerHTML = `<td>${slot}</td><td></td><td></td><td></td><td></td>`; // กำหนดให้ค่าว่างเป็นค่าเริ่มต้น
+          row.innerHTML = `<td>${slot}</td><td></td><td></td><td></td><td></td>`;
           tbody.appendChild(row);
         });
 
-        // เติมข้อมูลการจอง
         data.forEach(event => {
-          const timeFrom = event.timeFrom.replace("'", "").trim(); // ลบเครื่องหมาย ' จาก timeFrom
-          const timeTo = addOneMinute(event.timeTo.replace("'", "").trim()); // ลบ ' และบวก 1 นาทีให้ timeTo
+          const timeFrom = event.timeFrom.replace("'", "").trim();
+          const timeTo = addOneMinute(event.timeTo.replace("'", "").trim());
 
-          const matchingSlots = matchTimeToSlot(timeFrom, timeTo); // หา slot ที่ตรงกับช่วงเวลา
+          const matchingSlots = matchTimeToSlot(timeFrom, timeTo);
 
           matchingSlots.forEach(slot => {
             const row = Array.from(tbody.querySelectorAll('tr')).find(row => row.cells[0].textContent === slot);
@@ -266,7 +265,7 @@
                             event.translator === 'POOKY SAN' ? 3 :
                             event.translator === 'L SAN' ? 4 : -1;
               if (index > -1) {
-                row.cells[index].textContent = 'x'; // แสดง 'x' สำหรับเวลาที่มีการจอง
+                row.cells[index].innerHTML = '<span class="red-dot"></span>';
               }
             }
           });
