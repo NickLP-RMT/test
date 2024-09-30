@@ -10,7 +10,7 @@
       background-color: #f7f7f7;
     }
     .calendar {
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -40,81 +40,31 @@
     #todayButton:hover {
       background-color: #fdd835;
     }
-    .time-slot {
-      font-size: 7px;
-      white-space: nowrap;
-      padding: 2px 0;
-    }
-    .bold-text {
-      font-weight: bold;
-    }
     .calendar-days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      grid-gap: 5px;
+      grid-gap: 10px;
     }
-    .calendar-day, .day-header {
+    .calendar-day {
       background-color: #fff;
       border: 1px solid #ddd;
-      padding: 5px;
-      text-align: center;
-      position: relative;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      padding: 10px;
       border-radius: 4px;
-      height: 400px;
-    }
-    .calendar-day:hover {
-      background-color: #e3f2fd;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      height: 100px;
+      position: relative;
     }
     .today {
       background-color: #ffeb3b;
-      color: #000;
+      color: black;
       font-weight: bold;
     }
-    .day-header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #ddd;
-      font-weight: bold;
-      font-size: 14px;
-      text-align: center;
-      padding: 5px 0;
-      height: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 10px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
+    .event-list {
+      margin-top: 5px;
       padding: 5px;
-      text-align: center;
-    }
-    th {
-      background-color: #2196F3;
-      color: white;
-      font-size: 8px;
-      padding: 5px;
-    }
-    .event-dot {
-      height: 8px;
-      width: 8px;
-      background-color: red;
-      border-radius: 50%;
-      display: inline-block;
-      position: relative;
-      top: 50%; /* จัดให้อยู่ตรงกลาง */
-      transform: translateY(-50%);
-    }
-    /* เพิ่ม padding ใน td เพื่อให้จุดไม่ถูกครอบคลุม */
-    td {
-      padding: 10px;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      font-size: 12px;
     }
     /* Styles for loading modal */
     .modal {
@@ -147,16 +97,6 @@
     <button id="nextMonth">Next</button>
   </div>
 
-  <div class="calendar-days">
-    <div class="day-header">SUNDAY</div>
-    <div class="day-header">MONDAY</div>
-    <div class="day-header">TUESDAY</div>
-    <div class="day-header">WEDNESDAY</div>
-    <div class="day-header">THURSDAY</div>
-    <div class="day-header">FRIDAY</div>
-    <div class="day-header">SATURDAY</div>
-  </div>
-
   <div class="calendar-days" id="calendarDays"></div>
 </div>
 
@@ -185,18 +125,12 @@
 
   function loadEventDataForDay(date) {
     const formattedDate = date.split('-').reverse().join('/');
-    const requestUrl = `https://script.google.com/macros/s/AKfycbwzFXSq1cWuTMrEPzzKSsztUa2Ql6rRPc7zGunqTINMObAOxyOFUjn9YlGLg1HmUOao/exec?page=calendar&date=${formattedDate}`;
+    const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${formattedDate}`;
 
     return fetch(requestUrl)
       .then(response => response.json())
       .then(data => data)
       .catch(error => console.error('Error fetching data:', error));
-  }
-
-  function clearTableData() {
-    document.querySelectorAll('.time-slot').forEach(slot => {
-      slot.innerHTML = '';
-    });
   }
 
   function showLoadingModal() {
@@ -234,55 +168,18 @@
       }
 
       const formattedDate = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + i).slice(-2)}`;
-
-      dayCell.innerHTML = `<p>${i}</p><table>
-        <thead>
-          <tr>
-            <th>TIME</th>
-            <th>SOM SAN</th>
-            <th>GOOK SAN</th>
-            <th>POOKY SAN</th>
-            <th>L SAN</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td class="time-slot">08:00 - 08:30</td><td id="somSan_${formattedDate}_0800"></td><td id="gookSan_${formattedDate}_0800"></td><td id="pookySan_${formattedDate}_0800"></td><td id="lSan_${formattedDate}_0800"></td></tr>
-          <tr><td class="time-slot">08:30 - 09:00</td><td id="somSan_${formattedDate}_0830"></td><td id="gookSan_${formattedDate}_0830"></td><td id="pookySan_${formattedDate}_0830"></td><td id="lSan_${formattedDate}_0830"></td></tr>
-          <tr><td class="time-slot">09:00 - 09:30</td><td id="somSan_${formattedDate}_0900"></td><td id="gookSan_${formattedDate}_0900"></td><td id="pookySan_${formattedDate}_0900"></td><td id="lSan_${formattedDate}_0900"></td></tr>
-          <tr><td class="time-slot">09:30 - 10:00</td><td id="somSan_${formattedDate}_0930"></td><td id="gookSan_${formattedDate}_0930"></td><td id="pookySan_${formattedDate}_0930"></td><td id="lSan_${formattedDate}_0930"></td></tr>
-          <tr><td class="time-slot">10:00 - 10:30</td><td id="somSan_${formattedDate}_1000"></td><td id="gookSan_${formattedDate}_1000"></td><td id="pookySan_${formattedDate}_1000"></td><td id="lSan_${formattedDate}_1000"></td></tr>
-          <tr><td class="time-slot">10:30 - 11:00</td><td id="somSan_${formattedDate}_1030"></td><td id="gookSan_${formattedDate}_1030"></td><td id="pookySan_${formattedDate}_1030"></td><td id="lSan_${formattedDate}_1030"></td></tr>
-          <tr><td class="time-slot">11:00 - 11:30</td><td id="somSan_${formattedDate}_1100"></td><td id="gookSan_${formattedDate}_1100"></td><td id="pookySan_${formattedDate}_1100"></td><td id="lSan_${formattedDate}_1100"></td></tr>
-          <tr><td class="time-slot">11:30 - 12:00</td><td id="somSan_${formattedDate}_1130"></td><td id="gookSan_${formattedDate}_1130"></td><td id="pookySan_${formattedDate}_1130"></td><td id="lSan_${formattedDate}_1130"></td></tr>
-          <tr><td class="time-slot">12:00 - 12:30</td><td id="somSan_${formattedDate}_1200"></td><td id="gookSan_${formattedDate}_1200"></td><td id="pookySan_${formattedDate}_1200"></td><td id="lSan_${formattedDate}_1200"></td></tr>
-          <tr><td class="time-slot">12:30 - 13:00</td><td id="somSan_${formattedDate}_1230"></td><td id="gookSan_${formattedDate}_1230"></td><td id="pookySan_${formattedDate}_1230"></td><td id="lSan_${formattedDate}_1230"></td></tr>
-          <tr><td class="time-slot">13:00 - 13:30</td><td id="somSan_${formattedDate}_1300"></td><td id="gookSan_${formattedDate}_1300"></td><td id="pookySan_${formattedDate}_1300"></td><td id="lSan_${formattedDate}_1300"></td></tr>
-          <tr><td class="time-slot">13:30 - 14:00</td><td id="somSan_${formattedDate}_1330"></td><td id="gookSan_${formattedDate}_1330"></td><td id="pookySan_${formattedDate}_1330"></td><td id="lSan_${formattedDate}_1330"></td></tr>
-          <tr><td class="time-slot">14:00 - 14:30</td><td id="somSan_${formattedDate}_1400"></td><td id="gookSan_${formattedDate}_1400"></td><td id="pookySan_${formattedDate}_1400"></td><td id="lSan_${formattedDate}_1400"></td></tr>
-          <tr><td class="time-slot">14:30 - 15:00</td><td id="somSan_${formattedDate}_1430"></td><td id="gookSan_${formattedDate}_1430"></td><td id="pookySan_${formattedDate}_1430"></td><td id="lSan_${formattedDate}_1430"></td></tr>
-          <tr><td class="time-slot">15:00 - 15:30</td><td id="somSan_${formattedDate}_1500"></td><td id="gookSan_${formattedDate}_1500"></td><td id="pookySan_${formattedDate}_1500"></td><td id="lSan_${formattedDate}_1500"></td></tr>
-          <tr><td class="time-slot">15:30 - 16:00</td><td id="somSan_${formattedDate}_1530"></td><td id="gookSan_${formattedDate}_1530"></td><td id="pookySan_${formattedDate}_1530"></td><td id="lSan_${formattedDate}_1530"></td></tr>
-          <tr><td class="time-slot">16:00 - 16:30</td><td id="somSan_${formattedDate}_1600"></td><td id="gookSan_${formattedDate}_1600"></td><td id="pookySan_${formattedDate}_1600"></td><td id="lSan_${formattedDate}_1600"></td></tr>
-          <tr><td class="time-slot">16:30 - 17:00</td><td id="somSan_${formattedDate}_1630"></td><td id="gookSan_${formattedDate}_1630"></td><td id="pookySan_${formattedDate}_1630"></td><td id="lSan_${formattedDate}_1630"></td></tr>
-          <tr><td class="time-slot">17:00 - 17:30</td><td id="somSan_${formattedDate}_1700"></td><td id="gookSan_${formattedDate}_1700"></td><td id="pookySan_${formattedDate}_1700"></td><td id="lSan_${formattedDate}_1700"></td></tr>
-          <tr><td class="time-slot">17:30 - 18:00</td><td id="somSan_${formattedDate}_1730"></td><td id="gookSan_${formattedDate}_1730"></td><td id="pookySan_${formattedDate}_1730"></td><td id="lSan_${formattedDate}_1730"></td></tr>
-          <tr><td class="time-slot">18:00 - 18:30</td><td id="somSan_${formattedDate}_1800"></td><td id="gookSan_${formattedDate}_1800"></td><td id="pookySan_${formattedDate}_1800"></td><td id="lSan_${formattedDate}_1800"></td></tr>
-          <tr><td class="time-slot">18:30 - 19:00</td><td id="somSan_${formattedDate}_1830"></td><td id="gookSan_${formattedDate}_1830"></td><td id="pookySan_${formattedDate}_1830"></td><td id="lSan_${formattedDate}_1830"></td></tr>
-          <tr><td class="time-slot">19:00 - 19:30</td><td id="somSan_${formattedDate}_1900"></td><td id="gookSan_${formattedDate}_1900"></td><td id="pookySan_${formattedDate}_1900"></td><td id="lSan_${formattedDate}_1900"></td></tr>
-          <tr><td class="time-slot">19:30 - 20:00</td><td id="somSan_${formattedDate}_1930"></td><td id="gookSan_${formattedDate}_1930"></td><td id="pookySan_${formattedDate}_1930"></td><td id="lSan_${formattedDate}_1930"></td></tr>
-        </tbody>
-      </table>`;
+      dayCell.innerHTML = `<p>${i}</p><div class="event-list" id="events_${formattedDate}">No events</div>`;
 
       promises.push(loadEventDataForDay(formattedDate).then(data => {
-        data.forEach(event => {
-          const timeSlot = event.timeFrom.replace(':', '').slice(0, 4);
-          const translatorName = event.translator.toLowerCase().replace(/\s/g, ''); // ใช้ชื่อ translator ที่ถูกต้อง
-          const elementId = `${translatorName}_${formattedDate}_${timeSlot}`;
-          const element = document.getElementById(elementId);
-          if (element) {
-            element.innerHTML = '<span class="event-dot"></span>';
-          }
-        });
+        const eventList = document.getElementById(`events_${formattedDate}`);
+        if (data.length > 0) {
+          eventList.innerHTML = '';
+          data.forEach(event => {
+            const eventDiv = document.createElement('div');
+            eventDiv.textContent = `${event.translator}: ${event.timeFrom} - ${event.timeTo}`;
+            eventList.appendChild(eventDiv);
+          });
+        }
       }));
 
       calendarDays.appendChild(dayCell);
