@@ -19,13 +19,16 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
+      flex-wrap: nowrap; /* ป้องกันการย้ายไปบรรทัดใหม่ */
     }
     .navigation-buttons {
       display: flex;
+      gap: 10px; /* เพิ่มช่องว่างระหว่างปุ่ม */
     }
     .calendar-header h2 {
       margin: 0;
       color: #333;
+      text-align: right;
     }
     .calendar-header button {
       padding: 8px 12px;
