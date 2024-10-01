@@ -131,6 +131,8 @@
     <button id="prevMonth">Previous</button>
     <button id="nextMonth">Next</button>
     <button id="todayButton">Today</button>
+    <button id="refreshButton">Refresh</button> <!-- ปุ่ม Refresh -->
+  </div>
     <h2 id="monthYear">September 2024</h2>
   </div>
 
@@ -181,7 +183,11 @@
     '17:00 - 17:30', '17:30 - 18:00', '18:00 - 18:30', '18:30 - 19:00',
     '19:00 - 19:30', '19:30 - 20:00'
   ];
-
+  
+// ฟังก์ชันเพื่อ refresh หน้า
+document.getElementById('refreshButton').addEventListener('click', () => {
+  location.reload(); // รีเฟรชหน้าเว็บ
+});
   // Function เพิ่ม 1 นาที
   function addOneMinute(time) {
     const [hours, minutes] = time.split(':').map(Number);
