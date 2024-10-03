@@ -230,7 +230,31 @@
         <div class="form-container">
             <h2>Booking Form</h2>
             <form id="myForm">
-                <!-- Form fields as before -->
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+
+                <label for="translatorName">Translator Name:</label>
+                <select id="translatorName" name="translatorName" required>
+                    <option value="" disabled selected>Select Translator</option>
+                    <option value="SOM SAN">SOM SAN</option>
+                    <option value="GOOK SAN">GOOK SAN</option>
+                    <option value="POOKY SAN">POOKY SAN</option>
+                    <option value="L SAN">L SAN</option>
+                </select>
+
+                <label for="bookingBy">Booking By:</label>
+                <input type="text" id="bookingBy" name="bookingBy" required>
+
+                <label for="timeFrom">Time From:</label>
+                <input type="time" id="timeFrom" name="timeFrom" required>
+
+                <label for="timeTo">Time To:</label>
+                <input type="time" id="timeTo" name="timeTo" required>
+
+                <label for="forWork">For Work:</label>
+                <textarea id="forWork" name="forWork" required></textarea>
+
+                <input type="submit" value="Submit">
             </form>
         </div>
     </div>
@@ -276,16 +300,8 @@
                         .then(response => response.text())
                         .then(data => {
                             calendarContainer.innerHTML = data;
-
-                            // รันโค้ด calendar.js หลังจากโหลด HTML เสร็จแล้ว
                             const script = document.createElement('script');
-                            script.src = "calendar.js"; // path ไปยังไฟล์ calendar.js ที่คุณสร้าง
-                            script.onload = function () {
-                                // ตรวจสอบให้แน่ใจว่า DOM ถูกสร้างแล้วก่อนรันฟังก์ชั่นต่างๆ
-                                if (typeof renderCalendar === 'function') {
-                                    renderCalendar(currentMonth, currentYear); // รันฟังก์ชั่นแสดงปฏิทิน
-                                }
-                            };
+                            script.src = 'calendar.js'; // Load calendar.js dynamically
                             document.body.appendChild(script);
                         })
                         .catch(error => console.error('Error loading calendar.html:', error));
