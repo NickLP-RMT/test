@@ -1,226 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Calendar</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-    }
-    .calendar {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .calendar-header h2 {
-      margin: 0;
-      color: #333;
-    }
-    .calendar-header button {
-      padding: 8px 12px;
-      cursor: pointer;
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-    }
-    #todayButton {
-      background-color: #ffeb3b;
-      color: black;
-    }
-    #todayButton:hover {
-      background-color: #fdd835;
-    }
-    .time-slot {
-      font-size: 11px;
-    }
-    .bold-text {
-      font-weight: bold;
-    }
-    .calendar-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      grid-gap: 5px;
-    }
-    .calendar-day, .day-header {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-      position: relative;
-      cursor: pointer;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      border-radius: 4px;
-    }
-    .calendar-day:hover {
-      background-color: #e3f2fd;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .today {
-      background-color: #ffeb3b;
-      color: #000;
-      font-weight: bold;
-    }
-    .day-header {
-      background-color: #ddd;
-      font-weight: bold;
-      cursor: default;
-    }
-    .has-event::after {
-      content: '\1F4D6'; 
-      position: absolute;
-      bottom: 5px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 16px;
-      color: #4CAF50;
-    }
-    .modal {
-      display: none; 
-      position: fixed; 
-      z-index: 1; 
-      left: 0;
-      top: 0;
-      width: 100%; 
-      height: 100%; 
-      overflow: auto; 
-      background-color: rgba(0, 0, 0, 0.6); 
-      padding-top: 0px;
-    }
-    .modal-content {
-      background-color: #fefefe;
-      margin: 1% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%; 
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    }
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .refresh {
-      color: #aaa;
-      font-size: 28px;
-      cursor: pointer;
-      margin-left: 80px; 
-      vertical-align: middle;
-      float: right;
-    }
-    .refresh:hover,
-    .refresh:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 12px;
-      text-align: center;
-    }
-    th {
-      background-color: #2196F3;
-      color: white;
-    }
-    td {
-      background-color: #fff;
-      color: #333;
-    }
-    tr:nth-child(even) td {
-      background-color: #f9f9f9;
-    }
-    .spinner {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      top: 50%;
-      left: 50%;
-      margin-top: -60px;
-      margin-left: -60px;
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 120px;
-      height: 120px;
-      animation: spin 2s linear infinite;
-    }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+
+        .calendar {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .calendar-header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .calendar-header button {
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        #todayButton {
+            background-color: #ffeb3b;
+            color: black;
+        }
+
+        #todayButton:hover {
+            background-color: #fdd835;
+        }
+
+        .time-slot {
+            font-size: 11px;
+        }
+
+        .bold-text {
+            font-weight: bold;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-gap: 5px;
+        }
+
+        .calendar-day,
+        .day-header {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .calendar-day:hover {
+            background-color: #e3f2fd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .today {
+            background-color: #ffeb3b;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .day-header {
+            background-color: #ddd;
+            font-weight: bold;
+            cursor: default;
+        }
+
+        .has-event::after {
+            content: '\1F4D6';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            color: #4CAF50;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding-top: 0px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 1% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        td {
+            background-color: #fff;
+            color: #333;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+        /* Loading Spinner Styles */
+        .spinner {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 50%;
+            left: 50%;
+            margin-top: -60px;
+            margin-left: -60px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="calendar">
-  <div class="calendar-header">
-    <button id="prevMonth">Previous</button>
-    <h2 id="monthYear"></h2>
-    <div>
-      <button id="todayButton">Today</button> 
-      <button id="nextMonth">Next</button>
+    <div class="calendar">
+        <div class="calendar-header">
+            <button id="prevMonth">Previous</button>
+            <h2 id="monthYear"></h2>
+            <div>
+                <button id="todayButton">Today</button>
+                <button id="nextMonth">Next</button>
+            </div>
+        </div>
+        <div class="calendar-days">
+            <div class="day-header">SUNDAY</div>
+            <div class="day-header">MONDAY</div>
+            <div class="day-header">TUESDAY</div>
+            <div class="day-header">WEDNESDAY</div>
+            <div class="day-header">THURSDAY</div>
+            <div class="day-header">FRIDAY</div>
+            <div class="day-header">SATURDAY</div>
+        </div>
+        <div class="calendar-days" id="calendarDays">
+            <!-- Calendar days will be generated here by JavaScript -->
+        </div>
     </div>
-  </div>
-  <div class="calendar-days">
-    <div class="day-header">SUNDAY</div>
-    <div class="day-header">MONDAY</div>
-    <div class="day-header">TUESDAY</div>
-    <div class="day-header">WEDNESDAY</div>
-    <div class="day-header">THURSDAY</div>
-    <div class="day-header">FRIDAY</div>
-    <div class="day-header">SATURDAY</div>
-  </div>
-  <div class="calendar-days" id="calendarDays">
-    <!-- Calendar days will be generated here by JavaScript -->
-  </div>
-</div>
 
-<!-- Loading spinner element -->
-<div class="spinner" id="spinner"></div>
+    <!-- Loading spinner element -->
+    <div class="spinner" id="spinner"></div>
 
-<!-- The Modal -->
-<div id="myModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <span class="refresh">&#x21bb;</span>
-    <h3 id="modalText">Details</h3>
-    <table id="eventTable">
-      <thead>
-        <tr>
-          <th>TIME</th>
-          <th>SOM SAN</th>
-          <th>GOOK SAN</th>
-          <th>POOKY SAN</th>
-          <th>L SAN</th>
-        </tr>
-      </thead>
-      <tbody>
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modalText">Details</h3>
+            <table id="eventTable">
+                <thead>
+                    <tr>
+                        <th>TIME</th>
+                        <th>SOM SAN</th>
+                        <th>GOOK SAN</th>
+                        <th>POOKY SAN</th>
+                        <th>L SAN</th>
+                    </tr>
+                </thead>
+                <tbody>
         <tr>
           <td class="time-slot bold-text">07:00 - 07:30</td>
           <td id="somSan_0700_0730" class="time-slot"></td>
@@ -403,10 +425,11 @@
       <td id="pookySan_1930_2000" class="time-slot"></td>
       <td id="lSan_1930_2000" class="time-slot"></td>
     </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </body>
+
 </html>
