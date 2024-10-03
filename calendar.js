@@ -1,33 +1,23 @@
 const calendarDays = document.getElementById('calendarDays');
 const monthYear = document.getElementById('monthYear');
-const prevMonth = document.getElementById('prevMonth');
-const nextMonth = document.getElementById('nextMonth');
-const todayButton = document.getElementById('todayButton'); 
-const modal = document.getElementById("myModal");
-const modalText = document.getElementById("modalText");
-const span = document.getElementsByClassName("close")[0];
-const spinner = document.getElementById('spinner');
-const refreshButton = document.querySelector('.refresh');
-
-const timeSlots = [
-    '0700_0730', '0730_0800', '0800_0830', '0830_0900', '0900_0930', '0930_1000', '1000_1030', '1030_1100', 
-    '1100_1130', '1130_1200', '1200_1230', '1230_1300', '1300_1330', '1330_1400', 
-    '1400_1430', '1430_1500', '1500_1530', '1530_1600', '1600_1630', '1630_1700', 
-    '1700_1730', '1730_1800', '1800_1830', '1830_1900', '1900_1930', '1930_2000'
-];
-
-const date = new Date();
-let currentMonth = date.getMonth();
-let currentYear = date.getFullYear();
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
 let currentDay = null;
 
+const timeSlots = [
+  '0700_0730', '0730_0800', '0800_0830', '0830_0900', '0900_0930', '0930_1000', '1000_1030', '1030_1100',
+  '1100_1130', '1130_1200', '1200_1230', '1230_1300', '1300_1330', '1330_1400', '1400_1430', '1430_1500',
+  '1500_1530', '1530_1600', '1600_1630', '1630_1700', '1700_1730', '1730_1800', '1800_1830', '1830_1900', 
+  '1900_1930', '1930_2000'
+];
+
 const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
 function renderCalendar(month, year) {
-    calendarDays.innerHTML = '';
+    calendarDays.innerHTML = ''; // ล้างเนื้อหาเก่าออก
     monthYear.textContent = `${months[month]} ${year}`;
 
     const firstDay = new Date(year, month, 1).getDay();
@@ -38,16 +28,19 @@ function renderCalendar(month, year) {
     const todayMonth = today.getMonth();
     const todayYear = today.getFullYear();
 
+    // สร้างช่องว่างก่อนวันแรกของเดือน
     for (let i = 0; i < firstDay; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.classList.add('calendar-day');
         calendarDays.appendChild(emptyCell);
     }
 
+    // สร้างวันในเดือน
     for (let day = 1; day <= daysInMonth; day++) {
         const dayCell = document.createElement('div');
         dayCell.classList.add('calendar-day');
 
+        // ไฮไลต์วันปัจจุบัน
         if (day === todayDate && month === todayMonth && year === todayYear) {
             dayCell.classList.add('today');
         }
@@ -56,7 +49,7 @@ function renderCalendar(month, year) {
 
         dayCell.addEventListener('click', () => {
             currentDay = day; // บันทึกวันที่ปัจจุบันที่เลือก
-            loadEventsForDay(year, month + 1, day);
+            loadEventsForDay(year, month + 1, day); // โหลดกิจกรรมของวัน
         });
 
         // ตรวจสอบว่ามีการจองหรือไม่
@@ -75,6 +68,9 @@ function renderCalendar(month, year) {
 
         calendarDays.appendChild(dayCell);
     }
+
+    // ผูก event listener ให้ปุ่ม previous และ next
+    addEventListeners();
 }
 
 function loadEventsForDay(year, month, day) {
@@ -116,7 +112,7 @@ function loadEventsForDay(year, month, day) {
                             }
                         }
 
-                        // Increment timeFromSlot by 30 minutes
+                        // เพิ่มเวลาอีก 30 นาที
                         timeFromSlot = incrementTimeSlotBy30Minutes(timeFromSlot);
                     }
                 });
@@ -159,30 +155,29 @@ function incrementTimeSlotBy30Minutes(timeSlot) {
     return ('0' + hour).slice(-2) + ('0' + minute).slice(-2);
 }
 
-refreshButton.addEventListener('click', () => {
-    if (currentDay) {
-        loadEventsForDay(currentYear, currentMonth + 1, currentDay);
+function changeMonth(offset) {
+    currentMonth += offset;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear -= 1;
+    } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear += 1;
     }
-});
-
-todayButton.addEventListener('click', () => {
-    const today = new Date();
-    currentMonth = today.getMonth();
-    currentYear = today.getFullYear();
-    renderCalendar(currentMonth, currentYear);
-});
-
-prevMonth.addEventListener('click', () => changeMonth(-1));
-nextMonth.addEventListener('click', () => changeMonth(1));
-
-span.onclick = function() {
-    modal.style.display = "none";
+    renderCalendar(currentMonth, currentYear); // render ปฏิทินใหม่เมื่อเปลี่ยนเดือน
 }
 
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
+// ฟังก์ชันที่ใช้สำหรับผูก event listener
+function addEventListeners() {
+    document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
+    document.getElementById('todayButton').addEventListener('click', () => {
+        const today = new Date();
+        currentMonth = today.getMonth();
+        currentYear = today.getFullYear();
+        renderCalendar(currentMonth, currentYear); // กลับไปยังเดือนปัจจุบัน
+    });
 }
 
+// เริ่มต้นการ render ปฏิทินเมื่อโหลดหน้า
 renderCalendar(currentMonth, currentYear);
