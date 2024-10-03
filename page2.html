@@ -120,10 +120,91 @@
             color: #333;
         }
 
-        /* Additional styling for Calendar and Translator sections */
-        #calendar-content h2, 
-        #translator-content h2 {
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+            border-radius: 10px;
             text-align: center;
+        }
+
+        .close-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Spinner styles */
+        .spinner-modal {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .alert-icon {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .alert-error {
+            color: red;
+        }
+
+        .alert-success {
+            color: green;
         }
 
         /* Add a subtle background gradient */
@@ -147,7 +228,7 @@
     <div id="booking-content" class="tab-content active">
         <div class="form-container">
             <h2>Booking Form</h2>
-            <form id="bookingForm">
+            <form id="myForm">
                 <label for="date">Date:</label>
                 <input type="date" id="date" name="date" required>
 
@@ -164,10 +245,21 @@
                 <input type="text" id="bookingBy" name="bookingBy" required>
 
                 <label for="timeFrom">Time From:</label>
-                <input type="time" id="timeFrom" name="timeFrom" required>
+                <select id="timeFrom" name="timeFrom" required>
+                    <option value="" disabled selected>HH:MM</option>
+                    <option value="07:00">07:00</option>
+                    <option value="07:30">07:30</option>
+                    <option value="08:00">08:00</option>
+                    <!-- Add more time options as necessary -->
+                </select>
 
                 <label for="timeTo">Time To:</label>
-                <input type="time" id="timeTo" name="timeTo" required>
+                <select id="timeTo" name="timeTo" required>
+                    <option value="" disabled selected>HH:MM</option>
+                    <option value="07:30">07:30</option>
+                    <option value="08:00">08:00</option>
+                    <!-- Add more time options as necessary -->
+                </select>
 
                 <label for="forWork">For work?</label>
                 <textarea id="forWork" name="forWork" required></textarea>
@@ -189,6 +281,19 @@
         <!-- You can add specific translator-related content here -->
     </div>
 
+    <!-- Spinner modal -->
+    <div id="spinnerModal" class="spinner-modal">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <p id="modalMessage"></p>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
     <!-- JavaScript for Tab Navigation -->
     <script>
         const tabs = document.querySelectorAll('.tabs a');
@@ -207,6 +312,53 @@
                 this.classList.add('active');
             });
         });
+
+        // Form submission with modal and spinner logic
+        var form = document.getElementById('myForm');
+        var modal = document.getElementById('myModal');
+        var modalMessage = document.getElementById('modalMessage');
+        var spinnerModal = document.getElementById('spinnerModal');
+
+        form.onsubmit = function (event) {
+            event.preventDefault();
+
+            var formData = new FormData(form);
+
+            // เปลี่ยน 'YOUR_WEB_APP_URL' เป็น URL ของ Web App ที่คุณได้จากการ Deploy Google Apps Script
+            fetch('https://script.google.com/macros/s/AKfycbxhVD0_-g7VKhYcOKMRTCaRx_OmoxgTCoIactfbWBRvL7v-MOXKlOabsXkF40Jd263B/exec', {
+                method: 'POST',
+                mode: 'cors',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // เพิ่มเพื่อดูข้อมูลที่ได้รับจาก Google Apps Script
+                    spinnerModal.style.display = 'none'; // ซ่อน spinner modal
+
+                    if (data.success) {
+                        modalMessage.innerHTML = '<span class="alert-icon alert-success">&#x2714;</span> Booking successfully saved!';
+                    } else {
+                        modalMessage.innerHTML = '<span class="alert-icon alert-error">&#x2716;</span> ' + data.message;
+                    }
+
+                    modal.style.display = "flex";
+
+                    if (data.success) {
+                        form.reset(); // ล้างฟอร์มหลังจากการจองสำเร็จ
+                    }
+                })
+                .catch(error => {
+                    spinnerModal.style.display = 'none'; // ซ่อน spinner modal
+                    modalMessage.innerHTML = '<span class="alert-icon alert-error">&#x2716;</span> There was an error.';
+                    modal.style.display = "flex";
+                });
+
+            spinnerModal.style.display = 'flex'; // แสดง spinner modal ขณะกำลังส่งข้อมูล
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
     </script>
 
 </body>
