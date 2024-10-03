@@ -59,7 +59,7 @@ function renderCalendar(month, year) {
       loadEventsForDay(year, month + 1, day);
     });
 
-    const requestUrl = `https://script.google.com/macros/s/YOUR_API_ENDPOINT/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
+    const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
 
     fetch(requestUrl)
       .then(response => response.json())
@@ -78,7 +78,7 @@ function renderCalendar(month, year) {
 
 function loadEventsForDay(year, month, day) {
   spinner.style.display = 'block';
-  const requestUrl = `https://script.google.com/macros/s/YOUR_API_ENDPOINT/exec?page=calendar&date=${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}`;
+  const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}`;
 
   fetch(requestUrl)
     .then(response => response.json())
