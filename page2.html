@@ -271,19 +271,25 @@
                 this.classList.add('active');
 
                 // Load calendar.html into the calendarContainer when View Calendar by Day is clicked
-                if (target === 'calendarDay') {
-                    fetch('calendar.html')
-                        .then(response => response.text())
-                        .then(data => {
-                            calendarContainer.innerHTML = data;
+if (target === 'calendarDay') {
+    fetch('calendar.html')
+        .then(response => response.text())
+        .then(data => {
+            calendarContainer.innerHTML = data;
 
-                            // รันโค้ด calendar.js หลังจากโหลด HTML เสร็จแล้ว
-                            const script = document.createElement('script');
-                            script.src = "calendar.js"; // path ไปยังไฟล์ calendar.js ที่คุณสร้าง
-                            document.body.appendChild(script);
-                        })
-                        .catch(error => console.error('Error loading calendar.html:', error));
+            // รันโค้ด calendar.js หลังจากโหลด HTML เสร็จแล้ว
+            const script = document.createElement('script');
+            script.src = "calendar.js"; // path ไปยังไฟล์ calendar.js ที่คุณสร้าง
+            script.onload = function() {
+                // ตรวจสอบให้แน่ใจว่า DOM ถูกสร้างแล้วก่อนรันฟังก์ชั่นต่างๆ
+                if (typeof renderCalendar === 'function') {
+                    renderCalendar(currentMonth, currentYear); // รันฟังก์ชั่นแสดงปฏิทิน
                 }
+            };
+            document.body.appendChild(script);
+        })
+        .catch(error => console.error('Error loading calendar.html:', error));
+}
             });
         });
     </script>
