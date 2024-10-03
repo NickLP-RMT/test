@@ -2,433 +2,265 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Calendar</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+    }
 
-        .calendar {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    .calendar {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
 
-        .calendar-header h2 {
-            margin: 0;
-            color: #333;
-        }
+    .calendar-header h2 {
+      margin: 0;
+      color: #333;
+    }
 
-        .calendar-header button {
-            padding: 8px 12px;
-            cursor: pointer;
-            background-color: #2196F3;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
+    .calendar-header button {
+      padding: 8px 12px;
+      cursor: pointer;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
 
-        #todayButton {
-            background-color: #ffeb3b;
-            color: black;
-        }
+    #todayButton {
+      background-color: #ffeb3b;
+      color: black;
+    }
 
-        #todayButton:hover {
-            background-color: #fdd835;
-        }
+    #todayButton:hover {
+      background-color: #fdd835;
+    }
 
-        .time-slot {
-            font-size: 11px;
-        }
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-gap: 5px;
+    }
 
-        .bold-text {
-            font-weight: bold;
-        }
+    .calendar-day,
+    .day-header {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 4px;
+    }
 
-        .calendar-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            grid-gap: 5px;
-        }
+    .calendar-day:hover {
+      background-color: #e3f2fd;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-        .calendar-day,
-        .day-header {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            position: relative;
-            cursor: pointer;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            border-radius: 4px;
-        }
+    .today {
+      background-color: #ffeb3b;
+      color: #000;
+      font-weight: bold;
+    }
 
-        .calendar-day:hover {
-            background-color: #e3f2fd;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    .day-header {
+      background-color: #ddd;
+      font-weight: bold;
+      cursor: default;
+    }
 
-        .today {
-            background-color: #ffeb3b;
-            color: #000;
-            font-weight: bold;
-        }
+    .has-event::after {
+      content: '\1F4D6';
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      color: #4CAF50;
+    }
 
-        .day-header {
-            background-color: #ddd;
-            font-weight: bold;
-            cursor: default;
-        }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
 
-        .has-event::after {
-            content: '\1F4D6';
-            position: absolute;
-            bottom: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 16px;
-            color: #4CAF50;
-        }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 1% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.6);
-            padding-top: 0px;
-        }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 1% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-        }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
+    .refresh {
+      color: #aaa;
+      font-size: 28px;
+      cursor: pointer;
+      margin-left: 80px;
+      vertical-align: middle;
+      float: right;
+    }
 
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
+    .refresh:hover,
+    .refresh:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
 
-        table,
-        th,
-        td {
-            border: 1px solid #ddd;
-        }
+    table,
+    th,
+    td {
+      border: 1px solid #ddd;
+    }
 
-        th,
-        td {
-            padding: 12px;
-            text-align: center;
-        }
+    th,
+    td {
+      padding: 12px;
+      text-align: center;
+    }
 
-        th {
-            background-color: #2196F3;
-            color: white;
-        }
+    th {
+      background-color: #2196F3;
+      color: white;
+    }
 
-        td {
-            background-color: #fff;
-            color: #333;
-        }
+    td {
+      background-color: #fff;
+      color: #333;
+    }
 
-        tr:nth-child(even) td {
-            background-color: #f9f9f9;
-        }
+    tr:nth-child(even) td {
+      background-color: #f9f9f9;
+    }
 
-        /* Loading Spinner Styles */
-        .spinner {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            top: 50%;
-            left: 50%;
-            margin-top: -60px;
-            margin-left: -60px;
-            border: 16px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 16px solid #3498db;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
-        }
+    /* Loading Spinner Styles */
+    .spinner {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 50%;
+      left: 50%;
+      margin-top: -60px;
+      margin-left: -60px;
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+    }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
 
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="calendar">
-        <div class="calendar-header">
-            <button id="prevMonth">Previous</button>
-            <h2 id="monthYear"></h2>
-            <div>
-                <button id="todayButton">Today</button>
-                <button id="nextMonth">Next</button>
-            </div>
-        </div>
-        <div class="calendar-days">
-            <div class="day-header">SUNDAY</div>
-            <div class="day-header">MONDAY</div>
-            <div class="day-header">TUESDAY</div>
-            <div class="day-header">WEDNESDAY</div>
-            <div class="day-header">THURSDAY</div>
-            <div class="day-header">FRIDAY</div>
-            <div class="day-header">SATURDAY</div>
-        </div>
-        <div class="calendar-days" id="calendarDays">
-            <!-- Calendar days will be generated here by JavaScript -->
-        </div>
+  <div class="calendar">
+    <div class="calendar-header">
+      <button id="prevMonth">Previous</button>
+      <h2 id="monthYear"></h2>
+      <div>
+        <button id="todayButton">Today</button>
+        <button id="nextMonth">Next</button>
+      </div>
     </div>
-
-    <!-- Loading spinner element -->
-    <div class="spinner" id="spinner"></div>
-
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3 id="modalText">Details</h3>
-            <table id="eventTable">
-                <thead>
-                    <tr>
-                        <th>TIME</th>
-                        <th>SOM SAN</th>
-                        <th>GOOK SAN</th>
-                        <th>POOKY SAN</th>
-                        <th>L SAN</th>
-                    </tr>
-                </thead>
-                <tbody>
-        <tr>
-          <td class="time-slot bold-text">07:00 - 07:30</td>
-          <td id="somSan_0700_0730" class="time-slot"></td>
-          <td id="gookSan_0700_0730" class="time-slot"></td>
-          <td id="pookySan_0700_0730" class="time-slot"></td>
-          <td id="lSan_0700_0730" class="time-slot"></td>
-        </tr>
-        <tr>
-      <td class="time-slot bold-text">07:30 - 08:00</td>
-      <td id="somSan_0730_0800" class="time-slot"></td>
-      <td id="gookSan_0730_0800" class="time-slot"></td>
-      <td id="pookySan_0730_0800" class="time-slot"></td>
-      <td id="lSan_0730_0800" class="time-slot"></td>
-    </tr>
-      <tr>
-      <td class="time-slot bold-text">08:00 - 08:30</td>
-      <td id="somSan_0800_0830" class="time-slot"></td>
-      <td id="gookSan_0800_0830" class="time-slot"></td>
-      <td id="pookySan_0800_0830" class="time-slot"></td>
-      <td id="lSan_0800_0830" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">08:30 - 09:00</td>
-      <td id="somSan_0830_0900" class="time-slot"></td>
-      <td id="gookSan_0830_0900" class="time-slot"></td>
-      <td id="pookySan_0830_0900" class="time-slot"></td>
-      <td id="lSan_0830_0900" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">09:00 - 09:30</td>
-      <td id="somSan_0900_0930" class="time-slot"></td>
-      <td id="gookSan_0900_0930" class="time-slot"></td>
-      <td id="pookySan_0900_0930" class="time-slot"></td>
-      <td id="lSan_0900_0930" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">09:30 - 10:00</td>
-      <td id="somSan_0930_1000" class="time-slot"></td>
-      <td id="gookSan_0930_1000" class="time-slot"></td>
-      <td id="pookySan_0930_1000" class="time-slot"></td>
-      <td id="lSan_0930_1000" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">10:00 - 10:30</td>
-      <td id="somSan_1000_1030" class="time-slot"></td>
-      <td id="gookSan_1000_1030" class="time-slot"></td>
-      <td id="pookySan_1000_1030" class="time-slot"></td>
-      <td id="lSan_1000_1030" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">10:30 - 11:00</td>
-      <td id="somSan_1030_1100" class="time-slot"></td>
-      <td id="gookSan_1030_1100" class="time-slot"></td>
-      <td id="pookySan_1030_1100" class="time-slot"></td>
-      <td id="lSan_1030_1100" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">11:00 - 11:30</td>
-      <td id="somSan_1100_1130" class="time-slot"></td>
-      <td id="gookSan_1100_1130" class="time-slot"></td>
-      <td id="pookySan_1100_1130" class="time-slot"></td>
-      <td id="lSan_1100_1130" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">11:30 - 12:00</td>
-      <td id="somSan_1130_1200" class="time-slot"></td>
-      <td id="gookSan_1130_1200" class="time-slot"></td>
-      <td id="pookySan_1130_1200" class="time-slot"></td>
-      <td id="lSan_1130_1200" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">12:00 - 12:30</td>
-      <td id="somSan_1200_1230" class="time-slot"></td>
-      <td id="gookSan_1200_1230" class="time-slot"></td>
-      <td id="pookySan_1200_1230" class="time-slot"></td>
-      <td id="lSan_1200_1230" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">12:30 - 13:00</td>
-      <td id="somSan_1230_1300" class="time-slot"></td>
-      <td id="gookSan_1230_1300" class="time-slot"></td>
-      <td id="pookySan_1230_1300" class="time-slot"></td>
-      <td id="lSan_1230_1300" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">13:00 - 13:30</td>
-      <td id="somSan_1300_1330" class="time-slot"></td>
-      <td id="gookSan_1300_1330" class="time-slot"></td>
-      <td id="pookySan_1300_1330" class="time-slot"></td>
-      <td id="lSan_1300_1330" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">13:30 - 14:00</td>
-      <td id="somSan_1330_1400" class="time-slot"></td>
-      <td id="gookSan_1330_1400" class="time-slot"></td>
-      <td id="pookySan_1330_1400" class="time-slot"></td>
-      <td id="lSan_1330_1400" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">14:00 - 14:30</td>
-      <td id="somSan_1400_1430" class="time-slot"></td>
-      <td id="gookSan_1400_1430" class="time-slot"></td>
-      <td id="pookySan_1400_1430" class="time-slot"></td>
-      <td id="lSan_1400_1430" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">14:30 - 15:00</td>
-      <td id="somSan_1430_1500" class="time-slot"></td>
-      <td id="gookSan_1430_1500" class="time-slot"></td>
-      <td id="pookySan_1430_1500" class="time-slot"></td>
-      <td id="lSan_1430_1500" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">15:00 - 15:30</td>
-      <td id="somSan_1500_1530" class="time-slot"></td>
-      <td id="gookSan_1500_1530" class="time-slot"></td>
-      <td id="pookySan_1500_1530" class="time-slot"></td>
-      <td id="lSan_1500_1530" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">15:30 - 16:00</td>
-      <td id="somSan_1530_1600" class="time-slot"></td>
-      <td id="gookSan_1530_1600" class="time-slot"></td>
-      <td id="pookySan_1530_1600" class="time-slot"></td>
-      <td id="lSan_1530_1600" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">16:00 - 16:30</td>
-      <td id="somSan_1600_1630" class="time-slot"></td>
-      <td id="gookSan_1600_1630" class="time-slot"></td>
-      <td id="pookySan_1600_1630" class="time-slot"></td>
-      <td id="lSan_1600_1630" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">16:30 - 17:00</td>
-      <td id="somSan_1630_1700" class="time-slot"></td>
-      <td id="gookSan_1630_1700" class="time-slot"></td>
-      <td id="pookySan_1630_1700" class="time-slot"></td>
-      <td id="lSan_1630_1700" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">17:00 - 17:30</td>
-      <td id="somSan_1700_1730" class="time-slot"></td>
-      <td id="gookSan_1700_1730" class="time-slot"></td>
-      <td id="pookySan_1700_1730" class="time-slot"></td>
-      <td id="lSan_1700_1730" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">17:30 - 18:00</td>
-      <td id="somSan_1730_1800" class="time-slot"></td>
-      <td id="gookSan_1730_1800" class="time-slot"></td>
-      <td id="pookySan_1730_1800" class="time-slot"></td>
-      <td id="lSan_1730_1800" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">18:00 - 18:30</td>
-      <td id="somSan_1800_1830" class="time-slot"></td>
-      <td id="gookSan_1800_1830" class="time-slot"></td>
-      <td id="pookySan_1800_1830" class="time-slot"></td>
-      <td id="lSan_1800_1830" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">18:30 - 19:00</td>
-      <td id="somSan_1830_1900" class="time-slot"></td>
-      <td id="gookSan_1830_1900" class="time-slot"></td>
-      <td id="pookySan_1830_1900" class="time-slot"></td>
-      <td id="lSan_1830_1900" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">19:00 - 19:30</td>
-      <td id="somSan_1900_1930" class="time-slot"></td>
-      <td id="gookSan_1900_1930" class="time-slot"></td>
-      <td id="pookySan_1900_1930" class="time-slot"></td>
-      <td id="lSan_1900_1930" class="time-slot"></td>
-    </tr>
-    <tr>
-      <td class="time-slot bold-text">19:30 - 20:00</td>
-      <td id="somSan_1930_2000" class="time-slot"></td>
-      <td id="gookSan_1930_2000" class="time-slot"></td>
-      <td id="pookySan_1930_2000" class="time-slot"></td>
-      <td id="lSan_1930_2000" class="time-slot"></td>
-    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="calendar-days">
+      <div class="day-header">SUNDAY</div>
+      <div class="day-header">MONDAY</div>
+      <div class="day-header">TUESDAY</div>
+      <div class="day-header">WEDNESDAY</div>
+      <div class="day-header">THURSDAY</div>
+      <div class="day-header">FRIDAY</div>
+      <div class="day-header">SATURDAY</div>
     </div>
+    <div class="calendar-days" id="calendarDays">
+      <!-- Calendar days will be generated here by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Loading spinner element -->
+  <div class="spinner" id="spinner"></div>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <span class="refresh">&#x21bb;</span>
+      <h3 id="modalText">Details</h3>
+      <table id="eventTable">
+        <thead>
+          <tr>
+            <th>TIME</th>
+            <th>SOM SAN</th>
+            <th>GOOK SAN</th>
+            <th>POOKY SAN</th>
+            <th>L SAN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Event slots will be dynamically generated here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="calendar.js"></script>
 
 </body>
 
