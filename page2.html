@@ -8,26 +8,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSS here -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Custom Styles for Tabs */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 0;
+        }
+
         .tabs {
             display: flex;
             justify-content: center;
             margin-bottom: 20px;
+            padding: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .tabs a {
-            padding: 10px 20px;
+            padding: 15px 25px;
             margin: 0 10px;
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            cursor: pointer;
+            border-radius: 30px;
+            background-color: #e7e7e7;
             text-decoration: none;
-            color: #333;
-            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .tabs a.active {
@@ -35,31 +45,97 @@
             color: white;
         }
 
+        .tabs a:hover {
+            background-color: #2196F3;
+            color: white;
+        }
+
         .tab-content {
             display: none;
-            padding: 20px;
-            background-color: #f7f7f7;
-            border: 1px solid #ddd;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .tab-content.active {
             display: block;
         }
 
-        /* Custom form styles */
         .form-container {
-            max-width: 400px;
+            max-width: 600px;
             margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #2196F3;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1976d2;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Additional styling for Calendar and Translator sections */
+        #calendar-content h2, 
+        #translator-content h2 {
+            text-align: center;
+        }
+
+        /* Add a subtle background gradient */
+        body {
+            background: linear-gradient(to right, #e0eafc, #cfdef3);
         }
     </style>
 
 </head>
 
 <body>
+
     <!-- Navigation Tabs -->
     <div class="tabs">
         <a href="#booking" id="tab-booking" class="active">Booking</a>
@@ -132,6 +208,7 @@
             });
         });
     </script>
+
 </body>
 
 </html>
