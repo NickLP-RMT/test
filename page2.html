@@ -276,6 +276,11 @@
                         .then(response => response.text())
                         .then(data => {
                             calendarContainer.innerHTML = data;
+
+                            // รันโค้ด calendar.js หลังจากโหลด HTML เสร็จแล้ว
+                            const script = document.createElement('script');
+                            script.src = "calendar.js"; // path ไปยังไฟล์ calendar.js ที่คุณสร้าง
+                            document.body.appendChild(script);
                         })
                         .catch(error => console.error('Error loading calendar.html:', error));
                 }
