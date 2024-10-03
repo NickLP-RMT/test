@@ -220,8 +220,9 @@
     <!-- Navigation Tabs -->
     <div class="tabs">
         <a href="#booking" id="tab-booking" class="active">Booking</a>
-        <a href="#calendar" id="tab-calendar">View Calendar</a>
-        <a href="#translator" id="tab-translator">HR&Translator Only</a>
+        <a href="#calendarDay" id="tab-calendarDay">View Calendar by Day</a>
+        <a href="#calendarMonth" id="tab-calendarMonth">View Full Month</a>
+        <a href="#hrTranslator" id="tab-hrTranslator">HR & Translator Only</a>
     </div>
 
     <!-- Tab Contents -->
@@ -250,61 +251,15 @@
                     <option value="07:00">07:00</option>
                     <option value="07:30">07:30</option>
                     <option value="08:00">08:00</option>
-                    <option value="08:30">08:30</option>
-                    <option value="09:00">09:00</option>
-                    <option value="09:30">09:30</option>
-                    <option value="10:00">10:00</option>
-                    <option value="10:30">10:30</option>
-                    <option value="11:00">11:00</option>
-                    <option value="11:30">11:30</option>
-                    <option value="12:00">12:00</option>
-                    <option value="12:30">12:30</option>
-                    <option value="13:00">13:00</option>
-                    <option value="13:30">13:30</option>
-                    <option value="14:00">14:00</option>
-                    <option value="14:30">14:30</option>
-                    <option value="15:00">15:00</option>
-                    <option value="15:30">15:30</option>
-                    <option value="16:00">16:00</option>
-                    <option value="16:30">16:30</option>
-                    <option value="17:00">17:00</option>
-                    <option value="17:30">17:30</option>
-                    <option value="18:00">18:00</option>
-                    <option value="18:30">18:30</option>
-                    <option value="19:00">19:00</option>
-                    <option value="19:30">19:30</option>
-                    <option value="20:00">20:00</option>
+                    <!-- Add more time options as necessary -->
                 </select>
 
                 <label for="timeTo">Time To:</label>
                 <select id="timeTo" name="timeTo" required>
                     <option value="" disabled selected>HH:MM</option>
-                    <option value="07:29">07:30</option>
-                    <option value="07:59">08:00</option>
-                    <option value="08:29">08:30</option>
-                    <option value="08:59">09:00</option>
-                    <option value="09:29">09:30</option>
-                    <option value="09:59">10:00</option>
-                    <option value="10:29">10:30</option>
-                    <option value="10:59">11:00</option>
-                    <option value="11:29">11:30</option>
-                    <option value="11:59">12:00</option>
-                    <option value="12:29">12:30</option>
-                    <option value="12:59">13:00</option>
-                    <option value="13:29">13:30</option>
-                    <option value="13:59">14:00</option>
-                    <option value="14:29">14:30</option>
-                    <option value="14:59">15:00</option>
-                    <option value="15:29">15:30</option>
-                    <option value="15:59">16:00</option>
-                    <option value="16:29">16:30</option>
-                    <option value="16:59">17:00</option>
-                    <option value="17:29">17:30</option>
-                    <option value="17:59">18:00</option>
-                    <option value="18:29">18:30</option>
-                    <option value="18:59">19:00</option>
-                    <option value="18:29">19:30</option>
-                    <option value="19:59">20:00</option>
+                    <option value="07:30">07:30</option>
+                    <option value="08:00">08:00</option>
+                    <!-- Add more time options as necessary -->
                 </select>
 
                 <label for="forWork">For work?</label>
@@ -315,16 +270,22 @@
         </div>
     </div>
 
-    <div id="calendar-content" class="tab-content">
-        <h2>Calendar</h2>
-        <p>This section will display the calendar or scheduling system.</p>
+    <div id="calendarDay-content" class="tab-content">
+        <h2>View Calendar by Day</h2>
+        <p>This section will display the calendar for a specific day.</p>
         <!-- You can add calendar iframe or plugin here -->
     </div>
 
-    <div id="translator-content" class="tab-content">
-        <h2>Translator Only</h2>
-        <p>This section will be for translators only.</p>
-        <!-- You can add specific translator-related content here -->
+    <div id="calendarMonth-content" class="tab-content">
+        <h2>View Full Month</h2>
+        <p>This section will display the full month calendar.</p>
+        <!-- You can add full month calendar here -->
+    </div>
+
+    <div id="hrTranslator-content" class="tab-content">
+        <h2>HR & Translator Only</h2>
+        <p>This section will be for HR and translators only.</p>
+        <!-- You can add specific HR and translator-related content here -->
     </div>
 
     <!-- Spinner modal -->
