@@ -80,6 +80,7 @@ function loadEventsForDay(year, month, day) {
     fetch(requestUrl)
         .then(response => response.json())
         .then(events => {
+            console.log('Events loaded:', events);  // เพิ่ม log เพื่อตรวจสอบว่าข้อมูลถูกส่งกลับมาไหม
             spinner.style.display = 'none';
             timeSlots.forEach(time => {
                 document.getElementById(`somSan_${time}`).textContent = '';
@@ -112,7 +113,6 @@ function loadEventsForDay(year, month, day) {
                             }
                         }
 
-                        // เพิ่มเวลาอีก 30 นาที
                         timeFromSlot = incrementTimeSlotBy30Minutes(timeFromSlot);
                     }
                 });
@@ -128,6 +128,7 @@ function loadEventsForDay(year, month, day) {
             console.error(error);
         });
 }
+
 
 function getTimeSlot(timeFrom) {
     const slots = {
