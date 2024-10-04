@@ -259,12 +259,12 @@
         </div>
     </div>
 
-<div id="calendarDay-content" class="tab-content">
-    <h2>View Calendar by Day</h2>
-    <div id="calendarContainer">
-        <!-- This will be replaced by content from calendar.html -->
+    <div id="calendarDay-content" class="tab-content">
+        <h2>View Calendar by Day</h2>
+        <div id="calendarContainer">
+            <!-- This will be replaced by content from calendar.html -->
+        </div>
     </div>
-</div>
 
     <div id="calendarMonth-content" class="tab-content">
         <h2>View Full Month</h2>
@@ -278,51 +278,38 @@
 
     <!-- JavaScript for Tab Navigation -->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('.tabs a');
         const contents = document.querySelectorAll('.tab-content');
         const calendarContainer = document.getElementById('calendarContainer');
 
         tabs.forEach(tab => {
-            tab.addEventListener('click', function(e) {
+            tab.addEventListener('click', function (e) {
                 e.preventDefault();
-
+                // Remove active class from all tabs and contents
                 tabs.forEach(t => t.classList.remove('active'));
                 contents.forEach(c => c.classList.remove('active'));
 
+                // Add active class to the clicked tab and corresponding content
                 const target = this.getAttribute('href').substring(1);
                 document.getElementById(`${target}-content`).classList.add('active');
                 this.classList.add('active');
 
+                // Load calendar.html into the calendarContainer when View Calendar by Day is clicked
                 if (target === 'calendarDay') {
-                    if (calendarContainer.innerHTML === '') {
-                        loadCalendar(); // โหลดเมื่อกด View Calendar by Day
-                    }
+                    fetch('calendar.html')
+                        .then(response => response.text())
+                        .then(data => {
+                            calendarContainer.innerHTML = data;
+                            const script = document.createElement('script');
+                            script.src = 'calendar.js'; // Load calendar.js dynamically
+                            document.body.appendChild(script);
+                        })
+                        .catch(error => console.error('Error loading calendar.html:', error));
                 }
             });
         });
+    </script>
 
-        function loadCalendar() {
-            fetch('calendar.html')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    calendarContainer.innerHTML = data;
-
-                    // โหลด calendar.js หลังจากที่ content ของ calendar ถูกโหลด
-                    const script = document.createElement('script');
-                    script.src = 'calendar.js';
-                    document.body.appendChild(script);
-                })
-                .catch(error => {
-                    console.error('Error loading calendar.html:', error);
-                });
-        }
-    });
-</script>
 </body>
+
 </html>
