@@ -296,15 +296,17 @@
 
                 // Load calendar.html into the calendarContainer when View Calendar by Day is clicked
                 if (target === 'calendarDay') {
-                    fetch('calendar.html')
-                        .then(response => response.text())
-                        .then(data => {
-                            calendarContainer.innerHTML = data;
-                            const script = document.createElement('script');
-                            script.src = 'calendar.js'; // Load calendar.js dynamically
-                            document.body.appendChild(script);
-                        })
-                        .catch(error => console.error('Error loading calendar.html:', error));
+                    if (calendarContainer.innerHTML === '') {
+                        fetch('calendar.html')
+                            .then(response => response.text())
+                            .then(data => {
+                                calendarContainer.innerHTML = data;
+                                const script = document.createElement('script');
+                                script.src = 'calendar.js'; // Load calendar.js dynamically
+                                document.body.appendChild(script);
+                            })
+                            .catch(error => console.error('Error loading calendar.html:', error));
+                    }
                 }
             });
         });
