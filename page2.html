@@ -301,9 +301,18 @@
                             .then(response => response.text())
                             .then(data => {
                                 calendarContainer.innerHTML = data;
+
+                                // Dynamically load the calendar.js after loading calendar.html
                                 const script = document.createElement('script');
-                                script.src = 'calendar.js'; // Load calendar.js dynamically
+                                script.src = 'calendar.js';
                                 document.body.appendChild(script);
+
+                                // Call renderCalendar function if it's available
+                                script.onload = () => {
+                                    if (typeof renderCalendar === 'function') {
+                                        renderCalendar(new Date().getMonth(), new Date().getFullYear());
+                                    }
+                                };
                             })
                             .catch(error => console.error('Error loading calendar.html:', error));
                     }
