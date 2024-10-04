@@ -127,7 +127,23 @@
       font-size: 28px;
       font-weight: bold;
     }
+.modal-header {
+  display: flex;
+  justify-content: space-between; /* ปุ่มไปด้านขวา ข้อความอยู่ด้านซ้าย */
+  align-items: center; /* จัดให้อยู่ในแนวเดียวกัน */
+  margin-bottom: 20px;
+}
 
+#modalText {
+  text-align: left;
+  margin: 0;
+}
+
+.refresh, .close {
+  cursor: pointer;
+  font-size: 28px;
+  margin-left: 10px;
+}
     .close:hover,
     .close:focus {
       color: black;
@@ -241,9 +257,10 @@
 
   <!-- The Modal -->
   <div id="myModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-header">
       <span class="close">&times;</span>
       <span class="refresh">&#x21bb;</span>
+      </div>
       <h3 id="modalText">Details</h3>
       <table id="eventTable">
         <thead>
