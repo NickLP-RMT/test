@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("calendar.js loaded"); // เพิ่มเพื่อดูว่าไฟล์ถูกโหลดแล้ว
+
     const calendarDays = document.getElementById('calendarDays');
     const monthYear = document.getElementById('monthYear');
     const prevMonth = document.getElementById('prevMonth');
@@ -28,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
 
     function renderCalendar(month, year) {
+        console.log("Rendering calendar for:", month, year); // เพิ่มเพื่อตรวจสอบว่าฟังก์ชันถูกเรียกใช้งานหรือไม่
         calendarDays.innerHTML = '';
         monthYear.textContent = `${months[month]} ${year}`;
 
@@ -39,12 +42,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const todayMonth = today.getMonth();
         const todayYear = today.getFullYear();
 
+        // สร้างช่องว่างก่อนวันที่ 1
         for (let i = 0; i < firstDay; i++) {
             const emptyCell = document.createElement('div');
             emptyCell.classList.add('calendar-day');
             calendarDays.appendChild(emptyCell);
         }
 
+        // สร้างวันที่ในเดือน
         for (let day = 1; day <= daysInMonth; day++) {
             const dayCell = document.createElement('div');
             dayCell.classList.add('calendar-day');
@@ -60,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 loadEventsForDay(year, month + 1, day);
             });
 
+            // ตรวจสอบว่ามีการจองหรือไม่
             const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
 
             fetch(requestUrl)
@@ -70,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 })
                 .catch(error => {
-                    console.error(error);
+                    console.error("Error fetching events:", error); // เพิ่มเพื่อตรวจสอบข้อผิดพลาด
                 });
 
             calendarDays.appendChild(dayCell);
@@ -128,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 spinner.style.display = 'none';
                 modalText.textContent = "An error occurred while fetching data.";
                 openModal();
-                console.error(error);
+                console.error("Error fetching events:", error); // เพิ่มเพื่อตรวจสอบข้อผิดพลาด
             });
     }
 
