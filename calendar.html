@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,14 +46,6 @@
 
     #todayButton:hover {
       background-color: #fdd835;
-    }
-
-    .time-slot {
-      font-size: 11px;
-    }
-
-    .bold-text {
-      font-weight: bold;
     }
 
     .calendar-days {
@@ -110,7 +103,8 @@
       height: 100%;
       overflow: auto;
       background-color: rgba(0, 0, 0, 0.6);
-      padding-top: 0px;
+      justify-content: center;
+      align-items: center;
     }
 
     .modal-content {
@@ -118,8 +112,8 @@
       margin: 1% auto;
       padding: 20px;
       border: 1px solid #888;
-      width: 90%;
-      max-width: 1200px;
+      width: 80%;
+      max-width: 600px;
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
     }
@@ -158,14 +152,18 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+    }
+
+    table,
+    th,
+    td {
       border: 1px solid #ddd;
     }
 
-    th, td {
-      padding: 10px;
+    th,
+    td {
+      padding: 12px;
       text-align: center;
-      font-size: 14px;
-      border: 1px solid #ddd;
     }
 
     th {
@@ -182,6 +180,7 @@
       background-color: #f9f9f9;
     }
 
+    /* Loading Spinner Styles */
     .spinner {
       display: none;
       position: fixed;
@@ -241,9 +240,9 @@
   <!-- The Modal -->
   <div id="myModal" class="modal">
     <div class="modal-content">
-      <h3 id="modalText" style="float: left;">Details</h3>
       <span class="close">&times;</span>
       <span class="refresh">&#x21bb;</span>
+      <h3 id="modalText">Details</h3>
       <table id="eventTable">
         <thead>
           <tr>
@@ -255,7 +254,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
+      <tr>
       <td class="time-slot bold-text">07:00 - 07:30</td>
       <td id="somSan_0700_0730" class="time-slot"></td>
       <td id="gookSan_0700_0730" class="time-slot"></td>
@@ -445,4 +444,5 @@
   <script src="calendar.js"></script>
 
 </body>
+
 </html>
