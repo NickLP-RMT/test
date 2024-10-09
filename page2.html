@@ -246,10 +246,10 @@
                 <input type="text" id="bookingBy" name="bookingBy" required>
 
                 <label for="timeFrom">Time From:</label>
-                <input type="time" id="timeFrom" name="timeFrom" min="07:00" max="20:00" step="1800" required>
+                <input type="time" id="timeFrom" name="timeFrom" required>
 
                 <label for="timeTo">Time To:</label>
-                <input type="time" id="timeTo" name="timeTo" min="07:00" max="20:00" step="1800" required>
+                <input type="time" id="timeTo" name="timeTo" required>
 
                 <label for="forWork">For Work:</label>
                 <textarea id="forWork" name="forWork" required></textarea>
@@ -295,19 +295,17 @@
                 this.classList.add('active');
 
                 // Load calendar.html into the calendarContainer when View Calendar by Day is clicked
-if (target === 'calendarDay') {
-    if (calendarContainer.innerHTML === '') {
-        fetch('calendar.html')
-            .then(response => response.text())
-            .then(data => {
-                calendarContainer.innerHTML = data;
-                const script = document.createElement('script');
-                script.src = 'calendar.js'; // Load calendar.js dynamically
-                document.body.appendChild(script);
-            })
-            .catch(error => console.error('Error loading calendar.html:', error));
-    }
-}
+                if (target === 'calendarDay') {
+                    fetch('calendar.html')
+                        .then(response => response.text())
+                        .then(data => {
+                            calendarContainer.innerHTML = data;
+                            const script = document.createElement('script');
+                            script.src = 'calendar.js'; // Load calendar.js dynamically
+                            document.body.appendChild(script);
+                        })
+                        .catch(error => console.error('Error loading calendar.html:', error));
+                }
             });
         });
     </script>
