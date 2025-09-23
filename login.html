@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Interpreter Booking</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+    h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .link {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <label for="username">Username</label>
+      <input type="text" id="username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" required>
+
+      <button type="submit">Login</button>
+    </form>
+    <div class="link">
+      ยังไม่มีบัญชี? <a href="register.html">Register</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!username || !password) {
+        Swal.fire("Error", "กรุณากรอกข้อมูลให้ครบ", "error");
+        return;
+      }
+
+      // Hash password ด้วย SHA-256
+      const msgUint8 = new TextEncoder().encode(password);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const passwordHash = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+      const payload = {
+        action: "loginUser",
+        payload: { username, passwordHash }
+      };
+
+      try {
+        const res = await fetch("YOUR_SCRIPT_URL_HERE", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+          Swal.fire("สำเร็จ", "เข้าสู่ระบบเรียบร้อย", "success")
+            .then(() => {
+              localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+              // Redirect ตาม role
+              if (data.user.role === "admin") {
+                window.location.href = "dashboard_admin.html";
+              } else if (data.user.role === "interpreter") {
+                window.location.href = "dashboard_interpreter.html";
+              } else {
+                window.location.href = "dashboard.html";
+              }
+            });
+        } else {
+          Swal.fire("Error", data.message || "เข้าสู่ระบบไม่สำเร็จ", "error");
+        }
+      } catch (err) {
+        Swal.fire("Error", err.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>
