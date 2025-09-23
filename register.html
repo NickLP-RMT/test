@@ -72,6 +72,7 @@
         <option value="">-- Select Role --</option>
         <option value="user">User (ผู้จอง)</option>
         <option value="interpreter">Interpreter (ล่าม)</option>
+        <option value="admin">Admin</option>
       </select>
       
       <button type="submit">Register</button>
@@ -98,16 +99,18 @@
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const passwordHash = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
-      const payload = {
-        action: "registerUser",
-        payload: { username, email, passwordHash, role }
-      };
+      // ✅ ส่งเป็น form-data
+      const form = new URLSearchParams();
+      form.append("action", "registerUser");
+      form.append("username", username);
+      form.append("email", email);
+      form.append("passwordHash", passwordHash);
+      form.append("role", role);
 
       try {
-        const res = await fetch("https://script.google.com/macros/s/AKfycbwpb8hz09gAaBqQap5CgkgBRm5cKT5YMbL_EjLUfgWIicpfROvnsrC8gBesKXyUjaU/exec", {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbwTry-qMrSbj3KG1NeN8HMJrU1y_OiLUeJ2EwFTu-Rg2rsxXcNfle04LuQxjbOOhsM/exec", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: form
         });
         const data = await res.json();
 
