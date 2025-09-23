@@ -52,10 +52,29 @@
     button:hover {
       background: #0056b3;
     }
+    /* Loader */
+    #loader {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.7);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #loader div {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
     @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -82,68 +101,54 @@
       <button type="submit">Register</button>
     </form>
   </div>
-<!-- Loading Spinner -->
-<div id="loader" style="
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(255,255,255,0.7);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;">
-  <div style="
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #3498db;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;">
-  </div>
-</div>
+
+  <!-- Loader -->
+  <div id="loader"><div></div></div>
+
   <script>
-document.getElementById("registerForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
+    const API_URL = "https://script.google.com/macros/s/AKfycbzXIkmHI7jCoBj_uXo52XZuzWnAYPBn7mF_rns75_Rxw_W87K16xl0YlEMxusFg1cw/exec";
 
-  const username = document.getElementById("username").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const role = document.getElementById("role").value;
+    function showLoader(){ document.getElementById("loader").style.display="flex"; }
+    function hideLoader(){ document.getElementById("loader").style.display="none"; }
 
-  // 🔒 hash password ด้วย SHA-256
-  const msgUint8 = new TextEncoder().encode(password);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const passwordHash = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+    document.getElementById("registerForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
 
-  const form = new URLSearchParams();
-  form.append("page", "registerUser");
-  form.append("username", username);
-  form.append("email", email);
-  form.append("passwordHash", passwordHash);
-  form.append("role", role);
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const role = document.getElementById("role").value;
 
-  try {
-    showLoader(); // ✅ เริ่มโหลด
-    const res = await fetch("https://script.google.com/macros/s/AKfycbzXIkmHI7jCoBj_uXo52XZuzWnAYPBn7mF_rns75_Rxw_W87K16xl0YlEMxusFg1cw/exec", {
-      method: "POST",
-      body: form
+      // hash password
+      const msgUint8 = new TextEncoder().encode(password);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const passwordHash = hashArray.map(b => b.toString(16).padStart(2,"0")).join("");
+
+      const form = new URLSearchParams();
+      form.append("page","registerUser");
+      form.append("username",username);
+      form.append("email",email);
+      form.append("passwordHash",passwordHash);
+      form.append("role",role);
+
+      try {
+        showLoader();
+        const res = await fetch(API_URL, { method:"POST", body:form });
+        const data = await res.json();
+        hideLoader();
+
+        if(data.success){
+          Swal.fire("สำเร็จ", data.message, "success")
+            .then(()=> window.location.href="login.html");
+        } else {
+          Swal.fire("Error", data.message, "error");
+        }
+      } catch(err){
+        hideLoader();
+        Swal.fire("Error", err.message, "error");
+      }
     });
-    const data = await res.json();
-    hideLoader(); // ✅ ซ่อนหลังโหลดเสร็จ
-
-    if (data.success) {
-      Swal.fire("สำเร็จ", data.message, "success")
-        .then(() => window.location.href = "login.html");
-    } else {
-      Swal.fire("Error", data.message, "error");
-    }
-  } catch (err) {
-    hideLoader(); // ✅ ซ่อนถ้า error
-    Swal.fire("Error", err.message, "error");
-  }
-});
-</script>
-
+  </script>
 </body>
 </html>
