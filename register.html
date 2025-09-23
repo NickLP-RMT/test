@@ -80,50 +80,45 @@
   </div>
 
   <script>
-    document.getElementById("registerForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
 
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const role = document.getElementById("role").value;
+  const username = document.getElementById("username").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const role = document.getElementById("role").value;
 
-      if (!username || !email || !password || !role) {
-        Swal.fire("Error", "กรุณากรอกข้อมูลให้ครบทุกช่อง", "error");
-        return;
-      }
+  // 🔒 hash password ด้วย SHA-256
+  const msgUint8 = new TextEncoder().encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const passwordHash = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
-      // Hash password ด้วย SHA-256
-      const msgUint8 = new TextEncoder().encode(password);
-      const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const passwordHash = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  const form = new URLSearchParams();
+  form.append("page", "registerUser");
+  form.append("username", username);
+  form.append("email", email);
+  form.append("passwordHash", passwordHash);
+  form.append("role", role);
 
-      // ✅ ส่งเป็น form-data
-      const form = new URLSearchParams();
-      form.append("action", "registerUser");
-      form.append("username", username);
-      form.append("email", email);
-      form.append("passwordHash", passwordHash);
-      form.append("role", role);
-
-      try {
-        const res = await fetch("https://script.google.com/macros/s/AKfycbwTry-qMrSbj3KG1NeN8HMJrU1y_OiLUeJ2EwFTu-Rg2rsxXcNfle04LuQxjbOOhsM/exec", {
-          method: "POST",
-          body: form
-        });
-        const data = await res.json();
-
-        if (data.ok) {
-          Swal.fire("สำเร็จ", "สมัครสมาชิกเรียบร้อย", "success")
-            .then(() => window.location.href = "login.html");
-        } else {
-          Swal.fire("Error", data.message || "สมัครไม่สำเร็จ", "error");
-        }
-      } catch (err) {
-        Swal.fire("Error", err.message, "error");
-      }
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbzXIkmHI7jCoBj_uXo52XZuzWnAYPBn7mF_rns75_Rxw_W87K16xl0YlEMxusFg1cw/exec", {
+      method: "POST",
+      body: form
     });
-  </script>
+    const data = await res.json();
+
+    if (data.success) {
+      Swal.fire("สำเร็จ", data.message, "success")
+        .then(() => window.location.href = "login.html");
+    } else {
+      Swal.fire("Error", data.message, "error");
+    }
+  } catch (err) {
+    Swal.fire("Error", err.message, "error");
+  }
+});
+</script>
+
 </body>
 </html>
