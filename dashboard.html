@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Interpreter Booking</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+    }
+    /* Navbar */
+    .navbar {
+      background: #007bff;
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar .title { font-size: 18px; font-weight: bold; }
+    .navbar .user-info { font-size: 14px; }
+    .navbar button {
+      background: #dc3545; color: #fff; border: none;
+      padding: 6px 12px; border-radius: 4px; cursor: pointer;
+    }
+    /* Info Cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 15px;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .card h3 { margin: 0; font-size: 20px; }
+    .card p { margin: 5px 0 0; color: #555; }
+    /* Main Content */
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+      padding: 20px;
+    }
+    /* Calendar mock */
+    .calendar {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      min-height: 400px;
+    }
+    /* Table */
+    .table-container {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%; border-collapse: collapse; margin-top: 10px;
+    }
+    th, td {
+      padding: 10px; border-bottom: 1px solid #ddd; text-align: left;
+    }
+    th { background: #f8f9fa; }
+    /* Loader */
+    #loader {
+      display: none;
+      position: fixed;
+      top:0;left:0;right:0;bottom:0;
+      background: rgba(255,255,255,0.7);
+      z-index: 9999;
+      align-items: center; justify-content: center;
+    }
+    #loader div {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 60px; height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="title">📊 Interpreter Booking Dashboard</div>
+    <div class="user-info" id="userInfo"></div>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="cards">
+    <div class="card"><h3 id="todayBookings">0</h3><p>Bookings Today</p></div>
+    <div class="card"><h3 id="totalUsers">0</h3><p>Users</p></div>
+    <div class="card"><h3 id="totalInterpreters">0</h3><p>Interpreters</p></div>
+    <div class="card"><h3 id="canceledBookings">0</h3><p>Canceled</p></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <!-- Calendar -->
+    <div class="calendar" id="calendar">
+      <h3>Weekly Calendar (Mock)</h3>
+      <p>📅 จะใส่ calendar library (FullCalendar.js) ภายหลังได้</p>
+    </div>
+
+    <!-- Booking Table -->
+    <div class="table-container">
+      <h3>Bookings</h3>
+      <input type="text" id="searchBox" placeholder="🔍 ค้นหา..." oninput="filterTable()">
+      <table id="bookingTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Interpreter</th>
+            <th>Requester</th>
+            <th>Department</th>
+            <th>Topic</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div id="loader"><div></div></div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzXIkmHI7jCoBj_uXo52XZuzWnAYPBn7mF_rns75_Rxw_W87K16xl0YlEMxusFg1cw/exec";
+
+    function showLoader(){ document.getElementById("loader").style.display="flex"; }
+    function hideLoader(){ document.getElementById("loader").style.display="none"; }
+
+    function logout(){
+      localStorage.removeItem("loggedInUser");
+      window.location.href="login.html";
+    }
+
+    function filterTable(){
+      const keyword = document.getElementById("searchBox").value.toLowerCase();
+      const rows = document.querySelectorAll("#bookingTable tbody tr");
+      rows.forEach(r=>{
+        r.style.display = r.innerText.toLowerCase().includes(keyword) ? "" : "none";
+      });
+    }
+
+    async function loadDashboard(){
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      if(!user){
+        Swal.fire("กรุณา Login ก่อน","","warning").then(()=> window.location.href="login.html");
+        return;
+      }
+      document.getElementById("userInfo").innerText = `👤 ${user.username} (${user.role})`;
+
+      try {
+        showLoader();
+        const res = await fetch(API_URL+"?page=listBookings");
+        const bookings = await res.json();
+        hideLoader();
+
+        renderTable(bookings);
+        updateSummary(bookings);
+      } catch(err){
+        hideLoader();
+        Swal.fire("Error", err.message,"error");
+      }
+    }
+
+    function renderTable(data){
+      const tbody = document.querySelector("#bookingTable tbody");
+      tbody.innerHTML="";
+      data.forEach(b=>{
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td>${b.Date||""}</td>
+          <td>${(b.Start||"")+" - "+(b.End||"")}</td>
+          <td>${b.Interpreter||""}</td>
+          <td>${b.Requester||""}</td>
+          <td>${b.Department||""}</td>
+          <td>${b.Topic||""}</td>
+          <td>${b.Status||""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateSummary(data){
+      const today = new Date().toISOString().split("T")[0];
+      let todayCount=0, canceled=0;
+      const users=new Set(), interps=new Set();
+      data.forEach(b=>{
+        if(b.Date===today && b.Status==="BOOKED") todayCount++;
+        if(b.Status==="CANCELED") canceled++;
+        if(b.Requester) users.add(b.Requester);
+        if(b.Interpreter) interps.add(b.Interpreter);
+      });
+      document.getElementById("todayBookings").innerText = todayCount;
+      document.getElementById("totalUsers").innerText = users.size;
+      document.getElementById("totalInterpreters").innerText = interps.size;
+      document.getElementById("canceledBookings").innerText = canceled;
+    }
+
+    // init
+    loadDashboard();
+  </script>
+</body>
+</html>
