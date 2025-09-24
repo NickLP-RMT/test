@@ -42,6 +42,11 @@
       display: block; margin-top: 10px; text-align: right;
       font-size: 14px; color: #007bff; cursor: pointer;
     }
+    .new-booking-btn {
+      display:block; width:100%; margin-bottom:15px; padding:10px;
+      background:#28a745; color:#fff; border:none; border-radius:6px;
+      font-size:16px; cursor:pointer;
+    }
     /* Calendar Container */
     .calendar-box {
       background: #fff; border-radius: 10px; padding: 15px;
@@ -80,7 +85,10 @@
     th, td { padding:8px; border-bottom:1px solid #ddd; text-align:left; }
     th { background:#f8f9fa; }
     form label { display:block; margin-top:10px; font-weight:bold; }
-    form input { width:100%; padding:6px; margin-top:5px; border:1px solid #ccc; border-radius:4px; }
+    form input, form select, form textarea {
+      width:100%; padding:6px; margin-top:5px; border:1px solid #ccc; border-radius:4px;
+    }
+    form textarea { resize: vertical; }
   </style>
 </head>
 <body>
@@ -95,6 +103,7 @@
   <div class="main">
     <!-- My Booking -->
     <div class="mybooking">
+      <button class="new-booking-btn" onclick="openNewBookingModal()">+ New Booking</button>
       <h3>My Bookings (ล่าสุด)</h3>
       <div id="myBookingList"></div>
       <span class="see-more" onclick="openModal()">See more →</span>
@@ -161,6 +170,57 @@
     </div>
   </div>
 
+  <!-- Modal for New Booking -->
+  <div id="newBookingModal" class="modal">
+    <div class="modal-content" style="max-width:500px;">
+      <div class="modal-header">
+        <h3>New Booking</h3>
+        <span class="close" onclick="closeNewBookingModal()">&times;</span>
+      </div>
+      <form id="bookingForm">
+        <label>Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <label>Translator Name:</label>
+        <select id="translatorName" name="translatorName" required>
+          <option value="" disabled selected>Select Translator</option>
+          <option value="SOM SAN">SOM SAN</option>
+          <option value="GOOK SAN">GOOK SAN</option>
+          <option value="POOKY SAN">POOKY SAN</option>
+          <option value="L SAN">L SAN</option>
+        </select>
+
+        <label>Booking By:</label>
+        <input type="text" id="bookingBy" name="bookingBy" required>
+
+        <label>Time From:</label>
+        <select id="timeFrom" name="timeFrom" required>
+          <option value="" disabled selected>HH:MM</option>
+          <option value="07:00">07:00</option>
+          <option value="07:30">07:30</option>
+          <option value="08:00">08:00</option>
+          <option value="08:30">08:30</option>
+        </select>
+
+        <label>Time To:</label>
+        <select id="timeTo" name="timeTo" required>
+          <option value="" disabled selected>HH:MM</option>
+          <option value="07:30">07:30</option>
+          <option value="08:00">08:00</option>
+          <option value="08:30">08:30</option>
+          <option value="09:00">09:00</option>
+        </select>
+
+        <label>For work?</label>
+        <textarea id="forWork" name="forWork" required></textarea>
+
+        <button type="submit" style="margin-top:15px;padding:8px 16px;background:#28a745;color:#fff;border:none;border-radius:4px;cursor:pointer;">
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzXIkmHI7jCoBj_uXo52XZuzWnAYPBn7mF_rns75_Rxw_W87K16xl0YlEMxusFg1cw/exec";
 
@@ -172,6 +232,8 @@
     function openModal(){ document.getElementById("myModal").style.display="block"; renderAllMyBookings(); }
     function closeModal(){ document.getElementById("myModal").style.display="none"; }
     function closeEditModal(){ document.getElementById("editModal").style.display="none"; }
+    function openNewBookingModal(){ document.getElementById("newBookingModal").style.display="block"; }
+    function closeNewBookingModal(){ document.getElementById("newBookingModal").style.display="none"; }
 
     async function loadMyBookings(){
       const user = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -314,6 +376,29 @@
         Swal.fire("Error",err.message,"error");
       }
     }
+
+    // New Booking submit
+    document.getElementById("bookingForm").addEventListener("submit", async function(e){
+      e.preventDefault();
+      const formData = new FormData(this);
+      try {
+        showLoader();
+        const res = await fetch(API_URL, { method:"POST", body:formData });
+        const data = await res.json();
+        hideLoader();
+        if(data.success){
+          Swal.fire("สำเร็จ","บันทึกการจองแล้ว","success").then(()=>{
+            closeNewBookingModal();
+            loadMyBookings();
+          });
+        } else {
+          Swal.fire("Error",data.message,"error");
+        }
+      } catch(err){
+        hideLoader();
+        Swal.fire("Error",err.message,"error");
+      }
+    });
 
     // init
     loadMyBookings();
