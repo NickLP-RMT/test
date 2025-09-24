@@ -6,18 +6,12 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
+      margin: 0; font-family: Arial, sans-serif; background: #f4f6f9;
     }
     /* Navbar */
     .navbar {
-      background: #007bff;
-      color: #fff;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #007bff; color: #fff; padding: 12px 20px;
+      display: flex; justify-content: space-between; align-items: center;
     }
     .navbar .title { font-size: 18px; font-weight: bold; }
     .navbar .user-info { font-size: 14px; }
@@ -27,65 +21,66 @@
     }
     /* Layout */
     .main {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 20px;
-      padding: 20px;
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 20px; padding: 20px;
     }
     /* MyBooking */
     .mybooking {
-      background: #fff;
-      border-radius: 10px;
-      padding: 15px;
+      background: #fff; border-radius: 10px; padding: 15px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .mybooking h3 { margin-top: 0; }
-    .booking-item {
-      border-bottom: 1px solid #ddd;
-      padding: 8px 0;
-    }
+    .booking-item { border-bottom: 1px solid #ddd; padding: 8px 0; }
     .booking-item:last-child { border-bottom: none; }
     .booking-actions button {
-      margin-left: 5px;
-      padding: 3px 8px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+      margin-left: 5px; padding: 3px 8px; border: none;
+      border-radius: 4px; cursor: pointer;
     }
     .edit-btn { background: #ffc107; color: #000; }
     .cancel-btn { background: #dc3545; color: #fff; }
     .see-more {
-      display: block;
-      margin-top: 10px;
-      text-align: right;
-      font-size: 14px;
-      color: #007bff;
-      cursor: pointer;
+      display: block; margin-top: 10px; text-align: right;
+      font-size: 14px; color: #007bff; cursor: pointer;
     }
     /* Calendar Container */
     .calendar-box {
-      background: #fff;
-      border-radius: 10px;
-      padding: 15px;
+      background: #fff; border-radius: 10px; padding: 15px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     /* Loader */
     #loader {
-      display: none;
-      position: fixed;
-      top:0;left:0;right:0;bottom:0;
-      background: rgba(255,255,255,0.7);
-      z-index: 9999;
+      display: none; position: fixed; top:0;left:0;right:0;bottom:0;
+      background: rgba(255,255,255,0.7); z-index: 9999;
       align-items: center; justify-content: center;
     }
     #loader div {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #3498db;
-      border-radius: 50%;
-      width: 60px; height: 60px;
+      border: 6px solid #f3f3f3; border-top: 6px solid #3498db;
+      border-radius: 50%; width: 60px; height: 60px;
       animation: spin 1s linear infinite;
     }
-    @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+    @keyframes spin { 0%{transform:rotate(0deg);}100%{transform:rotate(360deg);} }
+    /* Modal */
+    .modal {
+      display:none; position:fixed; z-index:10000; left:0; top:0;
+      width:100%; height:100%; overflow:auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background:#fff; margin:5% auto; padding:20px;
+      border-radius:10px; width:80%; max-height:80%;
+      overflow-y:auto; box-shadow:0 2px 10px rgba(0,0,0,0.3);
+    }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; }
+    .modal-header h3 { margin:0; }
+    .close {
+      color:#aaa; font-size:28px; font-weight:bold; cursor:pointer;
+    }
+    .close:hover { color:#000; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { padding:8px; border-bottom:1px solid #ddd; text-align:left; }
+    th { background:#f8f9fa; }
+    form label { display:block; margin-top:10px; font-weight:bold; }
+    form input { width:100%; padding:6px; margin-top:5px; border:1px solid #ccc; border-radius:4px; }
   </style>
 </head>
 <body>
@@ -102,12 +97,11 @@
     <div class="mybooking">
       <h3>My Bookings (ล่าสุด)</h3>
       <div id="myBookingList"></div>
-      <span class="see-more" onclick="seeMore()">See more →</span>
+      <span class="see-more" onclick="openModal()">See more →</span>
     </div>
 
     <!-- Calendar -->
     <div class="calendar-box">
-      <!-- ใช้ calendar.html ที่คุณมี -->
       <iframe src="calendar.html" style="width:100%; height:600px; border:none; border-radius:10px;"></iframe>
     </div>
   </div>
@@ -115,20 +109,69 @@
   <!-- Loader -->
   <div id="loader"><div></div></div>
 
+  <!-- Modal for All MyBookings -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>My All Bookings</h3>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <table id="myBookingTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Interpreter</th>
+            <th>Department</th>
+            <th>Topic</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal for Edit Booking -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>แก้ไข Booking</h3>
+        <span class="close" onclick="closeEditModal()">&times;</span>
+      </div>
+      <form id="editForm">
+        <input type="hidden" id="editId">
+        <label>Date:</label>
+        <input type="date" id="editDate" required>
+        <label>Start Time:</label>
+        <input type="time" id="editStart" required>
+        <label>End Time:</label>
+        <input type="time" id="editEnd" required>
+        <label>Interpreter:</label>
+        <input type="text" id="editInterpreter" required>
+        <label>Department:</label>
+        <input type="text" id="editDepartment">
+        <label>Topic:</label>
+        <input type="text" id="editTopic">
+        <button type="submit" style="margin-top:15px;padding:8px 16px;background:#28a745;color:#fff;border:none;border-radius:4px;cursor:pointer;">
+          Save
+        </button>
+      </form>
+    </div>
+  </div>
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzXIkmHI7jCoBj_uXo52XZuzWnAYPBn7mF_rns75_Rxw_W87K16xl0YlEMxusFg1cw/exec";
 
     function showLoader(){ document.getElementById("loader").style.display="flex"; }
     function hideLoader(){ document.getElementById("loader").style.display="none"; }
+    function logout(){ localStorage.removeItem("loggedInUser"); window.location.href="login.html"; }
 
-    function logout(){
-      localStorage.removeItem("loggedInUser");
-      window.location.href="login.html";
-    }
-
-    function seeMore(){
-      window.location.href="mybooking.html"; // หรือทำ modal popup ได้
-    }
+    // Modal control
+    function openModal(){ document.getElementById("myModal").style.display="block"; renderAllMyBookings(); }
+    function closeModal(){ document.getElementById("myModal").style.display="none"; }
+    function closeEditModal(){ document.getElementById("editModal").style.display="none"; }
 
     async function loadMyBookings(){
       const user = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -144,13 +187,10 @@
         const bookings = await res.json();
         hideLoader();
 
-        // filter bookings ของ user นี้
         const myBookings = bookings.filter(b=> b.Requester === user.username);
-        // sort ล่าสุด
         myBookings.sort((a,b)=> new Date(b.CreatedAt) - new Date(a.CreatedAt));
-        const latest = myBookings.slice(0,5);
-
-        renderMyBookings(latest);
+        renderMyBookings(myBookings.slice(0,5));
+        window.allMyBookings = myBookings;
       } catch(err){
         hideLoader();
         Swal.fire("Error", err.message,"error");
@@ -160,10 +200,7 @@
     function renderMyBookings(list){
       const container = document.getElementById("myBookingList");
       container.innerHTML="";
-      if(list.length===0){
-        container.innerHTML="<p>ไม่มีการจอง</p>";
-        return;
-      }
+      if(list.length===0){ container.innerHTML="<p>ไม่มีการจอง</p>"; return; }
       list.forEach(b=>{
         const div=document.createElement("div");
         div.className="booking-item";
@@ -179,9 +216,78 @@
       });
     }
 
-    function editBooking(id){
-      Swal.fire("Edit booking "+id,"ยังไม่ implement","info");
+    function renderAllMyBookings(){
+      const tbody=document.querySelector("#myBookingTable tbody");
+      tbody.innerHTML="";
+      if(!window.allMyBookings || window.allMyBookings.length===0){
+        tbody.innerHTML="<tr><td colspan='7'>ไม่มีการจอง</td></tr>";
+        return;
+      }
+      window.allMyBookings.forEach(b=>{
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td>${b.Date||""}</td>
+          <td>${(b.Start||"")+" - "+(b.End||"")}</td>
+          <td>${b.Interpreter||""}</td>
+          <td>${b.Department||""}</td>
+          <td>${b.Topic||""}</td>
+          <td>${b.Status||""}</td>
+          <td>
+            <button class="edit-btn" onclick="editBooking('${b.ID}')">แก้ไข</button>
+            <button class="cancel-btn" onclick="cancelBooking('${b.ID}')">ยกเลิก</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
+
+    function editBooking(id){
+      const booking = window.allMyBookings.find(b=> b.ID===id);
+      if(booking){
+        document.getElementById("editId").value = booking.ID;
+        document.getElementById("editDate").value = booking.Date;
+        document.getElementById("editStart").value = booking.Start;
+        document.getElementById("editEnd").value = booking.End;
+        document.getElementById("editInterpreter").value = booking.Interpreter;
+        document.getElementById("editDepartment").value = booking.Department;
+        document.getElementById("editTopic").value = booking.Topic;
+        document.getElementById("editModal").style.display="block";
+      }
+    }
+
+    document.getElementById("editForm").addEventListener("submit", async function(e){
+      e.preventDefault();
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      const form = new URLSearchParams();
+      form.append("page","updateBooking");
+      form.append("id", document.getElementById("editId").value);
+      form.append("date", document.getElementById("editDate").value);
+      form.append("start", document.getElementById("editStart").value);
+      form.append("end", document.getElementById("editEnd").value);
+      form.append("interpreter", document.getElementById("editInterpreter").value);
+      form.append("department", document.getElementById("editDepartment").value);
+      form.append("topic", document.getElementById("editTopic").value);
+      form.append("updatedBy", user.username);
+
+      try {
+        showLoader();
+        const res = await fetch(API_URL, { method:"POST", body:form });
+        const data = await res.json();
+        hideLoader();
+        if(data.success){
+          Swal.fire("สำเร็จ",data.message,"success").then(()=>{
+            closeEditModal();
+            loadMyBookings(); 
+            renderAllMyBookings();
+          });
+        } else {
+          Swal.fire("Error",data.message,"error");
+        }
+      } catch(err){
+        hideLoader();
+        Swal.fire("Error",err.message,"error");
+      }
+    });
 
     async function cancelBooking(id){
       const user = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -195,9 +301,11 @@
         const res = await fetch(API_URL, { method:"POST", body:form });
         const data = await res.json();
         hideLoader();
-
         if(data.success){
-          Swal.fire("สำเร็จ",data.message,"success").then(()=> loadMyBookings());
+          Swal.fire("สำเร็จ",data.message,"success").then(()=>{
+            loadMyBookings();
+            renderAllMyBookings();
+          });
         } else {
           Swal.fire("Error",data.message,"error");
         }
