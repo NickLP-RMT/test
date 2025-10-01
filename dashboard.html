@@ -339,17 +339,21 @@ document.getElementById("bookingForm").addEventListener("submit", async function
   form.append("createdAt", new Date().toISOString());
 
   try {
+    // ✅ แสดง Loader
     showLoader();
+
     const res = await fetch(API_URL, { method:"POST", body:form });
     const data = await res.json();
+
+    // ✅ ปิด Loader
     hideLoader();
 
     if(data.success){
-      // ✅ ปิด modal และ reset form ทันที
+      // ✅ ปิด modal + reset form
       closeNewBookingModal();
       document.getElementById("bookingForm").reset();
 
-      // ✅ แล้วค่อยแสดง SweetAlert
+      // ✅ แจ้ง SweetAlert แล้ว reload bookings หลังจากกด OK
       Swal.fire("สำเร็จ", data.message, "success").then(()=>{
         loadMyBookings();
       });
@@ -361,6 +365,7 @@ document.getElementById("bookingForm").addEventListener("submit", async function
     Swal.fire("Error", err.message,"error");
   }
 });
+
 
 
     // Mapping Interpreter Id -> Email
