@@ -207,6 +207,10 @@
           <option value="19:59">20:00</option>
         </select>
 
+        <!-- ✅ เพิ่ม Title Meeting -->
+        <label for="title">Title Meeting:</label>
+        <input type="text" id="title" name="title" required>
+        
         <label>Location:</label>
         <select id="location" name="location" required>
           <option value="" disabled selected>Select Location</option>
@@ -327,6 +331,7 @@
   form.append("date", document.getElementById("date").value);
   form.append("startTime", document.getElementById("timeFrom").value);
   form.append("endTime", document.getElementById("timeTo").value);
+  form.append("title", document.getElementById("title").value);
   form.append("location", document.getElementById("location").value);
 
   // 👉 เพิ่มค่าเริ่มต้น
