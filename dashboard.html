@@ -381,7 +381,6 @@ function renderAllMyBookings(){
     const tr=document.createElement("tr");
     tr.innerHTML=`
       <td>${b.title || "-"}</td>
-      <td>${b.date||""}</td>
 <td>${formatDateTime(b.date, b.startTime)}</td>
 <td>${formatDateTime(b.date, b.endTime, true)}</td>
       <td>${b.interpreterId||""}</td>
