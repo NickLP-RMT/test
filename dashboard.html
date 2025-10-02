@@ -113,19 +113,19 @@
         <span class="close" onclick="closeModal()">&times;</span>
       </div>
       <table id="myBookingTable">
-       <thead>
   <thead>
-  <tr>
-    <th>Title Meeting</th>
-    <th>Time</th>
-    <th>Interpreter</th>
-    <th>Location</th>
-    <th>Status</th>
-    <th>Action</th>
-  </tr>
-</thead>
-        <tbody></tbody>
-      </table>
+    <tr>
+      <th>Title Meeting</th>
+      <th>Time</th>
+      <th>Interpreter</th>
+      <th>Location</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
     </div>
   </div>
 
@@ -303,37 +303,24 @@ function formatDateTime(dateVal, timeVal){
   if (!dObj || !m) return `${dateVal} ${timeVal}`;
 
   const hh = parseInt(m[1],10), mm = parseInt(m[2],10);
-  const combined = new Date(dObj.getFullYear(), dObj.getMonth(), dObj.getDate(), hh, mm);
-
-  return combined.toLocaleString("en-GB", { 
-    year: "numeric", month: "long", day: "numeric",
-    hour: "2-digit", minute: "2-digit", hour12: false 
-  });
+  return new Date(dObj.getFullYear(), dObj.getMonth(), dObj.getDate(), hh, mm);
 }
 
-// ✅ endTime แยกไว้สำหรับ +1 นาที
-function formatEndDateTime(dateVal, timeVal){
-  if (!dateVal || !timeVal) return "";
 
-  let dObj;
-  const s = String(dateVal).trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-    const [y,m,d] = s.split('-').map(Number);
-    dObj = new Date(y, m-1, d);
-  } else {
-    dObj = new Date(s);
+function formatRange(dateVal, startTime, endTime){
+  const start = formatDateTime(dateVal, startTime);
+  const end   = formatDateTime(dateVal, endTime);
+
+  if (!start || !end || isNaN(start) || isNaN(end)) {
+    return `${dateVal} ${startTime} - ${endTime}`;
   }
 
-  const m = String(timeVal).trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
-  if (!dObj || !m) return `${dateVal} ${timeVal}`;
+  // ✅ End +1 นาที
+  end.setMinutes(end.getMinutes() + 1);
 
-  const hh = parseInt(m[1],10), mm = parseInt(m[2],10);
-  const combined = new Date(dObj.getFullYear(), dObj.getMonth(), dObj.getDate(), hh, mm);
-  combined.setMinutes(combined.getMinutes() + 1); // ✅ +1 นาที
-
-  return combined.toLocaleString("en-GB", { 
-    hour: "2-digit", minute: "2-digit", hour12: false 
-  });
+  return `${start.toLocaleDateString("en-GB", {
+            day: "numeric", month: "long", year: "numeric"
+          })}, ${start.toLocaleTimeString("en-GB", {hour:"2-digit",minute:"2-digit",hour12:false})} - ${end.toLocaleTimeString("en-GB", {hour:"2-digit",minute:"2-digit",hour12:false})}`;
 }
 
 
@@ -349,7 +336,7 @@ function renderMyBookings(list){
     div.className="booking-item";
     div.innerHTML=`
       <div><b>Title Meeting:</b> ${b.title || "-"}</div>
-      <div><b>Time:</b> ${formatDateTime(b.date, b.startTime)} - ${formatEndDateTime(b.date, b.endTime)}</div>
+      <div><b>Time:</b> ${formatRange(b.date, b.startTime, b.endTime)}</div>
       <div><b>Interpreter:</b> ${b.interpreterId || ""}</div>
       <div><b>Location:</b> ${b.location || ""}</div>
       <div><b>Status:</b> ${b.status || ""}</div>
@@ -357,6 +344,8 @@ function renderMyBookings(list){
     container.appendChild(div);
   });
 }
+
+
 
 function renderAllMyBookings(){
   const tbody=document.querySelector("#myBookingTable tbody");
@@ -369,7 +358,7 @@ function renderAllMyBookings(){
     const tr=document.createElement("tr");
     tr.innerHTML=`
       <td>${b.title || "-"}</td>
-      <td>${formatDateTime(b.date, b.startTime)} - ${formatEndDateTime(b.date, b.endTime)}</td>
+      <td>${formatRange(b.date, b.startTime, b.endTime)}</td>
       <td>${b.interpreterId||""}</td>
       <td>${b.location||""}</td>
       <td>${b.status||""}</td>
@@ -378,7 +367,6 @@ function renderAllMyBookings(){
     tbody.appendChild(tr);
   });
 }
-
 
 
    // Submit New Booking
