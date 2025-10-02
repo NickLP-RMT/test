@@ -114,10 +114,10 @@
       </div>
       <table id="myBookingTable">
        <thead>
+  <thead>
   <tr>
     <th>Title Meeting</th>
-    <th>Start</th>
-    <th>End</th>
+    <th>Time</th>
     <th>Interpreter</th>
     <th>Location</th>
     <th>Status</th>
@@ -358,21 +358,18 @@ function renderMyBookings(list){
   });
 }
 
-
-
 function renderAllMyBookings(){
   const tbody=document.querySelector("#myBookingTable tbody");
   tbody.innerHTML="";
   if(!window.allMyBookings || window.allMyBookings.length===0){
-    tbody.innerHTML="<tr><td colspan='8'>No bookings</td></tr>"; 
+    tbody.innerHTML="<tr><td colspan='6'>No bookings</td></tr>"; 
     return;
   }
   window.allMyBookings.forEach(b=>{
     const tr=document.createElement("tr");
     tr.innerHTML=`
       <td>${b.title || "-"}</td>
-      <td>${b.date||""}</td>
-      <td colspan="2">${formatDateTime(b.date, b.startTime)} - ${formatEndDateTime(b.date, b.endTime)}</td>
+      <td>${formatDateTime(b.date, b.startTime)} - ${formatEndDateTime(b.date, b.endTime)}</td>
       <td>${b.interpreterId||""}</td>
       <td>${b.location||""}</td>
       <td>${b.status||""}</td>
@@ -381,6 +378,7 @@ function renderAllMyBookings(){
     tbody.appendChild(tr);
   });
 }
+
 
 
    // Submit New Booking
