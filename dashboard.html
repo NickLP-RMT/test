@@ -113,12 +113,18 @@
         <span class="close" onclick="closeModal()">&times;</span>
       </div>
       <table id="myBookingTable">
-        <thead>
-          <tr>
-            <th>Date</th><th>Time</th><th>Interpreter</th>
-            <th>Location</th><th>Status</th><th>Action</th>
-          </tr>
-        </thead>
+       <thead>
+  <tr>
+    <th>Title Meeting</th>
+    <th>Date</th>
+    <th>Start</th>
+    <th>End</th>
+    <th>Interpreter</th>
+    <th>Location</th>
+    <th>Status</th>
+    <th>Action</th>
+  </tr>
+</thead>
         <tbody></tbody>
       </table>
     </div>
@@ -282,41 +288,51 @@
     }
 
     function renderMyBookings(list){
-      const container = document.getElementById("myBookingList");
-      container.innerHTML="";
-      if(list.length===0){ container.innerHTML="<p>ไม่มีการจอง</p>"; return; }
-      list.forEach(b=>{
-        const div=document.createElement("div");
-        div.className="booking-item";
-        div.innerHTML=`
-          <div><b>${b.date}</b> ${b.startTime}-${b.endTime}</div>
-          <div>Interpreter: ${b.interpreterId}</div>
-          <div>Location: ${b.location}</div>
-          <div>Status: ${b.status}</div>
-        `;
-        container.appendChild(div);
-      });
-    }
+  const container = document.getElementById("myBookingList");
+  container.innerHTML="";
+  if(list.length===0){ 
+    container.innerHTML="<p>ไม่มีการจอง</p>"; 
+    return; 
+  }
+  list.forEach(b=>{
+    const div=document.createElement("div");
+    div.className="booking-item";
+    div.innerHTML=`
+      <div><b>Title Meeting:</b> ${b.title || "-"}</div>
+      <div><b>Meeting Start:</b> ${b.date || ""} ${b.startTime || ""}</div>
+      <div><b>Meeting End:</b> ${b.date || ""} ${b.endTime || ""}</div>
+      <div><b>Interpreter:</b> ${b.interpreterId || ""}</div>
+      <div><b>Location:</b> ${b.location || ""}</div>
+      <div><b>Status:</b> ${b.status || ""}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
 
     function renderAllMyBookings(){
-      const tbody=document.querySelector("#myBookingTable tbody");
-      tbody.innerHTML="";
-      if(!window.allMyBookings || window.allMyBookings.length===0){
-        tbody.innerHTML="<tr><td colspan='6'>ไม่มีการจอง</td></tr>"; return;
-      }
-      window.allMyBookings.forEach(b=>{
-        const tr=document.createElement("tr");
-        tr.innerHTML=`
-          <td>${b.date||""}</td>
-          <td>${(b.startTime||"")+" - "+(b.endTime||"")}</td>
-          <td>${b.interpreterId||""}</td>
-          <td>${b.location||""}</td>
-          <td>${b.status||""}</td>
-          <td><button class="cancel-btn" onclick="cancelBooking('${b.bookingId}')">ยกเลิก</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+  const tbody=document.querySelector("#myBookingTable tbody");
+  tbody.innerHTML="";
+  if(!window.allMyBookings || window.allMyBookings.length===0){
+    tbody.innerHTML="<tr><td colspan='7'>ไม่มีการจอง</td></tr>"; 
+    return;
+  }
+  window.allMyBookings.forEach(b=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${b.title || "-"}</td>
+      <td>${b.date||""}</td>
+      <td>${b.startTime||""}</td>
+      <td>${b.endTime||""}</td>
+      <td>${b.interpreterId||""}</td>
+      <td>${b.location||""}</td>
+      <td>${b.status||""}</td>
+      <td><button class="cancel-btn" onclick="cancelBooking('${b.bookingId}')">ยกเลิก</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
 
    // Submit New Booking
 document.getElementById("bookingForm").addEventListener("submit", async function(e){ 
