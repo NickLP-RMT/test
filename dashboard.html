@@ -286,10 +286,20 @@
         Swal.fire("Error", err.message,"error");
       }
     }
-function formatDateTime(date, time){
+
+    function formatDateTime(date, time){
   if(!date || !time) return "";
-  return `${date} ${time}`;
+  try {
+    const d = new Date(`${date}T${time}`);
+    return d.toLocaleString("en-US", { 
+      year: "numeric", month: "long", day: "numeric",
+      hour: "2-digit", minute: "2-digit"
+    });
+  } catch(e){
+    return `${date} ${time}`;
+  }
 }
+
 
     function renderMyBookings(list){
   const container = document.getElementById("myBookingList");
@@ -315,11 +325,11 @@ function formatDateTime(date, time){
 }
 
 
-    function renderAllMyBookings(){
+function renderAllMyBookings(){
   const tbody=document.querySelector("#myBookingTable tbody");
   tbody.innerHTML="";
   if(!window.allMyBookings || window.allMyBookings.length===0){
-    tbody.innerHTML="<tr><td colspan='7'>ไม่มีการจอง</td></tr>"; 
+    tbody.innerHTML="<tr><td colspan='8'>ไม่มีการจอง</td></tr>"; 
     return;
   }
   window.allMyBookings.forEach(b=>{
@@ -327,8 +337,8 @@ function formatDateTime(date, time){
     tr.innerHTML=`
       <td>${b.title || "-"}</td>
       <td>${b.date||""}</td>
-      <td>${b.startTime||""}</td>
-      <td>${b.endTime||""}</td>
+      <td>${formatDateTime(b.date, b.startTime)}</td>
+      <td>${formatDateTime(b.date, b.endTime)}</td>
       <td>${b.interpreterId||""}</td>
       <td>${b.location||""}</td>
       <td>${b.status||""}</td>
@@ -337,7 +347,6 @@ function formatDateTime(date, time){
     tbody.appendChild(tr);
   });
 }
-
 
    // Submit New Booking
 document.getElementById("bookingForm").addEventListener("submit", async function(e){ 
