@@ -307,20 +307,36 @@ function formatDateTime(dateVal, timeVal){
 }
 
 
-function formatRange(dateVal, startTime, endTime){
-  const start = formatDateTime(dateVal, startTime);
-  const end   = formatDateTime(dateVal, endTime);
+function formatRange(dateVal, startTime, endTime) {
+  if (!dateVal || !startTime || !endTime) return "";
 
-  if (!start || !end || isNaN(start) || isNaN(end)) {
+  // parse date (yyyy-mm-dd)
+  let dObj;
+  const s = String(dateVal).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const [y, m, d] = s.split('-').map(Number);
+    dObj = new Date(y, m - 1, d);
+  } else {
+    dObj = new Date(s);
+  }
+
+  // parse start time HH:mm
+  const startMatch = String(startTime).trim().match(/^(\d{1,2}):(\d{2})$/);
+  const endMatch   = String(endTime).trim().match(/^(\d{1,2}):(\d{2})$/);
+
+  if (!startMatch || !endMatch || !dObj) {
     return `${dateVal} ${startTime} - ${endTime}`;
   }
+
+  const start = new Date(dObj.getFullYear(), dObj.getMonth(), dObj.getDate(), parseInt(startMatch[1]), parseInt(startMatch[2]));
+  const end   = new Date(dObj.getFullYear(), dObj.getMonth(), dObj.getDate(), parseInt(endMatch[1]), parseInt(endMatch[2]));
 
   // ✅ End +1 นาที
   end.setMinutes(end.getMinutes() + 1);
 
   return `${start.toLocaleDateString("en-GB", {
             day: "numeric", month: "long", year: "numeric"
-          })}, ${start.toLocaleTimeString("en-GB", {hour:"2-digit",minute:"2-digit",hour12:false})} - ${end.toLocaleTimeString("en-GB", {hour:"2-digit",minute:"2-digit",hour12:false})}`;
+          })}, ${start.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", hour12:false})} - ${end.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", hour12:false})}`;
 }
 
 
