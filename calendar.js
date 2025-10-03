@@ -99,10 +99,10 @@ function loadEventsForDay(dateStr) {
 
   // reset ตาราง
   timeSlots.forEach(time => {
-    document.getElementById(`somSan_${time}`).textContent = '';
-    document.getElementById(`gookSan_${time}`).textContent = '';
-    document.getElementById(`pookySan_${time}`).textContent = '';
-    document.getElementById(`lSan_${time}`).textContent = '';
+    document.getElementById(`somSan_${time}`).innerHTML = '';
+    document.getElementById(`gookSan_${time}`).innerHTML = '';
+    document.getElementById(`pookySan_${time}`).innerHTML = '';
+    document.getElementById(`lSan_${time}`).innerHTML = '';
   });
 
   const events = allBookings.filter(b => b.date === dateStr && b.status === "BOOKED");
@@ -122,7 +122,11 @@ function loadEventsForDay(dateStr) {
         if (slot) {
           const col = INTERPRETER_MAP[ev.interpreterId];
           if (col) {
-            document.getElementById(`${col}_${slot}`).textContent = ev.title;
+            // 🔴 จุดสีแดง + Tooltip
+            document.getElementById(`${col}_${slot}`).innerHTML += `
+              <span class="red-dot" 
+                data-tooltip="Title: ${ev.title}\nLocation: ${ev.location}\nUser: ${ev.userEmail}">
+              </span>`;
           }
         }
         timeFrom = incrementTimeSlotBy30Minutes(timeFrom);
@@ -201,4 +205,3 @@ async function init(){
 }
 
 init();  // ✅ เรียกฟังก์ชันตรงนี้
-
