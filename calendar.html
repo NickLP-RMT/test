@@ -216,7 +216,7 @@
 #myModal .modal-content h3 {
   font-size: 14px;   /* หัวข้อ modal */
 }
-    /* จุดสีแดงกระพริบ */
+ /* จุดสีแดงกระพริบ */
 .red-dot {
   height: 10px;
   width: 10px;
@@ -225,6 +225,7 @@
   display: inline-block;
   animation: blink 1s infinite;
   position: relative;
+  margin: 0 2px;
 }
 
 @keyframes blink {
@@ -239,12 +240,12 @@
   bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, 0.85);
   color: #fff;
   padding: 6px 8px;
   border-radius: 4px;
   font-size: 12px;
-  white-space: nowrap;
+  white-space: pre-line; /* ✅ รองรับ \n */
   z-index: 20000;
 }
 
