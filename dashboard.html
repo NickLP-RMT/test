@@ -470,7 +470,15 @@ document.getElementById("bookingForm").addEventListener("submit", async function
     } else {
       // ถ้าเป็น Duplicate แสดง warning
       if (data.message && data.message.includes("Duplicate")) {
-        Swal.fire("⚠️ Duplicate Booking", data.message, "warning");
+        Swal.fire({
+  title: "⚠️ Duplicate Booking",
+  text: data.message,
+  icon: "warning",
+  didOpen: () => {
+    document.querySelector('.swal2-container').style.zIndex = 20000;
+  }
+});
+
       } else {
         Swal.fire("❌ Error", data.message, "error");
       }
