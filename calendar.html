@@ -216,6 +216,38 @@
 #myModal .modal-content h3 {
   font-size: 14px;   /* หัวข้อ modal */
 }
+    /* จุดสีแดงกระพริบ */
+.red-dot {
+  height: 10px;
+  width: 10px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+  animation: blink 1s infinite;
+  position: relative;
+}
+
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+}
+
+/* Tooltip */
+.red-dot:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 20000;
+}
+
 
   </style>
 </head>
