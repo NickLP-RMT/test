@@ -7,9 +7,14 @@
   <style>
     body { margin:0; font-family:Arial,sans-serif; background:#f4f6f9; }
     .navbar {
-      background:#007bff; color:#fff; padding:12px 20px;
-      display:flex; justify-content:space-between; align-items:center;
-    }
+  background:#007bff; color:#fff; padding:12px 20px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
     .navbar .title { font-size:18px; font-weight:bold; }
     .navbar .user-info { font-size:14px; }
     .navbar button {
@@ -28,6 +33,18 @@
       margin-left:5px; padding:3px 8px; border:none;
       border-radius:4px; cursor:pointer;
     }
+    .mybooking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.mybooking-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
     .edit-btn { background:#ffc107; color:#000; }
     .cancel-btn { background:#dc3545; color:#fff; }
     .see-more {
@@ -82,19 +99,25 @@
 </head>
 <body>
   <div class="navbar">
-    <div class="title">📊 Interpreter Booking Dashboard</div>
+  <div class="title">📊 Interpreter Booking Dashboard</div>
+  <div class="navbar-right">
     <div class="user-info" id="userInfo"></div>
     <button onclick="logout()">Logout</button>
   </div>
+</div>
+
 
   <div class="main">
     <!-- My Bookings -->
     <div class="mybooking">
-      <button class="new-booking-btn" onclick="openNewBookingModal()">+ New Booking</button>
-      <h3>My Bookings (ล่าสุด)</h3>
-      <div id="myBookingList"></div>
-      <span class="see-more" onclick="openModal()">See more →</span>
-    </div>
+  <button class="new-booking-btn" onclick="openNewBookingModal()">+ New Booking</button>
+  <div class="mybooking-header">
+    <h3>My Bookings (Latest)</h3>
+    <span class="see-more" onclick="openModal()">See more →</span>
+  </div>
+  <div id="myBookingList"></div>
+</div>
+
 
     <!-- Calendar -->
     <div class="calendar-box">
