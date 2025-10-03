@@ -321,48 +321,42 @@
     return isNaN(d) ? null : new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }
 
-  function parseTimePart(timeVal, kind){
-    if (!timeVal) return null;
-    const s = String(timeVal).trim();
-    let hh, mm;
+// parseTimePart: อ่าน HH:mm ตรงๆ
+function parseTimePart(timeVal, kind){
+  if (!timeVal) return null;
+  const s = String(timeVal).trim();
 
-    let m = s.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
-    if (m) {
-      hh = parseInt(m[1],10);
-      mm = parseInt(m[2],10);
-    } else {
-      const d = new Date(s);
-      if (isNaN(d)) return null;
-      if (s.includes("1899-12-30") || s.includes("1899-12-31")) {
-        d.setSeconds(d.getSeconds() - 1076); // offset Excel/Sheets
-      }
-      hh = d.getHours();
-      mm = d.getMinutes();
-    }
-
-    if (kind === 'start') {
-      mm = (mm < 30) ? 0 : 30;
-    } else {
-      mm = (mm < 30) ? 29 : 59;
-    }
-    return { hh, mm };
+  // ตรงๆ เลยจาก select เช่น "07:00"
+  let m = s.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (m) {
+    return { hh: parseInt(m[1],10), mm: parseInt(m[2],10) };
   }
 
-  function formatRange(dateVal, startTime, endTime){
-    const d  = parseDatePart(dateVal);
-    const st = parseTimePart(startTime, 'start');
-    const et = parseTimePart(endTime, 'end');
-    if (!d || !st || !et) return `${dateVal} ${startTime} - ${endTime}`;
-
-    const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), st.hh, st.mm);
-    const end   = new Date(d.getFullYear(), d.getMonth(), d.getDate(), et.hh, et.mm);
-    end.setMinutes(end.getMinutes() + 1);
-
-    const dateStr  = start.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" });
-    const startStr = start.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit", hour12:false });
-    const endStr   = end.toLocaleTimeString("en-GB",   { hour:"2-digit", minute:"2-digit", hour12:false });
-    return `${dateStr}, ${startStr} - ${endStr}`;
+  // ถ้าเจอเป็น ISO format (จาก sheet)
+  const d = new Date(s);
+  if (!isNaN(d)) {
+    return { hh: d.getHours(), mm: d.getMinutes() };
   }
+
+  return null;
+}
+
+function formatRange(dateVal, startTime, endTime){
+  const d  = parseDatePart(dateVal);
+  const st = parseTimePart(startTime, 'start');
+  const et = parseTimePart(endTime, 'end');
+  if (!d || !st || !et) return `${dateVal} ${startTime} - ${endTime}`;
+
+  const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), st.hh, st.mm);
+  const end   = new Date(d.getFullYear(), d.getMonth(), d.getDate(), et.hh, et.mm);
+  end.setMinutes(end.getMinutes() + 1); // ✅ end +1 นาที เพื่อให้ถึงสิ้น slot
+
+  const dateStr  = start.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" });
+  const startStr = start.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit", hour12:false });
+  const endStr   = end.toLocaleTimeString("en-GB",   { hour:"2-digit", minute:"2-digit", hour12:false });
+  return `${dateStr}, ${startStr} - ${endStr}`;
+}
+
 
   // ================= INTERPRETER MAP =================
   const INTERPRETERS = {
