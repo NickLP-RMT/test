@@ -3,11 +3,21 @@ const monthYear = document.getElementById('monthYear');
 const prevMonth = document.getElementById('prevMonth');
 const nextMonth = document.getElementById('nextMonth');
 const todayButton = document.getElementById('todayButton'); 
-const modal = document.getElementById("myModal");  // กำหนดตัวแปร modal
-const modalText = document.getElementById("modalText");  // อ้างอิงถึงเนื้อหาภายในโมดอล
+const modal = document.getElementById("myModal");
+const modalText = document.getElementById("modalText");
 const span = document.getElementsByClassName("close")[0];
 const spinner = document.getElementById('spinner');
 const refreshButton = document.querySelector('.refresh');
+
+const API_URL = "https://script.google.com/macros/s/AKfycbzYxFK_Mt-tEFPw-wr4_HrtgSIvlrqMRSNXR8-XviH8mahbXvDvXyIDrBRBbPZ9RfI/exec"; 
+
+// mapping interpreterId → column id prefix
+const INTERPRETER_MAP = {
+  i001: "somSan",
+  i002: "gookSan",
+  i003: "pookySan",
+  i004: "lSan"
+};
 
 const timeSlots = [
   '0700_0730', '0730_0800', '0800_0830', '0830_0900', '0900_0930', '0930_1000', '1000_1030', '1030_1100', 
@@ -25,6 +35,21 @@ const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
+
+let allBookings = [];
+
+// ✅ โหลด booking ทั้งหมดมา cache ไว้
+async function fetchBookings() {
+  spinner.style.display = 'block';
+  try {
+    const res = await fetch(API_URL + "?page=listBookings");
+    allBookings = await res.json();
+  } catch (err) {
+    console.error("❌ fetchBookings error:", err);
+  } finally {
+    spinner.style.display = 'none';
+  }
+}
 
 function renderCalendar(month, year) {
   calendarDays.innerHTML = '';
@@ -45,110 +70,83 @@ function renderCalendar(month, year) {
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
     const dayCell = document.createElement('div');
     dayCell.classList.add('calendar-day');
+    dayCell.innerHTML = `<p>${day}</p>`;
 
     if (day === todayDate && month === todayMonth && year === todayYear) {
       dayCell.classList.add('today');
     }
 
-    dayCell.innerHTML = `<p>${day}</p>`;
+    // ถ้ามี booking ในวันนั้น → mark
+    if (allBookings.some(b => b.date === dateStr && b.status === "BOOKED")) {
+      dayCell.classList.add('has-event');
+    }
 
     dayCell.addEventListener('click', () => {
-      currentDay = day; // บันทึกวันที่ปัจจุบันที่เลือก
-      loadEventsForDay(year, month + 1, day);
+      currentDay = day;
+      loadEventsForDay(dateStr);
     });
-
-    const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
-
-    fetch(requestUrl)
-      .then(response => response.json())
-      .then(events => {
-        if (events.length > 0) {
-          dayCell.classList.add('has-event');
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
 
     calendarDays.appendChild(dayCell);
   }
 }
 
-function loadEventsForDay(year, month, day) {
+// ✅ โหลด event สำหรับวันนั้น
+function loadEventsForDay(dateStr) {
   spinner.style.display = 'block';
-  const requestUrl = `https://script.google.com/macros/s/AKfycbyHILu3V2tHjjWzBTHxOf0iLYUl7lJPEdP0VmaSWgeQv98L7mStw12Hz4_wAvt6IC-I/exec?page=calendar&date=${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}`;
 
-  fetch(requestUrl)
-    .then(response => response.json())
-    .then(events => {
-      spinner.style.display = 'none';
-      timeSlots.forEach(time => {
-        document.getElementById(`somSan_${time}`).textContent = '';
-        document.getElementById(`gookSan_${time}`).textContent = '';
-        document.getElementById(`pookySan_${time}`).textContent = '';
-        document.getElementById(`lSan_${time}`).textContent = '';
-      });
+  // reset ตาราง
+  timeSlots.forEach(time => {
+    document.getElementById(`somSan_${time}`).textContent = '';
+    document.getElementById(`gookSan_${time}`).textContent = '';
+    document.getElementById(`pookySan_${time}`).textContent = '';
+    document.getElementById(`lSan_${time}`).textContent = '';
+  });
 
-      if (events.length === 0) {
-        modalText.textContent = "No events for this day.";
-        document.getElementById('eventTable').style.display = 'none';
-      } else {
-        document.getElementById('eventTable').style.display = '';
-        events.forEach(event => {
-          let timeFromSlot = event.timeFrom.replace(':', '');
-          let timeToSlot = event.timeTo.replace(':', '');
+  const events = allBookings.filter(b => b.date === dateStr && b.status === "BOOKED");
+  spinner.style.display = 'none';
 
-          while (timeFromSlot < timeToSlot) {
-            let slot = getTimeSlot(timeFromSlot);
+  if (events.length === 0) {
+    modalText.textContent = `No events for ${dateStr}`;
+    document.getElementById('eventTable').style.display = 'none';
+  } else {
+    document.getElementById('eventTable').style.display = '';
+    events.forEach(ev => {
+      let timeFrom = ev.startTime.replace(":", "");
+      let timeTo   = ev.endTime.replace(":", "");
 
-            if (slot) {
-              if (event.translator === 'SOM SAN') {
-                document.getElementById(`somSan_${slot}`).textContent = event.work;
-              } else if (event.translator === 'GOOK SAN') {
-                document.getElementById(`gookSan_${slot}`).textContent = event.work;
-              } else if (event.translator === 'POOKY SAN') {
-                document.getElementById(`pookySan_${slot}`).textContent = event.work;
-              } else if (event.translator === 'L SAN') {
-                document.getElementById(`lSan_${slot}`).textContent = event.work;
-              }
-            }
-
-            timeFromSlot = incrementTimeSlotBy30Minutes(timeFromSlot);
+      while (timeFrom < timeTo) {
+        const slot = getTimeSlot(timeFrom);
+        if (slot) {
+          const col = INTERPRETER_MAP[ev.interpreterId];
+          if (col) {
+            document.getElementById(`${col}_${slot}`).textContent = ev.title;
           }
-        });
-        modalText.textContent = `Details for ${months[month - 1]} ${day}, ${year}`;
+        }
+        timeFrom = incrementTimeSlotBy30Minutes(timeFrom);
       }
-
-      openModal();
-    })
-    .catch(error => {
-      spinner.style.display = 'none';
-      modalText.textContent = "An error occurred while fetching data.";
-      openModal();
-      console.error(error);
     });
+    modalText.textContent = `Details for ${dateStr}`;
+  }
+  openModal();
 }
 
-function openModal() {
-  modal.style.display = "block";
-}
-
-function closeModal() {
-  modal.style.display = "none";
-}
+// ================= Utility =================
+function openModal() { modal.style.display = "block"; }
+function closeModal() { modal.style.display = "none"; }
 
 function getTimeSlot(timeFrom) {
   const slots = {
-    '0700': '0700_0730', '0730': '0730_0800', '0800': '0800_0830', '0830': '0830_0900', '0900': '0900_0930', '0930': '0930_1000',
-    '1000': '1000_1030', '1030': '1030_1100', '1100': '1100_1130', '1130': '1130_1200',
-    '1200': '1200_1230', '1230': '1230_1300', '1300': '1300_1330', '1330': '1330_1400',
-    '1400': '1400_1430', '1430': '1430_1500', '1500': '1500_1530', '1530': '1530_1600',
-    '1600': '1600_1630', '1630': '1630_1700', '1700': '1700_1730', '1730': '1730_1800',
-    '1800': '1800_1830', '1830': '1830_1900', '1900': '1900_1930', '1930': '1930_2000'
+    '0700': '0700_0730', '0730': '0730_0800', '0800': '0800_0830', '0830': '0830_0900',
+    '0900': '0900_0930', '0930': '0930_1000', '1000': '1000_1030', '1030': '1030_1100',
+    '1100': '1100_1130', '1130': '1130_1200', '1200': '1200_1230', '1230': '1230_1300',
+    '1300': '1300_1330', '1330': '1330_1400', '1400': '1400_1430', '1430': '1430_1500',
+    '1500': '1500_1530', '1530': '1530_1600', '1600': '1600_1630', '1630': '1630_1700',
+    '1700': '1700_1730', '1730': '1730_1800', '1800': '1800_1830', '1830': '1830_1900',
+    '1900': '1900_1930', '1930': '1930_2000'
   };
-
   return slots[timeFrom] || null;
 }
 
@@ -161,7 +159,6 @@ function incrementTimeSlotBy30Minutes(timeSlot) {
     minute = 0;
     hour += 1;
   }
-
   return ('0' + hour).slice(-2) + ('0' + minute).slice(-2);
 }
 
@@ -179,7 +176,8 @@ function changeMonth(offset) {
 
 refreshButton.addEventListener('click', () => {
   if (currentDay) {
-    loadEventsForDay(currentYear, currentMonth + 1, currentDay);
+    const dateStr = `${currentYear}-${('0' + (currentMonth + 1)).slice(-2)}-${('0' + currentDay).slice(-2)}`;
+    loadEventsForDay(dateStr);
   }
 });
 
@@ -193,14 +191,11 @@ todayButton.addEventListener('click', () => {
 prevMonth.addEventListener('click', () => changeMonth(-1));
 nextMonth.addEventListener('click', () => changeMonth(1));
 
-span.onclick = function() {
-  closeModal();
-}
+span.onclick = function() { closeModal(); }
+window.onclick = function(event) { if (event.target == modal) closeModal(); }
 
-window.onclick = function(event) {
-  if (event.target == modal) {
-    closeModal();
-  }
-}
-
-renderCalendar(currentMonth, currentYear);
+// ================= INIT =================
+(async function init(){
+  await fetchBookings();
+  renderCalendar(currentMonth, currentYear);
+})();
