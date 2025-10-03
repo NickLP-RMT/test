@@ -195,7 +195,10 @@ span.onclick = function() { closeModal(); }
 window.onclick = function(event) { if (event.target == modal) closeModal(); }
 
 // ================= INIT =================
-(async function init(){
+async function init(){
   await fetchBookings();
   renderCalendar(currentMonth, currentYear);
-})();
+}
+
+init();  // ✅ เรียกฟังก์ชันตรงนี้
+
