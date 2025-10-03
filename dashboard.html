@@ -77,10 +77,16 @@
       background-color:rgba(0,0,0,0.5);
     }
     .modal-content {
-      background:#fff; margin:5% auto; padding:20px;
-      border-radius:10px; width:80%; max-height:80%;
-      overflow-y:auto; box-shadow:0 2px 10px rgba(0,0,0,0.3);
-    }
+  background-color: #fefefe;
+  margin: 1% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 95%;          /* 🔥 เดิมอาจเป็น 80% → ขยายเป็น 95% */
+  max-width: 1200px;   /* 🔥 เดิมอาจเป็น 600px → ขยายได้ เช่น 1200px */
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
     .modal-header { display:flex; justify-content:space-between; align-items:center; }
     .modal-header h3 { margin:0; }
     .close {
