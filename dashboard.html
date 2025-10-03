@@ -453,7 +453,7 @@ if (!startVal || !endVal) {
 const startMins = parseInt(startVal.split(":")[0]) * 60 + parseInt(startVal.split(":")[1]);
 const endMins   = parseInt(endVal.split(":")[0]) * 60 + parseInt(endVal.split(":")[1]);
 if (startMins >= endMins) {
-  Swal.fire("⚠️ Warning", "เวลาเริ่มต้นต้องน้อยกว่าเวลาสิ้นสุด", "warning");
+  Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
   submitBtn.disabled = false;
   submitBtn.innerText = "Submit";
   return;
