@@ -268,7 +268,7 @@
   </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbzKn-K-TC4dcolAt4YL1NUhy0OwZdUbb8ZGmzSl09LuTZMFHggpA5ast2_4D8pyMII/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbwhszYxG3QPy73UumMEIkEhAoKFFQTrwlja5Ep7sAEpEa4fkDm25MVs_xquMuzkqgo/exec"; 
 
   function showLoader(){ document.getElementById("loader").style.display="flex"; }
   function hideLoader(){ document.getElementById("loader").style.display="none"; }
@@ -451,8 +451,13 @@ document.getElementById("bookingForm").addEventListener("submit", async function
         loadMyBookings();
       });
     } else {
-      Swal.fire("Error", data.message, "error");
-    }
+      // ถ้า message มาจาก duplicate ให้โชว์เป็น warning
+  if (data.message && data.message.includes("Duplicate")) {
+    Swal.fire("⚠️ Duplicate Booking", data.message, "warning");
+  } else {
+    Swal.fire("❌ Error", data.message, "error");
+  }
+}
   } catch(err){
     hideLoader();
     Swal.fire("Error", err.message,"error");
