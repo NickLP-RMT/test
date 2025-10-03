@@ -442,22 +442,22 @@ document.getElementById("bookingForm").addEventListener("submit", async function
   const endVal   = document.getElementById("timeTo").value;
 
   // ✅ ตรวจสอบว่าเลือกเวลา
-  if (!startVal || !endVal) {
-    Swal.fire("❌ Error", "กรุณาเลือกเวลาเริ่มต้นและเวลาสิ้นสุด", "error");
-    submitBtn.disabled = false;
-    submitBtn.innerText = "Submit";
-    return;
-  }
+if (!startVal || !endVal) {
+  Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
+  submitBtn.disabled = false;
+  submitBtn.innerText = "Submit";
+  return;
+}
 
   // ✅ ตรวจสอบว่า Start < End
-  const startMins = parseInt(startVal.split(":")[0]) * 60 + parseInt(startVal.split(":")[1]);
-  const endMins   = parseInt(endVal.split(":")[0]) * 60 + parseInt(endVal.split(":")[1]);
-  if (startMins >= endMins) {
-    Swal.fire("❌ Error", "เวลาเริ่มต้นต้องน้อยกว่าเวลาสิ้นสุด", "error");
-    submitBtn.disabled = false;
-    submitBtn.innerText = "Submit";
-    return;
-  }
+const startMins = parseInt(startVal.split(":")[0]) * 60 + parseInt(startVal.split(":")[1]);
+const endMins   = parseInt(endVal.split(":")[0]) * 60 + parseInt(endVal.split(":")[1]);
+if (startMins >= endMins) {
+  Swal.fire("⚠️ Warning", "เวลาเริ่มต้นต้องน้อยกว่าเวลาสิ้นสุด", "warning");
+  submitBtn.disabled = false;
+  submitBtn.innerText = "Submit";
+  return;
+}
 
   const form = new URLSearchParams();
   form.append("page","newBooking");
