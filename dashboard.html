@@ -95,10 +95,13 @@
       width:100%; padding:6px; margin-top:5px; border:1px solid #ccc; border-radius:4px;
     }
     form textarea { resize:vertical; }
-    /* ✅ บังคับ SweetAlert ให้อยู่ด้านหน้าสุด */
+    
+/* ✅ SweetAlert อยู่บน modal เสมอ */
 .swal2-container {
-  z-index: 20000 !important;
+  z-index: 30000 !important;
+  position: fixed !important;  /* บังคับให้อยู่ layer บนสุด */
 }
+
 
   </style>
 </head>
