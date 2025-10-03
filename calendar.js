@@ -93,6 +93,8 @@ function renderCalendar(month, year) {
   }
 }
 
+// ... โค้ดด้านบนเหมือนเดิม ...
+
 // ✅ โหลด event สำหรับวันนั้น
 function loadEventsForDay(dateStr) {
   spinner.style.display = 'block';
@@ -117,6 +119,9 @@ function loadEventsForDay(dateStr) {
       let timeFrom = ev.startTime.replace(":", "");
       let timeTo   = ev.endTime.replace(":", "");
 
+      // ✂️ ดึง username ก่อนจุดแรก
+      let username = ev.userEmail ? ev.userEmail.split(".")[0] : ev.userEmail;
+
       while (timeFrom < timeTo) {
         const slot = getTimeSlot(timeFrom);
         if (slot) {
@@ -125,7 +130,7 @@ function loadEventsForDay(dateStr) {
             // 🔴 จุดสีแดง + Tooltip
             document.getElementById(`${col}_${slot}`).innerHTML += `
               <span class="red-dot" 
-                data-tooltip="Title: ${ev.title}\nLocation: ${ev.location}\nUser: ${ev.userEmail}">
+                data-tooltip="Title: ${ev.title}\nLocation: ${ev.location}\nUser: ${username}">
               </span>`;
           }
         }
@@ -136,6 +141,7 @@ function loadEventsForDay(dateStr) {
   }
   openModal();
 }
+
 
 // ================= Utility =================
 function openModal() { modal.style.display = "block"; }
