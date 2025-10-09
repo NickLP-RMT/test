@@ -544,29 +544,51 @@ if (startMins >= endMins) {
 });
 
   async function cancelBooking(bookingId){
+  // 🟡 แสดงกล่องยืนยันก่อนยกเลิก
+  const confirmResult = await Swal.fire({
+    title: "ยืนยันการยกเลิก?",
+    text: "คุณต้องการยกเลิกการจองนี้ใช่หรือไม่?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "ใช่, ยกเลิกเลย",
+    cancelButtonText: "ไม่, กลับไปก่อน"
+  });
+
+  // ❌ ถ้าผู้ใช้กดยกเลิก → ไม่ทำอะไร
+  if (!confirmResult.isConfirmed) return;
+
+  // ✅ ดำเนินการยกเลิก
   const form = new URLSearchParams();
-  form.append("page","cancelBooking");
+  form.append("page", "cancelBooking");
   form.append("bookingId", bookingId);
 
   try {
     showLoader();
-    const res = await fetch(API_URL, { method:"POST", body:form });
+    const res = await fetch(API_URL, { method:"POST", body: form });
     const data = await res.json();
     hideLoader();
-    if(data.success){
+
+    if (data.success) {
       Swal.fire("✅ Success", data.message, "success").then(() => {
+        // โหลดข้อมูลใหม่
         loadMyBookings();
+        renderAllMyBookings();
+
+        // ✅ รีเฟรช calendar iframe ด้วย
         const iframe = document.getElementById("calendarFrame");
         if (iframe) iframe.src = `calendar.html?v=${new Date().getTime()}`;
       });
     } else {
       Swal.fire("Error", data.message, "error");
     }
-  } catch(err){
+  } catch (err) {
     hideLoader();
-    Swal.fire("Error", err.message,"error");
+    Swal.fire("Error", err.message, "error");
   }
 }
+
 
 
   loadMyBookings();
