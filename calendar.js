@@ -11,6 +11,7 @@ const refreshButton = document.querySelector('.refresh');
 
 const API_URL = "https://script.google.com/macros/s/AKfycbzYxFK_Mt-tEFPw-wr4_HrtgSIvlrqMRSNXR8-XviH8mahbXvDvXyIDrBRBbPZ9RfI/exec"; 
 
+
 // mapping interpreterId → column id prefix
 const INTERPRETER_MAP = {
   i001: "somSan",
