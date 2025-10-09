@@ -232,18 +232,22 @@
 .red-dot:hover::after {
   content: attr(data-tooltip);
   position: absolute;
-  bottom: 125%;
+  bottom: 130%; /* ยกขึ้นนิดหน่อย */
   left: 50%;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.85);
   color: #fff;
-  padding: 6px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: pre-line; /* ✅ รองรับ \n */
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: pre-line; /* ✅ รองรับขึ้นบรรทัดใหม่ */
+  text-align: left;
+  max-width: 220px;      /* ✅ ขยายความกว้าง tooltip */
+  word-wrap: break-word; /* ✅ ตัดคำอัตโนมัติ */
   z-index: 20000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
-
 
   </style>
 </head>
