@@ -1,870 +1,840 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard - Interpreter Booking</title>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style>
-    /* โทนสีใหม่: #F5EFE6 (พื้นหลัง), #E8DFCA (รอง), #6D94C5 (หลัก), #CBDCEB (เน้นอ่อน) */
-    * { box-sizing: border-box; }
-    body { 
-      margin:0; 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      /* 1. พื้นหลังหลัก: ใช้สีอ่อนที่สุด #F5EFE6 */
-      background: #F5EFE6; 
-      min-height: 100vh;
-    }
-    
-    .navbar {
-      /* 2. Navbar: ใช้สีหลัก #6D94C5 */
-      background: #6D94C5; 
-      color: #fff;
-      padding: 16px 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    
-    .navbar-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    
-    .navbar .title { 
-      font-size: 22px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .navbar .user-info { 
-      font-size: 14px;
-      /* 3. User Info: ใช้สีเน้นอ่อน #CBDCEB */
-      background: #CBDCEB; 
-      color: #333;
-      padding: 8px 16px;
-      border-radius: 20px;
-      backdrop-filter: none;
-    }
-    
-    .navbar button {
-      /* 4. ปุ่ม Logout: ใช้สีรอง #E8DFCA (ตัด Gradient เดิม) */
-      background: #E8DFCA; 
-      color: #333;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .navbar button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      background: #F5EFE6;
-    }
-    
-    .main { 
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 24px;
-      padding: 32px;
-      max-width: 1600px;
-      margin: 0 auto;
-    }
-    
-    .mybooking {
-      background: #fff;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    }
-    
-    .mybooking h3 { 
-      margin-top: 0;
-      color: #2d3748;
-      font-size: 18px;
-      font-weight: 600;
-    }
-    
-    .booking-item { 
-      /* 5. แถบเน้น: ใช้สีหลัก #6D94C5 */
-      border-left: 4px solid #6D94C5; 
-      /* 6. พื้นหลังรายการจอง: ใช้สีรองอ่อน #CBDCEB หรือ #F5EFE6 */
-      background: #CBDCEB; 
-      padding: 16px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .booking-item:hover {
-      transform: translateX(4px);
-      box-shadow: 0 4px 12px rgba(109, 148, 197, 0.3);
-    }
-    
-    .booking-item:last-child { 
-      margin-bottom: 0;
-    }
-    
-    .booking-item > div {
-      margin-bottom: 8px;
-      font-size: 14px;
-      color: #4a5568;
-    }
-    
-    .booking-item > div:last-child {
-      margin-bottom: 0;
-    }
-    
-    .booking-item b {
-      color: #2d3748;
-      font-weight: 600;
-    }
-    
-    .booking-actions button {
-      margin-left: 5px;
-      padding: 4px 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      transition: all 0.2s;
-    }
-    
-    .mybooking-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      /* 7. เส้นแบ่ง: ใช้สีรองเข้ม #E8DFCA */
-      border-bottom: 2px solid #E8DFCA;
-    }
+  <meta charset="UTF-8">
+  <title>Dashboard - Interpreter Booking</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      margin:0; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .navbar {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: #fff;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .navbar .title { 
+      font-size: 22px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .navbar .user-info { 
+      font-size: 14px;
+      background: rgba(255,255,255,0.15);
+      padding: 8px 16px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .navbar button {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .navbar button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+    }
+    
+    .main { 
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 24px;
+      padding: 32px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    
+    .mybooking {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    .mybooking h3 { 
+      margin-top: 0;
+      color: #2d3748;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .booking-item { 
+      border-left: 4px solid #667eea;
+      background: #f7fafc;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .booking-item:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+    
+    .booking-item:last-child { 
+      margin-bottom: 0;
+    }
+    
+    .booking-item > div {
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #4a5568;
+    }
+    
+    .booking-item > div:last-child {
+      margin-bottom: 0;
+    }
+    
+    .booking-item b {
+      color: #2d3748;
+      font-weight: 600;
+    }
+    
+    .booking-actions button {
+      margin-left: 5px;
+      padding: 4px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    
+    .mybooking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e2e8f0;
+    }
 
-    .mybooking-header h3 {
-      margin: 0;
-      font-size: 18px;
-    }
+    .mybooking-header h3 {
+      margin: 0;
+      font-size: 18px;
+    }
 
-    .edit-btn { 
-      /* ปุ่มแก้ไข: ใช้สีเหลืองเดิมเพื่อความแตกต่าง (เป็นสีรองที่สำคัญ) */
-      background: #fbbf24;
-      color: #000;
-    }
-    
-    .edit-btn:hover {
-      background: #f59e0b;
-    }
-    
-    .cancel-btn { 
-      /* ปุ่มยกเลิก: ใช้สีแดงเดิมเพื่อความหมายสากล */
-      background: #dc3545;
-      color: #fff;
-    }
-    
-    .cancel-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-    }
-    
-    .see-more {
-      display: block;
-      text-align: right;
-      /* 8. ลิงก์: ใช้สีหลัก #6D94C5 */
-      color: #6D94C5; 
-      cursor: pointer;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    
-    .see-more:hover {
-      color: #4a6c9e; 
-      text-decoration: underline;
-    }
-    
-    .new-booking-btn {
-      display: block;
-      width: 100%;
-      margin-bottom: 20px;
-      padding: 14px;
-      /* 9. ปุ่มหลัก (New Booking): ใช้สีหลัก #6D94C5 (ตัด Gradient เดิม) */
-      background: #6D94C5; 
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .new-booking-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(109, 148, 197, 0.4);
-    }
-    
-    .calendar-box {
-      background: #fff;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    }
-    
-    #loader {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255,255,255,0.9);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    #loader div {
-      border: 6px solid #f3f3f3;
-      /* 10. Loader: ใช้สีหลัก #6D94C5 */
-      border-top: 6px solid #6D94C5; 
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 10000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
-    }
-    
-    .modal-content {
-      background-color: #fff;
-      margin: 1% auto;
-      padding: 32px;
-      border: none;
-      width: 95%;
-      max-width: 1200px;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      animation: slideDown 0.3s ease-out;
-    }
-    
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    .edit-btn { 
+      background: #fbbf24;
+      color: #000;
+    }
+    
+    .edit-btn:hover {
+      background: #f59e0b;
+    }
+    
+    .cancel-btn { 
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: #fff;
+    }
+    
+    .cancel-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(245, 87, 108, 0.3);
+    }
+    
+    .see-more {
+      display: block;
+      text-align: right;
+      font-size: 14px;
+      color: #667eea;
+      cursor: pointer;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .see-more:hover {
+      color: #5a67d8;
+      text-decoration: underline;
+    }
+    
+    .new-booking-btn {
+      display: block;
+      width: 100%;
+      margin-bottom: 20px;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .new-booking-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .calendar-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    #loader {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.9);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #loader div {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #667eea;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+    }
+    
+    .modal-content {
+      background-color: #fff;
+      margin: 1% auto;
+      padding: 32px;
+      border: none;
+      width: 95%;
+      max-width: 1200px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-    .modal-header { 
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 16px;
-      /* 11. เส้นแบ่ง Modal: ใช้สีรองเข้ม #E8DFCA */
-      border-bottom: 2px solid #E8DFCA; 
-      margin-bottom: 24px;
-    }
-    
-    .modal-header h3 { 
-      margin: 0;
-      color: #2d3748;
-      font-size: 24px;
-      font-weight: 600;
-    }
-    
-    .close {
-      color: #a0aec0;
-      font-size: 32px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    
-    .close:hover { 
-      color: #6D94C5; /* สีหลักเมื่อ hover */
-    }
-    
-    table { 
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    
-    th, td { 
-      padding: 14px;
-      border-bottom: 1px solid #E8DFCA; /* 12. เส้นตาราง: ใช้สีรองเข้ม #E8DFCA */
-      text-align: left;
-    }
-    
-    th { 
-      /* 13. หัวตาราง: ใช้สีหลัก #6D94C5 (ตัด Gradient เดิม) */
-      background: #6D94C5; 
-      color: #fff;
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 13px;
-      letter-spacing: 0.5px;
-    }
-    
-    tbody tr:hover {
-      background: #F5EFE6; /* 14. Hover Row: ใช้สีพื้นหลังอ่อน #F5EFE6 */
-    }
-    
-    form label { 
-      display: block;
-      margin-top: 16px;
-      font-weight: 600;
-      color: #2d3748;
-      font-size: 14px;
-    }
-    
-    form input, form select, form textarea {
-      width: 100%;
-      padding: 10px 14px;
-      margin-top: 6px;
-      /* 15. Form Input Border: ใช้สีเน้นอ่อน #CBDCEB */
-      border: 2px solid #CBDCEB; 
-      border-radius: 8px;
-      font-size: 14px;
-      transition: border-color 0.2s;
-    }
-    
-    form input:focus, form select:focus, form textarea:focus {
-      outline: none;
-      /* 16. Form Focus Color: ใช้สีหลัก #6D94C5 */
-      border-color: #6D94C5; 
-    }
-    
-    form textarea { 
-      resize: vertical;
-    }
-    
-    .swal2-container {
-      z-index: 30000 !important;
-      position: fixed !important;
-    }
+    .modal-header { 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 24px;
+    }
+    
+    .modal-header h3 { 
+      margin: 0;
+      color: #2d3748;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    .close {
+      color: #a0aec0;
+      font-size: 32px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    
+    .close:hover { 
+      color: #2d3748;
+    }
+    
+    table { 
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    
+    th, td { 
+      padding: 14px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: left;
+    }
+    
+    th { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+    
+    tbody tr:hover {
+      background: #f7fafc;
+    }
+    
+    form label { 
+      display: block;
+      margin-top: 16px;
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 14px;
+    }
+    
+    form input, form select, form textarea {
+      width: 100%;
+      padding: 10px 14px;
+      margin-top: 6px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    
+    form input:focus, form select:focus, form textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    form textarea { 
+      resize: vertical;
+    }
+    
+    .swal2-container {
+      z-index: 30000 !important;
+      position: fixed !important;
+    }
 
-    form button[type="submit"] {
-      margin-top: 24px;
-      padding: 12px 24px;
-      /* 17. ปุ่ม Submit Modal: ใช้สีหลัก #6D94C5 (ตัด Gradient เดิม) */
-      background: #6D94C5; 
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 15px;
-      width: 100%;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    form button[type="submit"]:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(109, 148, 197, 0.4);
-    }
-    
-    form button[type="submit"]:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+    form button[type="submit"] {
+      margin-top: 24px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      width: 100%;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    form button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+    
+    form button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
 
-    @media (max-width: 1024px) {
-      .main {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+    @media (max-width: 1024px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="navbar">
-    <div class="title">
-      <span>📘</span>
-      <span>Interpreter Booking Dashboard</span>
-    </div>
-    <div class="navbar-right">
-      <div class="user-info" id="userInfo"></div>
-      <button onclick="logout()">Logout</button>
-    </div>
-  </div>
+  <div class="navbar">
+    <div class="title">
+      <span>📊</span>
+      <span>Interpreter Booking Dashboard</span>
+    </div>
+    <div class="navbar-right">
+      <div class="user-info" id="userInfo"></div>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
 
-  <div class="main">
-        <div class="mybooking">
-      <button class="new-booking-btn" onclick="openNewBookingModal()">+ New Booking</button>
-      <div class="mybooking-header">
-        <h3>My Bookings (Latest)</h3>
-        <span class="see-more" onclick="openModal()">See more →</span>
-      </div>
-      <div id="myBookingList"></div>
-    </div>
+  <div class="main">
+    <!-- My Bookings -->
+    <div class="mybooking">
+      <button class="new-booking-btn" onclick="openNewBookingModal()">+ New Booking</button>
+      <div class="mybooking-header">
+        <h3>My Bookings (Latest)</h3>
+        <span class="see-more" onclick="openModal()">See more →</span>
+      </div>
+      <div id="myBookingList"></div>
+    </div>
 
-        <div class="calendar-box">
-      <iframe
-        id="calendarFrame"
-        src="calendar.html"
-        style="width:100%; height:600px; border:none; border-radius:10px;">
-      </iframe>
-    </div>
-  </div>
+    <!-- Calendar -->
+    <div class="calendar-box">
+      <iframe
+        id="calendarFrame"
+        src="calendar.html"
+        style="width:100%; height:600px; border:none; border-radius:10px;">
+      </iframe>
+    </div>
+  </div>
 
-    <div id="loader"><div></div></div>
+  <!-- Loader -->
+  <div id="loader"><div></div></div>
 
-    <div id="myModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>My All Bookings</h3>
-        <span class="close" onclick="closeModal()">&times;</span>
-        <style>
-          /* 18. แก้ปุ่มตรง modal ให้ดูสวยงามขึ้น */
-          .myModal-action-btn {
-            background: #6D94C5;
-            color: #fff;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s;
-          }
-          .myModal-action-btn:hover {
-            background: #4a6c9e;
-          }
-        </style>
-      </div>
-      <table id="myBookingTable">
-        <thead>
-          <tr>
-            <th>Title Meeting</th>
-            <th>Time</th>
-            <th>Interpreter</th>
-            <th>Location</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
+  <!-- Modal All Bookings -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>My All Bookings</h3>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <table id="myBookingTable">
+        <thead>
+          <tr>
+            <th>Title Meeting</th>
+            <th>Time</th>
+            <th>Interpreter</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
-    <div id="newBookingModal" class="modal">
-    <div class="modal-content" style="max-width:500px;">
-      <div class="modal-header">
-        <h3>New Booking</h3>
-        <span class="close" onclick="closeNewBookingModal()">&times;</span>
-      </div>
-      <form id="bookingForm">
-        <label>Date:</label>
-        <input type="date" id="date" name="date" required>
+  <!-- New Booking Modal -->
+  <div id="newBookingModal" class="modal">
+    <div class="modal-content" style="max-width:500px;">
+      <div class="modal-header">
+        <h3>New Booking</h3>
+        <span class="close" onclick="closeNewBookingModal()">&times;</span>
+      </div>
+      <form id="bookingForm">
+        <label>Date:</label>
+        <input type="date" id="date" name="date" required>
 
-        <label>Interpreter:</label>
-        <select id="interpreterId" name="interpreterId" required>
-          <option value="" disabled selected>Select Interpreter</option>
-          <option value="i001">SOM SAN</option>
-          <option value="i002">GOOK SAN</option>
-          <option value="i003">POOKY SAN</option>
-          <option value="i004">L SAN</option>
-        </select>
+        <label>Interpreter:</label>
+        <select id="interpreterId" name="interpreterId" required>
+          <option value="" disabled selected>Select Interpreter</option>
+          <option value="i001">SOM SAN</option>
+          <option value="i002">GOOK SAN</option>
+          <option value="i003">POOKY SAN</option>
+          <option value="i004">L SAN</option>
+        </select>
 
-        <label for="timeFrom">Time From:</label>
-        <select id="timeFrom" name="startTime" required>
-          <option value="" disabled selected>HH:MM</option>
-          <option value="07:00">07:00</option>
-          <option value="07:30">07:30</option>
-          <option value="08:00">08:00</option>
-          <option value="08:30">08:30</option>
-          <option value="09:00">09:00</option>
-          <option value="09:30">09:30</option>
-          <option value="10:00">10:00</option>
-          <option value="10:30">10:30</option>
-          <option value="11:00">11:00</option>
-          <option value="11:30">11:30</option>
-          <option value="12:00">12:00</option>
-          <option value="12:30">12:30</option>
-          <option value="13:00">13:00</option>
-          <option value="13:30">13:30</option>
-          <option value="14:00">14:00</option>
-          <option value="14:30">14:30</option>
-          <option value="15:00">15:00</option>
-          <option value="15:30">15:30</option>
-          <option value="16:00">16:00</option>
-          <option value="16:30">16:30</option>
-          <option value="17:00">17:00</option>
-          <option value="17:30">17:30</option>
-          <option value="18:00">18:00</option>
-          <option value="18:30">18:30</option>
-          <option value="19:00">19:00</option>
-          <option value="19:30">19:30</option>
-          <option value="20:00">20:00</option>
-        </select>
+        <label for="timeFrom">Time From:</label>
+        <select id="timeFrom" name="startTime" required>
+          <option value="" disabled selected>HH:MM</option>
+          <option value="07:00">07:00</option>
+          <option value="07:30">07:30</option>
+          <option value="08:00">08:00</option>
+          <option value="08:30">08:30</option>
+          <option value="09:00">09:00</option>
+          <option value="09:30">09:30</option>
+          <option value="10:00">10:00</option>
+          <option value="10:30">10:30</option>
+          <option value="11:00">11:00</option>
+          <option value="11:30">11:30</option>
+          <option value="12:00">12:00</option>
+          <option value="12:30">12:30</option>
+          <option value="13:00">13:00</option>
+          <option value="13:30">13:30</option>
+          <option value="14:00">14:00</option>
+          <option value="14:30">14:30</option>
+          <option value="15:00">15:00</option>
+          <option value="15:30">15:30</option>
+          <option value="16:00">16:00</option>
+          <option value="16:30">16:30</option>
+          <option value="17:00">17:00</option>
+          <option value="17:30">17:30</option>
+          <option value="18:00">18:00</option>
+          <option value="18:30">18:30</option>
+          <option value="19:00">19:00</option>
+          <option value="19:30">19:30</option>
+          <option value="20:00">20:00</option>
+        </select>
 
-        <label for="timeTo">Time To:</label>
-        <select id="timeTo" name="endTime" required>
-          <option value="" disabled selected>HH:MM</option>
-          <option value="07:29">07:30</option>
-          <option value="07:59">08:00</option>
-          <option value="08:29">08:30</option>
-          <option value="08:59">09:00</option>
-          <option value="09:29">09:30</option>
-          <option value="09:59">10:00</option>
-          <option value="10:29">10:30</option>
-          <option value="10:59">11:00</option>
-          <option value="11:29">11:30</option>
-          <option value="11:59">12:00</option>
-          <option value="12:29">12:30</option>
-          <option value="12:59">13:00</option>
-          <option value="13:29">13:30</option>
-          <option value="13:59">14:00</option>
-          <option value="14:29">14:30</option>
-          <option value="14:59">15:00</option>
-          <option value="15:29">15:30</option>
-          <option value="15:59">16:00</option>
-          <option value="16:29">16:30</option>
-          <option value="16:59">17:00</option>
-          <option value="17:29">17:30</option>
-          <option value="17:59">18:00</option>
-          <option value="18:29">18:30</option>
-          <option value="18:59">19:00</option>
-          <option value="19:29">19:30</option>
-          <option value="19:59">20:00</option>
-        </select>
+        <label for="timeTo">Time To:</label>
+        <select id="timeTo" name="endTime" required>
+          <option value="" disabled selected>HH:MM</option>
+          <option value="07:29">07:30</option>
+          <option value="07:59">08:00</option>
+          <option value="08:29">08:30</option>
+          <option value="08:59">09:00</option>
+          <option value="09:29">09:30</option>
+          <option value="09:59">10:00</option>
+          <option value="10:29">10:30</option>
+          <option value="10:59">11:00</option>
+          <option value="11:29">11:30</option>
+          <option value="11:59">12:00</option>
+          <option value="12:29">12:30</option>
+          <option value="12:59">13:00</option>
+          <option value="13:29">13:30</option>
+          <option value="13:59">14:00</option>
+          <option value="14:29">14:30</option>
+          <option value="14:59">15:00</option>
+          <option value="15:29">15:30</option>
+          <option value="15:59">16:00</option>
+          <option value="16:29">16:30</option>
+          <option value="16:59">17:00</option>
+          <option value="17:29">17:30</option>
+          <option value="17:59">18:00</option>
+          <option value="18:29">18:30</option>
+          <option value="18:59">19:00</option>
+          <option value="19:29">19:30</option>
+          <option value="19:59">20:00</option>
+        </select>
 
-        <label for="title">Title Meeting:</label>
-        <input type="text" id="title" name="title" required>
-        
-        <label>Location:</label>
-        <select id="location" name="location" required>
-          <option value="" disabled selected>Select Location</option>
-          <option>CHP-M201-Rajapruek</option>
-          <option>CHP-M202-Fuengfah</option>
-          <option>CHP-M203-Koson</option>
-          <option>CHP-M204-Lilawadee</option>
-          <option>CHP-M205-Training Center</option>
-          <option>CHP-M301-Anchan</option>
-          <option>CHP-M302-Supanniga</option>
-          <option>CHP-M303-Bualuang</option>
-          <option>CHP-M304-Puang Sad</option>
-          <option>CHP-M305-Parichat</option>
-          <option>G1P-Guest-Room</option>
-          <option>G1P-Meeting1</option>
-          <option>G1P-Meeting2</option>
-          <option>G1P-Meeting3</option>
-          <option>G1P-Meeting4</option>
-          <option>G1P-Meeting5</option>
-        </select>
+        <label for="title">Title Meeting:</label>
+        <input type="text" id="title" name="title" required>
+        
+        <label>Location:</label>
+        <select id="location" name="location" required>
+          <option value="" disabled selected>Select Location</option>
+          <option>CHP-M201-Rajapruek</option>
+          <option>CHP-M202-Fuengfah</option>
+          <option>CHP-M203-Koson</option>
+          <option>CHP-M204-Lilawadee</option>
+          <option>CHP-M205-Training Center</option>
+          <option>CHP-M301-Anchan</option>
+          <option>CHP-M302-Supanniga</option>
+          <option>CHP-M303-Bualuang</option>
+          <option>CHP-M304-Puang Sad</option>
+          <option>CHP-M305-Parichat</option>
+          <option>G1P-Guest-Room</option>
+          <option>G1P-Meeting1</option>
+          <option>G1P-Meeting2</option>
+          <option>G1P-Meeting3</option>
+          <option>G1P-Meeting4</option>
+          <option>G1P-Meeting5</option>
+        </select>
 
-        <button type="submit">Submit</button>
-      </form>
-    </div>
-  </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbzYxFK_Mt-tEFPw-wr4_HrtgSIvlrqMRSNXR8-XviH8mahbXvDvXyIDrBRBbPZ9RfI/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbzYxFK_Mt-tEFPw-wr4_HrtgSIvlrqMRSNXR8-XviH8mahbXvDvXyIDrBRBbPZ9RfI/exec"; 
 
-  function showLoader(){ document.getElementById("loader").style.display="flex"; }
-  function hideLoader(){ document.getElementById("loader").style.display="none"; }
-  function logout(){ localStorage.removeItem("loggedInUser"); window.location.href="login.html"; }
+  function showLoader(){ document.getElementById("loader").style.display="flex"; }
+  function hideLoader(){ document.getElementById("loader").style.display="none"; }
+  function logout(){ localStorage.removeItem("loggedInUser"); window.location.href="login.html"; }
 
-  // Modal Control
-  function openModal(){ document.getElementById("myModal").style.display="block"; renderAllMyBookings(); }
-  function closeModal(){ document.getElementById("myModal").style.display="none"; }
-  function openNewBookingModal(){ 
-    document.getElementById("bookingForm").reset();
-    document.getElementById("newBookingModal").style.display="block"; 
-  }
-  function closeNewBookingModal(){ 
-    document.getElementById("newBookingModal").style.display="none"; 
-  }
+  // Modal Control
+  function openModal(){ document.getElementById("myModal").style.display="block"; renderAllMyBookings(); }
+  function closeModal(){ document.getElementById("myModal").style.display="none"; }
+  function openNewBookingModal(){ 
+    document.getElementById("bookingForm").reset();
+    document.getElementById("newBookingModal").style.display="block"; 
+  }
+  function closeNewBookingModal(){ 
+    document.getElementById("newBookingModal").style.display="none"; 
+  }
 
-  async function loadMyBookings(){
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
-    if(!user){
-      Swal.fire("กรุณา Login ก่อน","","warning").then(()=> window.location.href="login.html");
-      return;
-    }
-    document.getElementById("userInfo").innerText = `👤 ${user.username} (${user.role})`;
+  async function loadMyBookings(){
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    if(!user){
+      Swal.fire("กรุณา Login ก่อน","","warning").then(()=> window.location.href="login.html");
+      return;
+    }
+    document.getElementById("userInfo").innerText = `👤 ${user.username} (${user.role})`;
 
-    try {
-      showLoader();
-      const res = await fetch(API_URL+"?page=listBookings");
-      const bookings = await res.json();
-      hideLoader();
+    try {
+      showLoader();
+      const res = await fetch(API_URL+"?page=listBookings");
+      const bookings = await res.json();
+      hideLoader();
 
-      const myBookings = bookings.filter(b=> b.userId === user.id);
-      myBookings.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-      renderMyBookings(myBookings.slice(0,5));
-      window.allMyBookings = myBookings;
-    } catch(err){
-      hideLoader();
-      Swal.fire("Error", err.message,"error");
-    }
-  }
+      const myBookings = bookings.filter(b=> b.userId === user.id);
+      myBookings.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+      renderMyBookings(myBookings.slice(0,5));
+      window.allMyBookings = myBookings;
+    } catch(err){
+      hideLoader();
+      Swal.fire("Error", err.message,"error");
+    }
+  }
 
-  // ================= TIME FORMAT =================
-  function parseDatePart(dateVal){
-    if (!dateVal) return null;
-    const s = String(dateVal).trim();
-    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-      const [y,m,d] = s.split('-').map(Number);
-      return new Date(y, m-1, d);
-    }
-    const d = new Date(s);
-    return isNaN(d) ? null : new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  }
+  // ================= TIME FORMAT =================
+  function parseDatePart(dateVal){
+    if (!dateVal) return null;
+    const s = String(dateVal).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+      const [y,m,d] = s.split('-').map(Number);
+      return new Date(y, m-1, d);
+    }
+    const d = new Date(s);
+    return isNaN(d) ? null : new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
 
-  function parseTimePart(timeVal, kind){
-    if (!timeVal) return null;
-    const s = String(timeVal).trim();
+  function parseTimePart(timeVal, kind){
+    if (!timeVal) return null;
+    const s = String(timeVal).trim();
 
-    let m = s.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
-    if (m) {
-      return { hh: parseInt(m[1],10), mm: parseInt(m[2],10) };
-    }
+    let m = s.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+    if (m) {
+      return { hh: parseInt(m[1],10), mm: parseInt(m[2],10) };
+    }
 
-    const d = new Date(s);
-    if (!isNaN(d)) {
-      return { hh: d.getHours(), mm: d.getMinutes() };
-    }
+    const d = new Date(s);
+    if (!isNaN(d)) {
+      return { hh: d.getHours(), mm: d.getMinutes() };
+    }
 
-    return null;
-  }
+    return null;
+  }
 
-  function formatRange(dateVal, startTime, endTime){
-    const d  = parseDatePart(dateVal);
-    const st = parseTimePart(startTime, 'start');
-    const et = parseTimePart(endTime, 'end');
-    if (!d || !st || !et) return `${dateVal} ${startTime} - ${endTime}`;
+  function formatRange(dateVal, startTime, endTime){
+    const d  = parseDatePart(dateVal);
+    const st = parseTimePart(startTime, 'start');
+    const et = parseTimePart(endTime, 'end');
+    if (!d || !st || !et) return `${dateVal} ${startTime} - ${endTime}`;
 
-    const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), st.hh, st.mm);
-    const end   = new Date(d.getFullYear(), d.getMonth(), d.getDate(), et.hh, et.mm);
-    end.setMinutes(end.getMinutes() + 1);
+    const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), st.hh, st.mm);
+    const end   = new Date(d.getFullYear(), d.getMonth(), d.getDate(), et.hh, et.mm);
+    end.setMinutes(end.getMinutes() + 1);
 
-    const dateStr  = start.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" });
-    const startStr = start.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit", hour12:false });
-    const endStr   = end.toLocaleTimeString("en-GB",   { hour:"2-digit", minute:"2-digit", hour12:false });
-    return `${dateStr}, ${startStr} - ${endStr}`;
-  }
+    const dateStr  = start.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" });
+    const startStr = start.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit", hour12:false });
+    const endStr   = end.toLocaleTimeString("en-GB",   { hour:"2-digit", minute:"2-digit", hour12:false });
+    return `${dateStr}, ${startStr} - ${endStr}`;
+  }
 
-  // ================= INTERPRETER MAP =================
-  const INTERPRETERS = {
-    i001: { name: "SOM SAN",  email: "teeraporn.sanyaprachasakul.xijqx@resonac.com" },
-    i002: { name: "GOOK SAN", email: "boonnak.songnok.xijmk@resonac.com" },
-    i003: { name: "POOKY SAN",email: "waraporn.yokao.xlbmb@resonac.com" },
-    i004: { name: "L SAN",    email: "prataksara.poolsawad.xmpuh@resonac.com" }
-  };
-  function getInterpreterEmail(id){ return (INTERPRETERS[id] && INTERPRETERS[id].email) || ""; }
-  function getInterpreterName(id){ return (INTERPRETERS[id] && INTERPRETERS[id].name) || id; }
+  // ================= INTERPRETER MAP =================
+  const INTERPRETERS = {
+    i001: { name: "SOM SAN",  email: "teeraporn.sanyaprachasakul.xijqx@resonac.com" },
+    i002: { name: "GOOK SAN", email: "boonnak.songnok.xijmk@resonac.com" },
+    i003: { name: "POOKY SAN",email: "waraporn.yokao.xlbmb@resonac.com" },
+    i004: { name: "L SAN",    email: "prataksara.poolsawad.xmpuh@resonac.com" }
+  };
+  function getInterpreterEmail(id){ return (INTERPRETERS[id] && INTERPRETERS[id].email) || ""; }
+  function getInterpreterName(id){ return (INTERPRETERS[id] && INTERPRETERS[id].name) || id; }
 
-  // ================= RENDER =================
-  function renderMyBookings(list){
-    const container = document.getElementById("myBookingList");
-    container.innerHTML="";
-    if(list.length===0){ 
-      container.innerHTML="<p style='text-align:center;color:#a0aec0;padding:20px;'>No bookings</p>"; 
-      return; 
-    }
-    list.forEach(b=>{
-      const div=document.createElement("div");
-      div.className="booking-item";
-      div.innerHTML=`
-        <div><b>Title Meeting:</b> ${b.title || "-"}</div>
-        <div><b>Time:</b> ${formatRange(b.date, b.startTime, b.endTime)}</div>
-        <div><b>Interpreter:</b> ${getInterpreterName(b.interpreterId)}</div>
-        <div><b>Location:</b> ${b.location || ""}</div>
-        <div>
-          <b>Status:</b>
-          <span style="color:${
-            b.status === 'BOOKED' ? '#28a745' :
-            b.status === 'CANCELED' ? '#dc3545' : '#333'
-          }">
-            ${b.status || ""}
-          </span>
-        </div>
-      `;
-      container.appendChild(div);
-    });
-  }
+  // ================= RENDER =================
+  function renderMyBookings(list){
+    const container = document.getElementById("myBookingList");
+    container.innerHTML="";
+    if(list.length===0){ 
+      container.innerHTML="<p style='text-align:center;color:#a0aec0;padding:20px;'>No bookings</p>"; 
+      return; 
+    }
+    list.forEach(b=>{
+      const div=document.createElement("div");
+      div.className="booking-item";
+      div.innerHTML=`
+        <div><b>Title Meeting:</b> ${b.title || "-"}</div>
+        <div><b>Time:</b> ${formatRange(b.date, b.startTime, b.endTime)}</div>
+        <div><b>Interpreter:</b> ${getInterpreterName(b.interpreterId)}</div>
+        <div><b>Location:</b> ${b.location || ""}</div>
+        <div>
+          <b>Status:</b>
+          <span style="color:${
+            b.status === 'BOOKED' ? '#28a745' :
+            b.status === 'CANCELED' ? '#dc3545' : '#333'
+          }">
+            ${b.status || ""}
+          </span>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
 
-  function renderAllMyBookings(){
-    const tbody=document.querySelector("#myBookingTable tbody");
-    tbody.innerHTML="";
-    if(!window.allMyBookings || window.allMyBookings.length===0){
-      tbody.innerHTML="<tr><td colspan='6' style='text-align:center;color:#a0aec0;padding:20px;'>No bookings</td></tr>"; 
-      return;
-    }
-    window.allMyBookings.forEach(b=>{
-      const tr=document.createElement("tr");
-      tr.innerHTML=`
-        <td>${b.title || "-"}</td>
-        <td>${formatRange(b.date, b.startTime, b.endTime)}</td>
-        <td>${getInterpreterName(b.interpreterId)}</td>
-        <td>${b.location||""}</td>
-        <td style="color:${
-          b.status === 'BOOKED' ? '#28a745' :
-          b.status === 'CANCELED' ? '#dc3545' : '#333'
-        }">${b.status||""}</td>
-        <td><button class="cancel-btn myModal-action-btn" onclick="cancelBooking('${b.bookingId}')">Cancel</button></td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
+  function renderAllMyBookings(){
+    const tbody=document.querySelector("#myBookingTable tbody");
+    tbody.innerHTML="";
+    if(!window.allMyBookings || window.allMyBookings.length===0){
+      tbody.innerHTML="<tr><td colspan='6' style='text-align:center;color:#a0aec0;padding:20px;'>No bookings</td></tr>"; 
+      return;
+    }
+    window.allMyBookings.forEach(b=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td>${b.title || "-"}</td>
+        <td>${formatRange(b.date, b.startTime, b.endTime)}</td>
+        <td>${getInterpreterName(b.interpreterId)}</td>
+        <td>${b.location||""}</td>
+        <td style="color:${
+          b.status === 'BOOKED' ? '#28a745' :
+          b.status === 'CANCELED' ? '#dc3545' : '#333'
+        }">${b.status||""}</td>
+        <td><button class="cancel-btn" onclick="cancelBooking('${b.bookingId}')">Cancel</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
 
-  // Submit New Booking
-  document.getElementById("bookingForm").addEventListener("submit", async function(e){ 
-    e.preventDefault();
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
-    const submitBtn = this.querySelector("button[type='submit']");
-    
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Submitting...";
+  // Submit New Booking
+  document.getElementById("bookingForm").addEventListener("submit", async function(e){ 
+    e.preventDefault();
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    const submitBtn = this.querySelector("button[type='submit']");
+    
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
 
-    function formatTimeStr(val){
-      if (!val) return "";
-      const parts = String(val).split(":");
-      const hh = ('0' + parts[0]).slice(-2);
-      const mm = ('0' + parts[1]).slice(-2);
-      return `${hh}:${mm}`;
-    }
+    function formatTimeStr(val){
+      if (!val) return "";
+      const parts = String(val).split(":");
+      const hh = ('0' + parts[0]).slice(-2);
+      const mm = ('0' + parts[1]).slice(-2);
+      return `${hh}:${mm}`;
+    }
 
-    const startVal = document.getElementById("timeFrom").value;
-    const endVal   = document.getElementById("timeTo").value;
+    const startVal = document.getElementById("timeFrom").value;
+    const endVal   = document.getElementById("timeTo").value;
 
-    if (!startVal || !endVal) {
-      Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Submit";
-      return;
-    }
+    if (!startVal || !endVal) {
+      Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit";
+      return;
+    }
 
-    const startMins = parseInt(startVal.split(":")[0]) * 60 + parseInt(startVal.split(":")[1]);
-    const endMins   = parseInt(endVal.split(":")[0]) * 60 + parseInt(endVal.split(":")[1]);
-    if (startMins >= endMins) {
-      Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Submit";
-      return;
-    }
+    const startMins = parseInt(startVal.split(":")[0]) * 60 + parseInt(startVal.split(":")[1]);
+    const endMins   = parseInt(endVal.split(":")[0]) * 60 + parseInt(endVal.split(":")[1]);
+    if (startMins >= endMins) {
+      Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit";
+      return;
+    }
 
-    const form = new URLSearchParams();
-    form.append("page","newBooking");
-    form.append("userId", user.id);
-    form.append("userEmail", user.email);
-    form.append("interpreterId", document.getElementById("interpreterId").value);
-    form.append("interpreterEmail", getInterpreterEmail(document.getElementById("interpreterId").value));
-    form.append("date", document.getElementById("date").value);
-    form.append("startTime", formatTimeStr(startVal));
-    form.append("endTime", formatTimeStr(endVal));
-    form.append("title", document.getElementById("title").value);
-    form.append("location", document.getElementById("location").value);
-    form.append("status", "BOOKED");
-    form.append("createdAt", new Date().toISOString());
+    const form = new URLSearchParams();
+    form.append("page","newBooking");
+    form.append("userId", user.id);
+    form.append("userEmail", user.email);
+    form.append("interpreterId", document.getElementById("interpreterId").value);
+    form.append("interpreterEmail", getInterpreterEmail(document.getElementById("interpreterId").value));
+    form.append("date", document.getElementById("date").value);
+    form.append("startTime", formatTimeStr(startVal));
+    form.append("endTime", formatTimeStr(endVal));
+    form.append("title", document.getElementById("title").value);
+    form.append("location", document.getElementById("location").value);
+    form.append("status", "BOOKED");
+    form.append("createdAt", new Date().toISOString());
 
-    try {
-      showLoader();
-      const res = await fetch(API_URL, { method:"POST", body:form });
-      const data = await res.json();
-      hideLoader();
+    try {
+      showLoader();
+      const res = await fetch(API_URL, { method:"POST", body:form });
+      const data = await res.json();
+      hideLoader();
 
-      if(data.success){
-        closeNewBookingModal();
-        this.reset();
-        Swal.fire("✅ Success", data.message, "success").then(() => {
-          loadMyBookings();
-          const iframe = document.getElementById("calendarFrame");
-          if (iframe) {
-            iframe.src = `calendar.html?v=${new Date().getTime()}`;
-          }
-        });
-      } else {
-        if (data.message && data.message.includes("Duplicate")) {
-          Swal.fire({
-            title: "⚠️ Duplicate Booking",
-            text: data.message,
-            icon: "warning",
-            didOpen: () => { document.querySelector('.swal2-container').style.zIndex = 30000; }
-          });
-        } else {
-          Swal.fire("❌ Error", data.message, "error");
-        }
-      }
-    } catch(err){
-      hideLoader();
-      Swal.fire("Error", err.message,"error");
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Submit";
-    }
-  });
+      if(data.success){
+        closeNewBookingModal();
+        this.reset();
+        Swal.fire("✅ Success", data.message, "success").then(() => {
+          loadMyBookings();
+          const iframe = document.getElementById("calendarFrame");
+          if (iframe) {
+            iframe.src = `calendar.html?v=${new Date().getTime()}`;
+          }
+        });
+      } else {
+        if (data.message && data.message.includes("Duplicate")) {
+          Swal.fire({
+            title: "⚠️ Duplicate Booking",
+            text: data.message,
+            icon: "warning",
+            didOpen: () => { document.querySelector('.swal2-container').style.zIndex = 30000; }
+          });
+        } else {
+          Swal.fire("❌ Error", data.message, "error");
+        }
+      }
+    } catch(err){
+      hideLoader();
+      Swal.fire("Error", err.message,"error");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit";
+    }
+  });
 
-  async function cancelBooking(bookingId) {
-    const confirmResult = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to cancel this booking?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, cancel it",
-      cancelButtonText: "No, keep it"
-    });
+  async function cancelBooking(bookingId) {
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to cancel this booking?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, cancel it",
+      cancelButtonText: "No, keep it"
+    });
 
-    if (!confirmResult.isConfirmed) return;
+    if (!confirmResult.isConfirmed) return;
 
-    const form = new URLSearchParams();
-    form.append("page", "cancelBooking");
-    form.append("bookingId", bookingId);
+    const form = new URLSearchParams();
+    form.append("page", "cancelBooking");
+    form.append("bookingId", bookingId);
 
-    try {
-      showLoader();
-      const res = await fetch(API_URL, { method: "POST", body: form });
-      const data = await res.json();
-      hideLoader();
+    try {
+      showLoader();
+      const res = await fetch(API_URL, { method: "POST", body: form });
+      const data = await res.json();
+      hideLoader();
 
-      if (data.success) {
-        Swal.fire("✅ Canceled", data.message, "success").then(() => {
-          loadMyBookings();
-          renderAllMyBookings();
+      if (data.success) {
+        Swal.fire("✅ Canceled", data.message, "success").then(() => {
+          loadMyBookings();
+          renderAllMyBookings();
 
-          const iframe = document.getElementById("calendarFrame");
-          if (iframe) iframe.src = `calendar.html?v=${new Date().getTime()}`;
+          const iframe = document.getElementById("calendarFrame");
+          if (iframe) iframe.src = `calendar.html?v=${new Date().getTime()}`;
 
-          document.getElementById("myModal").style.display = "none";
-        });
-      } else {
-        Swal.fire("Error", data.message, "error");
-      }
-    } catch (err) {
-      hideLoader();
-      Swal.fire("Error", err.message, "error");
-    }
-  }
+          document.getElementById("myModal").style.display = "none";
+        });
+      } else {
+        Swal.fire("Error", data.message, "error");
+      }
+    } catch (err) {
+      hideLoader();
+      Swal.fire("Error", err.message, "error");
+    }
+  }
 
-  loadMyBookings();
+  loadMyBookings();
 </script>
 
 </body>
