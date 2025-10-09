@@ -572,13 +572,16 @@ async function cancelBooking(bookingId) {
 
     if (data.success) {
       Swal.fire("✅ Canceled", data.message, "success").then(() => {
-        // ✅ Refresh only data (DON'T close modal)
+        // ✅ Refresh data
         loadMyBookings();
         renderAllMyBookings();
 
         // ✅ Refresh calendar iframe
         const iframe = document.getElementById("calendarFrame");
         if (iframe) iframe.src = `calendar.html?v=${new Date().getTime()}`;
+
+        // ✅ Close modal after success
+        document.getElementById("myModal").style.display = "none";
       });
     } else {
       Swal.fire("Error", data.message, "error");
@@ -588,7 +591,6 @@ async function cancelBooking(bookingId) {
     Swal.fire("Error", err.message, "error");
   }
 }
-
 
   loadMyBookings();
 </script>
