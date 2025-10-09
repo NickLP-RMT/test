@@ -418,26 +418,29 @@ function formatRange(dateVal, startTime, endTime){
     });
   }
 
-  function renderAllMyBookings(){
-    const tbody=document.querySelector("#myBookingTable tbody");
-    tbody.innerHTML="";
-    if(!window.allMyBookings || window.allMyBookings.length===0){
-      tbody.innerHTML="<tr><td colspan='6'>No bookings</td></tr>"; 
-      return;
-    }
-    window.allMyBookings.forEach(b=>{
-      const tr=document.createElement("tr");
-      tr.innerHTML=`
-        <td>${b.title || "-"}</td>
-        <td>${formatRange(b.date, b.startTime, b.endTime)}</td>
-        <td>${getInterpreterName(b.interpreterId)}</td>
-        <td>${b.location||""}</td>
-        <td>${b.status||""}</td>
-        <td><button class="cancel-btn" onclick="cancelBooking('${b.bookingId}')">Cancel</button></td>
-      `;
-      tbody.appendChild(tr);
-    });
+function renderAllMyBookings(){
+  const tbody=document.querySelector("#myBookingTable tbody");
+  tbody.innerHTML="";
+  if(!window.allMyBookings || window.allMyBookings.length===0){
+    tbody.innerHTML="<tr><td colspan='6'>No bookings</td></tr>"; 
+    return;
   }
+  window.allMyBookings.forEach(b=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${b.title || "-"}</td>
+      <td>${formatRange(b.date, b.startTime, b.endTime)}</td>
+      <td>${getInterpreterName(b.interpreterId)}</td>
+      <td>${b.location||""}</td>
+      <td style="color:${
+        b.status === 'BOOKED' ? '#28a745' :
+        b.status === 'CANCELED' ? '#dc3545' : '#333'
+      }">${b.status||""}</td>
+      <td><button class="cancel-btn" onclick="cancelBooking('${b.bookingId}')">Cancel</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
  // Submit New Booking
 document.getElementById("bookingForm").addEventListener("submit", async function(e){ 
