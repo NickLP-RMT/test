@@ -5,19 +5,19 @@
   <title>Dashboard - Interpreter Booking</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    /* โทนสีใหม่: #F5EFE6, #E8DFCA, #6D94C5, #CBDCEB */
+    /* โทนสีใหม่: #F5EFE6 (พื้นหลัง), #E8DFCA (รอง), #6D94C5 (หลัก), #CBDCEB (เน้นอ่อน) */
     * { box-sizing: border-box; }
     body { 
       margin:0; 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      /* พื้นหลังหลัก: ใช้สีอ่อน/กลางเพื่อให้สบายตา */
-      background: #F5EFE6; /* สีเบจ-ขาวนวล */
+      /* 1. พื้นหลังหลัก: ใช้สีอ่อนที่สุด #F5EFE6 */
+      background: #F5EFE6; 
       min-height: 100vh;
     }
     
     .navbar {
-      /* สี Navbar: ใช้สีหลัก #6D94C5 */
-      background: #6D94C5;
+      /* 2. Navbar: ใช้สีหลัก #6D94C5 */
+      background: #6D94C5; 
       color: #fff;
       padding: 16px 32px;
       display: flex;
@@ -42,17 +42,17 @@
     
     .navbar .user-info { 
       font-size: 14px;
-      /* สีข้อมูลผู้ใช้: ใช้สีรองอ่อน #CBDCEB */
-      background: #CBDCEB;
+      /* 3. User Info: ใช้สีเน้นอ่อน #CBDCEB */
+      background: #CBDCEB; 
       color: #333;
       padding: 8px 16px;
       border-radius: 20px;
-      backdrop-filter: none; /* ลบ blur ออกเพื่อให้เข้ากับสีทึบ */
+      backdrop-filter: none;
     }
     
     .navbar button {
-      /* ปุ่ม Logout: ใช้สีรองที่ให้ความรู้สึกแตกต่าง (อาจใช้สีเข้มกว่าหรือสีหลักเดิม) */
-      background: #E8DFCA; /* สีเบจเข้มขึ้น */
+      /* 4. ปุ่ม Logout: ใช้สีรอง #E8DFCA (ตัด Gradient เดิม) */
+      background: #E8DFCA; 
       color: #333;
       border: none;
       padding: 8px 20px;
@@ -92,10 +92,10 @@
     }
     
     .booking-item { 
-      /* แถบสีด้านซ้าย: ใช้สีหลัก #6D94C5 */
-      border-left: 4px solid #6D94C5;
-      /* พื้นหลังรายการ: ใช้สีรองอ่อน #F5EFE6 */
-      background: #F5EFE6;
+      /* 5. แถบเน้น: ใช้สีหลัก #6D94C5 */
+      border-left: 4px solid #6D94C5; 
+      /* 6. พื้นหลังรายการจอง: ใช้สีรองอ่อน #CBDCEB หรือ #F5EFE6 */
+      background: #CBDCEB; 
       padding: 16px;
       margin-bottom: 12px;
       border-radius: 8px;
@@ -104,7 +104,6 @@
     
     .booking-item:hover {
       transform: translateX(4px);
-      /* Shadow: เน้นด้วยสีหลัก */
       box-shadow: 0 4px 12px rgba(109, 148, 197, 0.3);
     }
     
@@ -143,7 +142,8 @@
       align-items: center;
       margin-bottom: 16px;
       padding-bottom: 12px;
-      border-bottom: 2px solid #E8DFCA; /* เส้นแบ่ง: ใช้สีรองเข้มขึ้น */
+      /* 7. เส้นแบ่ง: ใช้สีรองเข้ม #E8DFCA */
+      border-bottom: 2px solid #E8DFCA;
     }
 
     .mybooking-header h3 {
@@ -152,7 +152,7 @@
     }
 
     .edit-btn { 
-      /* ปุ่มแก้ไข: ใช้สีส้ม/เหลือง (คงเดิมเพื่อให้เห็นความแตกต่าง) */
+      /* ปุ่มแก้ไข: ใช้สีเหลืองเดิมเพื่อความแตกต่าง (เป็นสีรองที่สำคัญ) */
       background: #fbbf24;
       color: #000;
     }
@@ -162,7 +162,7 @@
     }
     
     .cancel-btn { 
-      /* ปุ่มยกเลิก: ใช้สีแดงมาตรฐาน (คงเดิมเพื่อความหมายสากล) */
+      /* ปุ่มยกเลิก: ใช้สีแดงเดิมเพื่อความหมายสากล */
       background: #dc3545;
       color: #fff;
     }
@@ -175,15 +175,15 @@
     .see-more {
       display: block;
       text-align: right;
-      /* สีลิงก์: ใช้สีหลัก #6D94C5 */
-      color: #6D94C5;
+      /* 8. ลิงก์: ใช้สีหลัก #6D94C5 */
+      color: #6D94C5; 
       cursor: pointer;
       font-weight: 500;
       transition: color 0.2s;
     }
     
     .see-more:hover {
-      color: #4a6c9e; /* สีเข้มขึ้นเมื่อ hover */
+      color: #4a6c9e; 
       text-decoration: underline;
     }
     
@@ -192,8 +192,8 @@
       width: 100%;
       margin-bottom: 20px;
       padding: 14px;
-      /* ปุ่มหลัก: ใช้สีหลัก #6D94C5 */
-      background: #6D94C5;
+      /* 9. ปุ่มหลัก (New Booking): ใช้สีหลัก #6D94C5 (ตัด Gradient เดิม) */
+      background: #6D94C5; 
       color: #fff;
       border: none;
       border-radius: 12px;
@@ -230,8 +230,8 @@
     
     #loader div {
       border: 6px solid #f3f3f3;
-      /* สี Loader: ใช้สีหลัก #6D94C5 */
-      border-top: 6px solid #6D94C5;
+      /* 10. Loader: ใช้สีหลัก #6D94C5 */
+      border-top: 6px solid #6D94C5; 
       border-radius: 50%;
       width: 60px;
       height: 60px;
@@ -252,7 +252,7 @@
       width: 100%;
       height: 100%;
       overflow: auto;
-      background-color: rgba(0,0,0,0.4); /* ลดความทึบแสงลงเล็กน้อย */
+      background-color: rgba(0,0,0,0.6);
       backdrop-filter: blur(4px);
     }
     
@@ -284,7 +284,8 @@
       justify-content: space-between;
       align-items: center;
       padding-bottom: 16px;
-      border-bottom: 2px solid #E8DFCA; /* เส้นแบ่ง: ใช้สีรองเข้มขึ้น */
+      /* 11. เส้นแบ่ง Modal: ใช้สีรองเข้ม #E8DFCA */
+      border-bottom: 2px solid #E8DFCA; 
       margin-bottom: 24px;
     }
     
@@ -315,13 +316,13 @@
     
     th, td { 
       padding: 14px;
-      border-bottom: 1px solid #E8DFCA; /* เส้นตาราง: ใช้สีรองเข้มขึ้น */
+      border-bottom: 1px solid #E8DFCA; /* 12. เส้นตาราง: ใช้สีรองเข้ม #E8DFCA */
       text-align: left;
     }
     
     th { 
-      /* หัวตาราง: ใช้สีหลัก #6D94C5 */
-      background: #6D94C5;
+      /* 13. หัวตาราง: ใช้สีหลัก #6D94C5 (ตัด Gradient เดิม) */
+      background: #6D94C5; 
       color: #fff;
       font-weight: 600;
       text-transform: uppercase;
@@ -330,7 +331,7 @@
     }
     
     tbody tr:hover {
-      background: #F5EFE6; /* สีรายการตารางเมื่อ hover */
+      background: #F5EFE6; /* 14. Hover Row: ใช้สีพื้นหลังอ่อน #F5EFE6 */
     }
     
     form label { 
@@ -345,8 +346,8 @@
       width: 100%;
       padding: 10px 14px;
       margin-top: 6px;
-      /* Border: ใช้สีรองอ่อน #CBDCEB */
-      border: 2px solid #CBDCEB;
+      /* 15. Form Input Border: ใช้สีเน้นอ่อน #CBDCEB */
+      border: 2px solid #CBDCEB; 
       border-radius: 8px;
       font-size: 14px;
       transition: border-color 0.2s;
@@ -354,8 +355,8 @@
     
     form input:focus, form select:focus, form textarea:focus {
       outline: none;
-      /* Focus Color: ใช้สีหลัก #6D94C5 */
-      border-color: #6D94C5;
+      /* 16. Form Focus Color: ใช้สีหลัก #6D94C5 */
+      border-color: #6D94C5; 
     }
     
     form textarea { 
@@ -370,8 +371,8 @@
     form button[type="submit"] {
       margin-top: 24px;
       padding: 12px 24px;
-      /* ปุ่ม Submit: ใช้สีหลัก #6D94C5 */
-      background: #6D94C5;
+      /* 17. ปุ่ม Submit Modal: ใช้สีหลัก #6D94C5 (ตัด Gradient เดิม) */
+      background: #6D94C5; 
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -403,7 +404,8 @@
 <body>
   <div class="navbar">
     <div class="title">
-      <span>📘</span>       <span>Interpreter Booking Dashboard</span>
+      <span>📘</span>
+      <span>Interpreter Booking Dashboard</span>
     </div>
     <div class="navbar-right">
       <div class="user-info" id="userInfo"></div>
@@ -437,6 +439,22 @@
       <div class="modal-header">
         <h3>My All Bookings</h3>
         <span class="close" onclick="closeModal()">&times;</span>
+        <style>
+          /* 18. แก้ปุ่มตรง modal ให้ดูสวยงามขึ้น */
+          .myModal-action-btn {
+            background: #6D94C5;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+          }
+          .myModal-action-btn:hover {
+            background: #4a6c9e;
+          }
+        </style>
       </div>
       <table id="myBookingTable">
         <thead>
@@ -681,8 +699,8 @@
         <div>
           <b>Status:</b>
           <span style="color:${
-            b.status === 'BOOKED' ? '#28a745' : /* BOOKED: สีเขียว */
-            b.status === 'CANCELED' ? '#dc3545' : /* CANCELED: สีแดง */ '#333'
+            b.status === 'BOOKED' ? '#28a745' :
+            b.status === 'CANCELED' ? '#dc3545' : '#333'
           }">
             ${b.status || ""}
           </span>
@@ -710,7 +728,7 @@
           b.status === 'BOOKED' ? '#28a745' :
           b.status === 'CANCELED' ? '#dc3545' : '#333'
         }">${b.status||""}</td>
-        <td><button class="cancel-btn" onclick="cancelBooking('${b.bookingId}')">Cancel</button></td>
+        <td><button class="cancel-btn myModal-action-btn" onclick="cancelBooking('${b.bookingId}')">Cancel</button></td>
       `;
       tbody.appendChild(tr);
     });
