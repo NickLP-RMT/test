@@ -130,8 +130,8 @@ function loadEventsForDay(dateStr) {
     document.getElementById(`lSan_${time}`).innerHTML = '';
   });
 
-  // ดึงเฉพาะ BOOKED + UNAVAILABLE
-  const events = allBookings.filter(b => 
+  // ดึงทั้ง BOOKED + UNAVAILABLE
+  const events = allBookings.filter(b =>
     b.date === dateStr && (b.status === "BOOKED" || b.status === "UNAVAILABLE")
   );
 
@@ -152,9 +152,11 @@ function loadEventsForDay(dateStr) {
         if (slot) {
           const col = INTERPRETER_MAP[ev.interpreterId];
           if (col) {
-            const color = ev.status === "BOOKED" ? "red-dot" : "yellow-dot";
+            // 🟢 แยกสีตามสถานะ
+            const colorClass = ev.status === "BOOKED" ? "blue-dot" : "orange-dot";
+
             document.getElementById(`${col}_${slot}`).innerHTML += `
-              <span class="${color}" 
+              <span class="${colorClass}"
                 data-tooltip="Title: ${ev.title}\nLocation: ${ev.location}\nUser: ${username}">
               </span>`;
           }
@@ -166,6 +168,7 @@ function loadEventsForDay(dateStr) {
   }
   openModal();
 }
+
 
 // =================== UTILS ===================
 function openModal() { modal.style.display = "block"; }
