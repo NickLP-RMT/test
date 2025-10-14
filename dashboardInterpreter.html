@@ -250,7 +250,7 @@
   if(list.length===0){ container.innerHTML="<p>No bookings</p>"; return; }
 
   list.forEach(b=>{
-    // ✅ แปลง endTime +1 นาที
+    // ✅ แปลง endTime +1 นาทีสำหรับแสดงผล
     let [eh, em] = b.endTime.split(":").map(Number);
     em += 1;
     if (em >= 60) { em -= 60; eh += 1; }
@@ -262,6 +262,7 @@
       <div><b>${b.title}</b></div>
       <div>${b.date} (${b.startTime}-${displayEnd})</div>
       <div>${b.location}</div>
+      <div><b>User:</b> ${b.userEmail || '—'}</div>
       <div><b>Status:</b> <span style="color:${
         b.status==='BOOKED'?'#28a745': 
         b.status==='UNAVAILABLE'?'#ffc107': 
@@ -273,15 +274,15 @@
 }
 
 
-    function renderAllMyBookings(){
+
+function renderAllMyBookings(){
   const tbody=document.querySelector("#myBookingTable tbody");
   tbody.innerHTML="";
   if(!window.allMyBookings || window.allMyBookings.length===0){
-    tbody.innerHTML="<tr><td colspan='4'>No data</td></tr>"; return;
+    tbody.innerHTML="<tr><td colspan='5'>No data</td></tr>"; return;
   }
 
   window.allMyBookings.forEach(b=>{
-    // ✅ เพิ่ม +1 นาทีให้ endTime
     let [eh, em] = b.endTime.split(":").map(Number);
     em += 1;
     if (em >= 60) { em -= 60; eh += 1; }
@@ -292,6 +293,7 @@
       <td>${b.title}</td>
       <td>${b.date} ${b.startTime}-${displayEnd}</td>
       <td>${b.location}</td>
+      <td>${b.userEmail || '-'}</td>
       <td style="color:${
         b.status==='BOOKED'?'#28a745': 
         b.status==='UNAVAILABLE'?'#ffc107': 
@@ -301,6 +303,7 @@
     tbody.appendChild(tr);
   });
 }
+
 
 
     // 📌 Save "Unavailable"
