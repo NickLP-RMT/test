@@ -5,356 +5,304 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Booking Calendar</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
+ <style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+  }
+
+  .calendar {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .calendar-header h2 {
+    margin: 0;
+    color: #333;
+  }
+
+  .calendar-header button {
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  #todayButton {
+    background-color: #ffeb3b;
+    color: black;
+  }
+
+  #todayButton:hover {
+    background-color: #fdd835;
+  }
+
+  .calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 5px;
+  }
+
+  .calendar-day,
+  .day-header {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 4px;
+  }
+
+  .calendar-day:hover {
+    background-color: #e3f2fd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .today {
+    background-color: #ffeb3b;
+    color: #000;
+    font-weight: bold;
+  }
+
+  .day-header {
+    background-color: #ddd;
+    font-weight: bold;
+    cursor: default;
+  }
+
+  /* แสดงไอคอนหนังสือเมื่อมีงาน */
+  .has-event::after {
+    content: '\1F4D6';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    color: #4CAF50;
+  }
+
+  /* สีพื้นหลังของวัน Unavailable */
+  .unavailable-day {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 1% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .refresh {
+    color: #aaa;
+    font-size: 28px;
+    cursor: pointer;
+    margin-left: 80px;
+    vertical-align: middle;
+    float: right;
+  }
+
+  .refresh:hover,
+  .refresh:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  table,
+  th,
+  td {
+    border: 1px solid #ddd;
+  }
+
+  th,
+  td {
+    padding: 12px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #2196F3;
+    color: white;
+  }
+
+  td {
+    background-color: #fff;
+    color: #333;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f9f9f9;
+  }
+
+  /* Loading Spinner Styles */
+  .spinner {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 50%;
+    left: 50%;
+    margin-top: -60px;
+    margin-left: -60px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
     }
 
-    .calendar {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
+    100% {
+      transform: rotate(360deg);
     }
+  }
 
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
+  /* ลดขนาดฟอนต์เฉพาะ modal ตาราง */
+  #eventTable th,
+  #eventTable td {
+    font-size: 12px;
+    padding: 6px;
+  }
 
-    .calendar-header h2 {
-      margin: 0;
-      color: #333;
-    }
+  #myModal .modal-content h3 {
+    font-size: 14px;
+  }
 
-    .calendar-header button {
-      padding: 8px 12px;
-      cursor: pointer;
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-    }
+  /* จุดสถานะในตาราง */
+  .blue-dot,
+  .orange-dot {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    margin: 0 2px;
+  }
 
-    #todayButton {
-      background-color: #ffeb3b;
-      color: black;
-    }
+  /* 💙 Booked */
+  .blue-dot {
+    background-color: #2196F3;
+    box-shadow: 0 0 3px rgba(33, 150, 243, 0.7);
+  }
 
-    #todayButton:hover {
-      background-color: #fdd835;
-    }
+  /* 🟠 Unavailable */
+  .orange-dot {
+    background-color: #ff9800;
+    box-shadow: 0 0 3px rgba(255, 152, 0, 0.7);
+  }
 
-    .calendar-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      grid-gap: 5px;
-    }
+  /* Tooltip */
+  .blue-dot:hover::after,
+  .orange-dot:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 140%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-line;
+    text-align: left;
+    min-width: 200px;
+    max-width: 280px;
+    word-wrap: break-word;
+    z-index: 20000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
 
-    .calendar-day,
-    .day-header {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-      position: relative;
-      cursor: pointer;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      border-radius: 4px;
-    }
+  .blue-dot:hover::before,
+  .orange-dot:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
+  }
 
-    .calendar-day:hover {
-      background-color: #e3f2fd;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+  /* Legend ใต้ตาราง */
+  .legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #333;
+  }
 
-    .today {
-      background-color: #ffeb3b;
-      color: #000;
-      font-weight: bold;
-    }
+  .legend span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+</style>
 
-    .day-header {
-      background-color: #ddd;
-      font-weight: bold;
-      cursor: default;
-    }
-
-    /* 🔵 วันมีงานจอง */
-    .has-event {
-      background-color: #cce5ff;
-      border: 2px solid #007bff;
-    }
-
-    /* 🟡 วันกันคิว Unavailable */
-    .unavailable-day {
-      background-color: #fff3cd;
-      border: 2px solid #ffc107;
-    }
-
-    /* Tooltip เมื่อ hover ที่วัน */
-    .calendar-day[title]:hover {
-      position: relative;
-    }
-
-    .calendar-day[title]:hover::after {
-      content: attr(title);
-      position: absolute;
-      bottom: 110%;
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: pre-wrap;
-      background: rgba(0, 0, 0, 0.85);
-      color: #fff;
-      padding: 8px 10px;
-      border-radius: 6px;
-      font-size: 13px;
-      line-height: 1.4;
-      z-index: 1000;
-      width: 230px;
-    }
-
-    /* Legend */
-    .legend {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-
-    .legend span {
-      display: inline-block;
-      margin: 0 10px;
-    }
-
-    .legend .blue-box,
-    .legend .yellow-box {
-      width: 15px;
-      height: 15px;
-      display: inline-block;
-      margin-right: 5px;
-      vertical-align: middle;
-      border-radius: 3px;
-    }
-
-    .legend .blue-box {
-      background-color: #cce5ff;
-      border: 1px solid #007bff;
-    }
-
-    .legend .yellow-box {
-      background-color: #fff3cd;
-      border: 1px solid #ffc107;
-    }
-
-    /* Modal & Table styles เดิม */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background-color: #fefefe;
-      margin: 1% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 600px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .refresh {
-      color: #aaa;
-      font-size: 28px;
-      cursor: pointer;
-      margin-left: 80px;
-      vertical-align: middle;
-      float: right;
-    }
-
-    .refresh:hover,
-    .refresh:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    table,
-    th,
-    td {
-      border: 1px solid #ddd;
-    }
-
-    th,
-    td {
-      padding: 12px;
-      text-align: center;
-    }
-
-    th {
-      background-color: #2196F3;
-      color: white;
-    }
-
-    tr:nth-child(even) td {
-      background-color: #f9f9f9;
-    }
-
-    #eventTable th, #eventTable td {
-      font-size: 12px;
-      padding: 6px;
-    }
-
-    #myModal .modal-content h3 {
-      font-size: 14px;
-    }
-
-    /* จุดสีในตาราง */
-    .red-dot, .yellow-dot {
-      height: 10px;
-      width: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      position: relative;
-      margin: 0 2px;
-    }
-
-    .red-dot { background-color: red; }
-    .yellow-dot { background-color: #ffc107; }
-
-    .red-dot:hover::after, .yellow-dot:hover::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: 140%;
-      left: 50%;
-      transform: translateX(-50%);
-      display: block;
-      background-color: rgba(0, 0, 0, 0.85);
-      color: #fff;
-      padding: 10px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      line-height: 1.5;
-      white-space: pre-line;
-      text-align: left;
-      min-width: 200px;
-      max-width: 280px;
-      word-wrap: break-word;
-      z-index: 20000;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .red-dot:hover::before, .yellow-dot:hover::before {
-      content: "";
-      position: absolute;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      border-width: 6px;
-      border-style: solid;
-      border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
-    }
-/* จุดสีแสดงสถานะในตารางรายชั่วโมง */
-.blue-dot, .orange-dot {
-  height: 10px;
-  width: 10px;
-  border-radius: 50%;
-  display: inline-block;
-  position: relative;
-  margin: 0 2px;
-}
-
-.blue-dot { background-color: #2196F3; }   /* 💙 Booked */
-.orange-dot { background-color: #ff9800; } /* 🟠 Unavailable */
-
-/* Tooltip ของจุด */
-.blue-dot:hover::after, .orange-dot:hover::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 140%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: block;
-  background-color: rgba(0, 0, 0, 0.85);
-  color: #fff;
-  padding: 10px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  line-height: 1.5;
-  white-space: pre-line;
-  text-align: left;
-  min-width: 200px;
-  max-width: 280px;
-  word-wrap: break-word;
-  z-index: 20000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-.blue-dot:hover::before, .orange-dot:hover::before {
-  content: "";
-  position: absolute;
-  bottom: 125%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 6px;
-  border-style: solid;
-  border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
-}
-
-    /* Spinner */
-    .spinner {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      top: 50%;
-      left: 50%;
-      margin-top: -60px;
-      margin-left: -60px;
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 120px;
-      height: 120px;
-      animation: spin 2s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
 </head>
 
 <body>
@@ -381,10 +329,10 @@
     <div class="calendar-days" id="calendarDays"></div>
 
     <!-- Legend -->
-    <div class="legend">
-      <span><span class="blue-box"></span>Booked</span>
-      <span><span class="yellow-box"></span>Unavailable</span>
-    </div>
+<div class="legend">
+  <span><span class="blue-dot"></span> Booked</span>
+  <span><span class="orange-dot"></span> Unavailable</span>
+</div>
   </div>
 
   <div class="spinner" id="spinner"></div>
