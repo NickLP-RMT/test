@@ -82,26 +82,32 @@ function renderCalendar(month, year) {
       dayCell.classList.add('today');
     }
 
-    // ✅ ตรวจสอบสถานะของวันนั้น
-    const bookedList = allBookings.filter(b => b.date === dateStr && b.status === "BOOKED");
-    const unavailableList = allBookings.filter(b => b.date === dateStr && b.status === "UNAVAILABLE");
+    // ✅ รวมทั้ง Booked และ Unavailable
+    const events = allBookings.filter(
+      b => b.date === dateStr && (b.status === "BOOKED" || b.status === "UNAVAILABLE")
+    );
 
-    // 🔵 มีงานจอง
-    if (bookedList.length > 0) {
-      dayCell.classList.add('has-event');
-      dayCell.title = bookedList.map(b => `📘 ${b.title} (${b.startTime}-${b.endTime})`).join('\n');
+    if (events.length > 0) {
+      dayCell.classList.add('has-event'); // ใช้สีฟ้าเหมือนกันทั้งหมด
+
+      // นับจำนวนงานต่อ interpreter
+      const count = { somSan: 0, gookSan: 0, pookySan: 0, lSan: 0 };
+      events.forEach(ev => {
+        if (ev.interpreterId === "i001") count.somSan++;
+        if (ev.interpreterId === "i002") count.gookSan++;
+        if (ev.interpreterId === "i003") count.pookySan++;
+        if (ev.interpreterId === "i004") count.lSan++;
+      });
+
+      // สร้าง tooltip แบบรวม
+      dayCell.title =
+        `SOM SAN = ${count.somSan} Job\n` +
+        `GOOK SAN = ${count.gookSan} Job\n` +
+        `POOKY SAN = ${count.pookySan} Job\n` +
+        `L SAN = ${count.lSan} Job`;
     }
 
-    // 🟡 มีการกันคิว (Unavailable)
-    if (unavailableList.length > 0) {
-      dayCell.classList.add('unavailable-day');
-      const reasonList = unavailableList.map(b =>
-        `⛔ ${b.title || 'Unavailable'} (${b.startTime}-${b.endTime})\nReason: ${b.location || 'N/A'}`
-      ).join('\n\n');
-      dayCell.title = (dayCell.title ? dayCell.title + '\n\n' : '') + reasonList;
-    }
-
-    // คลิกดูรายละเอียดวันนั้น
+    // คลิกเปิดรายละเอียดวันนั้น
     dayCell.addEventListener('click', () => {
       currentDay = day;
       loadEventsForDay(dateStr);
@@ -110,6 +116,7 @@ function renderCalendar(month, year) {
     calendarDays.appendChild(dayCell);
   }
 }
+
 
 // =================== LOAD EVENTS FOR DAY ===================
 function loadEventsForDay(dateStr) {
