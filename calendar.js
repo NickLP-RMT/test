@@ -20,10 +20,11 @@ const INTERPRETER_MAP = {
 };
 
 const timeSlots = [
-  '0700_0730', '0730_0800', '0800_0830', '0830_0900', '0900_0930', '0930_1000', '1000_1030', '1030_1100', 
-  '1100_1130', '1130_1200', '1200_1230', '1230_1300', '1300_1330', '1330_1400', 
-  '1400_1430', '1430_1500', '1500_1530', '1530_1600', '1600_1630', '1630_1700', 
-  '1700_1730', '1730_1800', '1800_1830', '1830_1900', '1900_1930', '1930_2000'
+  '0700_0730', '0730_0800', '0800_0830', '0830_0900', '0900_0930', '0930_1000',
+  '1000_1030', '1030_1100', '1100_1130', '1130_1200', '1200_1230', '1230_1300',
+  '1300_1330', '1330_1400', '1400_1430', '1430_1500', '1500_1530', '1530_1600',
+  '1600_1630', '1630_1700', '1700_1730', '1730_1800', '1800_1830', '1830_1900',
+  '1900_1930', '1930_2000'
 ];
 
 const date = new Date();
@@ -82,13 +83,14 @@ function renderCalendar(month, year) {
       dayCell.classList.add('today');
     }
 
-    // ✅ รวมทั้ง Booked และ Unavailable
-    const events = allBookings.filter(
-      b => b.date === dateStr && (b.status === "BOOKED" || b.status === "UNAVAILABLE")
-    );
+    // ✅ รวมทั้ง Booked และ Unavailable (ไม่สนตัวพิมพ์ใหญ่/เล็ก)
+    const events = allBookings.filter(b => {
+      const status = (b.status || '').toUpperCase();
+      return b.date === dateStr && (status === "BOOKED" || status === "UNAVAILABLE");
+    });
 
     if (events.length > 0) {
-      dayCell.classList.add('has-event'); // ใช้สีฟ้าเหมือนกันทั้งหมด
+      dayCell.classList.add('has-event');
 
       // นับจำนวนงานต่อ interpreter
       const count = { somSan: 0, gookSan: 0, pookySan: 0, lSan: 0 };
@@ -99,7 +101,7 @@ function renderCalendar(month, year) {
         if (ev.interpreterId === "i004") count.lSan++;
       });
 
-      // สร้าง tooltip แบบรวม
+      // Tooltip แสดงจำนวนงาน
       dayCell.title =
         `SOM SAN = ${count.somSan} Job\n` +
         `GOOK SAN = ${count.gookSan} Job\n` +
@@ -107,7 +109,6 @@ function renderCalendar(month, year) {
         `L SAN = ${count.lSan} Job`;
     }
 
-    // คลิกเปิดรายละเอียดวันนั้น
     dayCell.addEventListener('click', () => {
       currentDay = day;
       loadEventsForDay(dateStr);
@@ -116,7 +117,6 @@ function renderCalendar(month, year) {
     calendarDays.appendChild(dayCell);
   }
 }
-
 
 // =================== LOAD EVENTS FOR DAY ===================
 function loadEventsForDay(dateStr) {
@@ -130,10 +130,11 @@ function loadEventsForDay(dateStr) {
     document.getElementById(`lSan_${time}`).innerHTML = '';
   });
 
-  // ดึงทั้ง BOOKED + UNAVAILABLE
-  const events = allBookings.filter(b =>
-    b.date === dateStr && (b.status === "BOOKED" || b.status === "UNAVAILABLE")
-  );
+  // ✅ ดึงทั้ง BOOKED + UNAVAILABLE (ไม่สนตัวพิมพ์)
+  const events = allBookings.filter(b => {
+    const status = (b.status || '').toUpperCase();
+    return b.date === dateStr && (status === "BOOKED" || status === "UNAVAILABLE");
+  });
 
   spinner.style.display = 'none';
 
@@ -145,16 +146,15 @@ function loadEventsForDay(dateStr) {
     events.forEach(ev => {
       let timeFrom = ev.startTime.replace(":", "");
       let timeTo = ev.endTime.replace(":", "");
-      let username = ev.userEmail ? ev.userEmail.split(".")[0] : ev.userEmail;
+      let username = ev.userEmail ? ev.userEmail.split("@")[0] : ev.userEmail;
+      const status = (ev.status || '').toUpperCase();
 
       while (timeFrom < timeTo) {
         const slot = getTimeSlot(timeFrom);
         if (slot) {
           const col = INTERPRETER_MAP[ev.interpreterId];
           if (col) {
-            // 🟢 แยกสีตามสถานะ
-            const colorClass = ev.status === "BOOKED" ? "blue-dot" : "orange-dot";
-
+            const colorClass = status === "BOOKED" ? "blue-dot" : "orange-dot";
             document.getElementById(`${col}_${slot}`).innerHTML += `
               <span class="${colorClass}"
                 data-tooltip="Title: ${ev.title}\nLocation: ${ev.location}\nUser: ${username}">
@@ -166,9 +166,9 @@ function loadEventsForDay(dateStr) {
     });
     modalText.textContent = `Details for ${dateStr}`;
   }
+
   openModal();
 }
-
 
 // =================== UTILS ===================
 function openModal() { modal.style.display = "block"; }
@@ -190,24 +190,15 @@ function getTimeSlot(timeFrom) {
 function incrementTimeSlotBy30Minutes(timeSlot) {
   let hour = parseInt(timeSlot.slice(0, 2));
   let minute = parseInt(timeSlot.slice(2));
-
   minute += 30;
-  if (minute >= 60) {
-    minute = 0;
-    hour += 1;
-  }
+  if (minute >= 60) { minute = 0; hour += 1; }
   return ('0' + hour).slice(-2) + ('0' + minute).slice(-2);
 }
 
 function changeMonth(offset) {
   currentMonth += offset;
-  if (currentMonth < 0) {
-    currentMonth = 11;
-    currentYear -= 1;
-  } else if (currentMonth > 11) {
-    currentMonth = 0;
-    currentYear += 1;
-  }
+  if (currentMonth < 0) { currentMonth = 11; currentYear -= 1; }
+  else if (currentMonth > 11) { currentMonth = 0; currentYear += 1; }
   renderCalendar(currentMonth, currentYear);
 }
 
