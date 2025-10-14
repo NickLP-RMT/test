@@ -1,18 +1,17 @@
+// =================== CONFIG ===================
 const calendarDays = document.getElementById('calendarDays');
 const monthYear = document.getElementById('monthYear');
 const prevMonth = document.getElementById('prevMonth');
 const nextMonth = document.getElementById('nextMonth');
-const todayButton = document.getElementById('todayButton'); 
+const todayButton = document.getElementById('todayButton');
 const modal = document.getElementById("myModal");
 const modalText = document.getElementById("modalText");
 const span = document.getElementsByClassName("close")[0];
 const spinner = document.getElementById('spinner');
 const refreshButton = document.querySelector('.refresh');
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyCtTuqAC45Gw6tFtf4Yk8lc_ZfhqGnx_YUfkPCG6FbZABY3CMslY1Ifm6sm5BmWBE/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbyRNkxBJsDhMGpgX333lrzxtc-APAkWn4gCzZGDhvcBJjBsJSfnlsobaXrbngHZX2A/exec";
 
-
-// mapping interpreterId → column id prefix
 const INTERPRETER_MAP = {
   i001: "somSan",
   i002: "gookSan",
@@ -39,7 +38,7 @@ const months = [
 
 let allBookings = [];
 
-// ✅ โหลด booking ทั้งหมดมา cache ไว้
+// =================== FETCH BOOKINGS ===================
 async function fetchBookings() {
   spinner.style.display = 'block';
   try {
@@ -52,6 +51,7 @@ async function fetchBookings() {
   }
 }
 
+// =================== RENDER CALENDAR ===================
 function renderCalendar(month, year) {
   calendarDays.innerHTML = '';
   monthYear.textContent = `${months[month]} ${year}`;
@@ -64,12 +64,14 @@ function renderCalendar(month, year) {
   const todayMonth = today.getMonth();
   const todayYear = today.getFullYear();
 
+  // ช่องว่างก่อนวันที่ 1
   for (let i = 0; i < firstDay; i++) {
     const emptyCell = document.createElement('div');
     emptyCell.classList.add('calendar-day');
     calendarDays.appendChild(emptyCell);
   }
 
+  // วนวันที่ในเดือน
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
     const dayCell = document.createElement('div');
@@ -80,11 +82,26 @@ function renderCalendar(month, year) {
       dayCell.classList.add('today');
     }
 
-    // ถ้ามี booking ในวันนั้น → mark
-    if (allBookings.some(b => b.date === dateStr && b.status === "BOOKED")) {
+    // ✅ ตรวจสอบสถานะของวันนั้น
+    const bookedList = allBookings.filter(b => b.date === dateStr && b.status === "BOOKED");
+    const unavailableList = allBookings.filter(b => b.date === dateStr && b.status === "UNAVAILABLE");
+
+    // 🔵 มีงานจอง
+    if (bookedList.length > 0) {
       dayCell.classList.add('has-event');
+      dayCell.title = bookedList.map(b => `📘 ${b.title} (${b.startTime}-${b.endTime})`).join('\n');
     }
 
+    // 🟡 มีการกันคิว (Unavailable)
+    if (unavailableList.length > 0) {
+      dayCell.classList.add('unavailable-day');
+      const reasonList = unavailableList.map(b =>
+        `⛔ ${b.title || 'Unavailable'} (${b.startTime}-${b.endTime})\nReason: ${b.location || 'N/A'}`
+      ).join('\n\n');
+      dayCell.title = (dayCell.title ? dayCell.title + '\n\n' : '') + reasonList;
+    }
+
+    // คลิกดูรายละเอียดวันนั้น
     dayCell.addEventListener('click', () => {
       currentDay = day;
       loadEventsForDay(dateStr);
@@ -94,13 +111,11 @@ function renderCalendar(month, year) {
   }
 }
 
-// ... โค้ดด้านบนเหมือนเดิม ...
-
-// ✅ โหลด event สำหรับวันนั้น
+// =================== LOAD EVENTS FOR DAY ===================
 function loadEventsForDay(dateStr) {
   spinner.style.display = 'block';
 
-  // reset ตาราง
+  // เคลียร์ตารางเก่า
   timeSlots.forEach(time => {
     document.getElementById(`somSan_${time}`).innerHTML = '';
     document.getElementById(`gookSan_${time}`).innerHTML = '';
@@ -108,7 +123,11 @@ function loadEventsForDay(dateStr) {
     document.getElementById(`lSan_${time}`).innerHTML = '';
   });
 
-  const events = allBookings.filter(b => b.date === dateStr && b.status === "BOOKED");
+  // ดึงเฉพาะ BOOKED + UNAVAILABLE
+  const events = allBookings.filter(b => 
+    b.date === dateStr && (b.status === "BOOKED" || b.status === "UNAVAILABLE")
+  );
+
   spinner.style.display = 'none';
 
   if (events.length === 0) {
@@ -118,9 +137,7 @@ function loadEventsForDay(dateStr) {
     document.getElementById('eventTable').style.display = '';
     events.forEach(ev => {
       let timeFrom = ev.startTime.replace(":", "");
-      let timeTo   = ev.endTime.replace(":", "");
-
-      // ✂️ ดึง username ก่อนจุดแรก
+      let timeTo = ev.endTime.replace(":", "");
       let username = ev.userEmail ? ev.userEmail.split(".")[0] : ev.userEmail;
 
       while (timeFrom < timeTo) {
@@ -128,9 +145,9 @@ function loadEventsForDay(dateStr) {
         if (slot) {
           const col = INTERPRETER_MAP[ev.interpreterId];
           if (col) {
-            // 🔴 จุดสีแดง + Tooltip
+            const color = ev.status === "BOOKED" ? "red-dot" : "yellow-dot";
             document.getElementById(`${col}_${slot}`).innerHTML += `
-              <span class="red-dot" 
+              <span class="${color}" 
                 data-tooltip="Title: ${ev.title}\nLocation: ${ev.location}\nUser: ${username}">
               </span>`;
           }
@@ -143,8 +160,7 @@ function loadEventsForDay(dateStr) {
   openModal();
 }
 
-
-// ================= Utility =================
+// =================== UTILS ===================
 function openModal() { modal.style.display = "block"; }
 function closeModal() { modal.style.display = "none"; }
 
@@ -185,6 +201,7 @@ function changeMonth(offset) {
   renderCalendar(currentMonth, currentYear);
 }
 
+// =================== EVENTS ===================
 refreshButton.addEventListener('click', () => {
   if (currentDay) {
     const dateStr = `${currentYear}-${('0' + (currentMonth + 1)).slice(-2)}-${('0' + currentDay).slice(-2)}`;
@@ -205,10 +222,9 @@ nextMonth.addEventListener('click', () => changeMonth(1));
 span.onclick = function() { closeModal(); }
 window.onclick = function(event) { if (event.target == modal) closeModal(); }
 
-// ================= INIT =================
+// =================== INIT ===================
 async function init(){
   await fetchBookings();
   renderCalendar(currentMonth, currentYear);
 }
-
-init();  // ✅ เรียกฟังก์ชันตรงนี้
+init();
