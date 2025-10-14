@@ -144,6 +144,7 @@
             <th>Title</th>
             <th>Time</th>
             <th>Location</th>
+            <th>User</th>    
             <th>Status</th>
           </tr>
         </thead>
@@ -244,7 +245,7 @@
       }
     }
 
-    function renderMyBookings(list){
+function renderMyBookings(list){
   const container = document.getElementById("myBookingList");
   container.innerHTML="";
   if(list.length===0){ container.innerHTML="<p>No bookings</p>"; return; }
@@ -274,7 +275,6 @@
 }
 
 
-
 function renderAllMyBookings(){
   const tbody=document.querySelector("#myBookingTable tbody");
   tbody.innerHTML="";
@@ -283,6 +283,7 @@ function renderAllMyBookings(){
   }
 
   window.allMyBookings.forEach(b=>{
+    // ✅ endTime +1 นาทีเพื่อแสดงผล
     let [eh, em] = b.endTime.split(":").map(Number);
     em += 1;
     if (em >= 60) { em -= 60; eh += 1; }
@@ -303,7 +304,6 @@ function renderAllMyBookings(){
     tbody.appendChild(tr);
   });
 }
-
 
 
     // 📌 Save "Unavailable"
