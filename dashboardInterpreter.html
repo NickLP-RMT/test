@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>Interpreter Dashboard - Resonac Booking System</title>
+  <title>Interpreter Dashboard - Resonac Booking</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body { margin:0; font-family:Arial,sans-serif; background:#f4f6f9; }
@@ -76,7 +76,7 @@
     .close:hover { color:#000; }
 
     label { display:block; margin-top:10px; font-weight:bold; }
-    input, textarea {
+    input, textarea, select {
       width:100%; padding:6px; margin-top:5px;
       border:1px solid #ccc; border-radius:4px;
     }
@@ -164,10 +164,41 @@
         <input type="date" id="na_date" required>
 
         <label>Start Time:</label>
-        <input type="time" id="na_start" required>
+        <select id="na_start" required>
+          <option value="" disabled selected>HH:MM</option>
+          <option value="07:00">07:00</option><option value="07:30">07:30</option>
+          <option value="08:00">08:00</option><option value="08:30">08:30</option>
+          <option value="09:00">09:00</option><option value="09:30">09:30</option>
+          <option value="10:00">10:00</option><option value="10:30">10:30</option>
+          <option value="11:00">11:00</option><option value="11:30">11:30</option>
+          <option value="12:00">12:00</option><option value="12:30">12:30</option>
+          <option value="13:00">13:00</option><option value="13:30">13:30</option>
+          <option value="14:00">14:00</option><option value="14:30">14:30</option>
+          <option value="15:00">15:00</option><option value="15:30">15:30</option>
+          <option value="16:00">16:00</option><option value="16:30">16:30</option>
+          <option value="17:00">17:00</option><option value="17:30">17:30</option>
+          <option value="18:00">18:00</option><option value="18:30">18:30</option>
+          <option value="19:00">19:00</option><option value="19:30">19:30</option>
+          <option value="20:00">20:00</option>
+        </select>
 
         <label>End Time:</label>
-        <input type="time" id="na_end" required>
+        <select id="na_end" required>
+          <option value="" disabled selected>HH:MM</option>
+          <option value="07:29">07:30</option><option value="07:59">08:00</option>
+          <option value="08:29">08:30</option><option value="08:59">09:00</option>
+          <option value="09:29">09:30</option><option value="09:59">10:00</option>
+          <option value="10:29">10:30</option><option value="10:59">11:00</option>
+          <option value="11:29">11:30</option><option value="11:59">12:00</option>
+          <option value="12:29">12:30</option><option value="12:59">13:00</option>
+          <option value="13:29">13:30</option><option value="13:59">14:00</option>
+          <option value="14:29">14:30</option><option value="14:59">15:00</option>
+          <option value="15:29">15:30</option><option value="15:59">16:00</option>
+          <option value="16:29">16:30</option><option value="16:59">17:00</option>
+          <option value="17:29">17:30</option><option value="17:59">18:00</option>
+          <option value="18:29">18:30</option><option value="18:59">19:00</option>
+          <option value="19:29">19:30</option><option value="19:59">20:00</option>
+        </select>
 
         <label>Reason:</label>
         <textarea id="na_reason" placeholder="e.g. Meeting, Leave, etc."></textarea>
@@ -225,7 +256,9 @@
           <div>${b.date} (${b.startTime}-${b.endTime})</div>
           <div>${b.location}</div>
           <div><b>Status:</b> <span style="color:${
-            b.status==='BOOKED'?'#28a745': b.status==='UNAVAILABLE'?'#ffc107': b.status==='CANCELED'?'#dc3545':'#333'
+            b.status==='BOOKED'?'#28a745': 
+            b.status==='UNAVAILABLE'?'#ffc107': 
+            b.status==='CANCELED'?'#dc3545':'#333'
           }">${b.status}</span></div>
         `;
         container.appendChild(div);
@@ -245,7 +278,9 @@
           <td>${b.date} ${b.startTime}-${b.endTime}</td>
           <td>${b.location}</td>
           <td style="color:${
-            b.status==='BOOKED'?'#28a745': b.status==='UNAVAILABLE'?'#ffc107': b.status==='CANCELED'?'#dc3545':'#333'
+            b.status==='BOOKED'?'#28a745': 
+            b.status==='UNAVAILABLE'?'#ffc107': 
+            b.status==='CANCELED'?'#dc3545':'#333'
           }">${b.status}</td>
         `;
         tbody.appendChild(tr);
@@ -256,6 +291,17 @@
     document.getElementById("unavailableForm").addEventListener("submit", async function(e){
       e.preventDefault();
       const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      const start = document.getElementById("na_start").value;
+      const end = document.getElementById("na_end").value;
+
+      // ตรวจสอบเวลาเริ่ม < สิ้นสุด
+      const sM = parseInt(start.split(":")[0])*60 + parseInt(start.split(":")[1]);
+      const eM = parseInt(end.split(":")[0])*60 + parseInt(end.split(":")[1]);
+      if(sM >= eM){
+        Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
+        return;
+      }
+
       const form = new URLSearchParams();
       form.append("page", "newBooking");
       form.append("userId", user.id);
@@ -263,8 +309,8 @@
       form.append("interpreterId", user.id);
       form.append("interpreterEmail", user.email);
       form.append("date", document.getElementById("na_date").value);
-      form.append("startTime", document.getElementById("na_start").value);
-      form.append("endTime", document.getElementById("na_end").value);
+      form.append("startTime", start);
+      form.append("endTime", end);
       form.append("title", "Unavailable");
       form.append("location", document.getElementById("na_reason").value || "Not Available");
       form.append("status", "UNAVAILABLE");
