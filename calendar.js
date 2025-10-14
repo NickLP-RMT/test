@@ -9,7 +9,7 @@ const span = document.getElementsByClassName("close")[0];
 const spinner = document.getElementById('spinner');
 const refreshButton = document.querySelector('.refresh');
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzNJr6AqGCZRTjwD3DoH6pHmFPQn0-Us4t8wP5Kqwu3ISngmIBiRseOR3rl6tp5T08/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbxp6gDq7N-sR4aAMPnGDwrAbmqMIZZqT3JHNwZmSF8nhfgokLMbZE27ek5uGbhU5yI/exec"; 
 
 
 // mapping interpreterId → column id prefix
