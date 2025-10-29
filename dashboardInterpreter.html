@@ -53,9 +53,7 @@
       border-bottom:1px solid #ddd; padding:8px 0;
       font-size:13px;
     }
-    .booking-item:nth-child(even) {
-      background:#f8f9fa;
-    }
+    .booking-item:nth-child(even) { background:#f8f9fa; }
     .booking-item:last-child { border-bottom:none; }
 
     .status-bar {
@@ -196,7 +194,13 @@
 
         updateSummaryCards(myBookings);
         const selectedDate = formatDate(currentDate);
-        const todays = myBookings.filter(b=> b.date === selectedDate && b.status !== "CANCELED");
+        const todays = myBookings
+          .filter(b=> b.date === selectedDate && b.status !== "CANCELED")
+          .sort((a,b)=>{
+            const aT = a.startTime.split(":").map(Number);
+            const bT = b.startTime.split(":").map(Number);
+            return aT[0]*60+aT[1] - (bT[0]*60+bT[1]);
+          });
         renderMyBookings(todays);
       } catch(err){
         hideLoader();
@@ -234,8 +238,7 @@
 
       list.forEach(b=>{
         let [eh, em] = b.endTime.split(":").map(Number);
-        em += 1;
-        if (em >= 60) { em -= 60; eh += 1; }
+        em += 1; if (em >= 60) { em -= 60; eh += 1; }
         const displayEnd = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
 
         let colorClass = "";
