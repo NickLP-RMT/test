@@ -52,7 +52,6 @@
       display:flex; align-items:flex-start;
       border-bottom:1px solid #ddd; padding:8px 0;
       font-size:13px;
-      background:#fff;
     }
     .booking-item:nth-child(even) {
       background:#f8f9fa;
@@ -73,6 +72,30 @@
       background:#fff; border-radius:10px; padding:15px;
       box-shadow:0 2px 6px rgba(0,0,0,0.1);
     }
+
+    /* ✅ Status badges */
+    .badge {
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:6px;
+      color:#fff;
+      font-weight:bold;
+      font-size:12px;
+    }
+    .badge.booked { background:#28a745; }
+    .badge.unavailable { background:#ffc107; color:#000; }
+    .badge.canceled { background:#dc3545; }
+
+    /* Header */
+    .mybooking-header {
+      display:flex; justify-content:space-between; align-items:center;
+      color:#007bff; margin-bottom:8px;
+    }
+    .date-nav-btn {
+      background:#007bff; color:#fff; border:none;
+      border-radius:5px; padding:4px 8px; font-size:12px; cursor:pointer;
+    }
+    .date-nav-btn:hover { background:#0056b3; }
 
     #loader {
       display:none; position:fixed; top:0;left:0;right:0;bottom:0;
@@ -109,8 +132,14 @@
       </div>
 
       <div class="mybooking-header">
-        <h3 style="margin:0; color:#007bff;">My Bookings</h3>
+        <h3 id="jobHeader">My Job (—)</h3>
+        <div>
+          <button class="date-nav-btn" onclick="changeDate(-1)">&lt;</button>
+          <button class="date-nav-btn" onclick="goToday()">Today</button>
+          <button class="date-nav-btn" onclick="changeDate(1)">&gt;</button>
+        </div>
       </div>
+
       <div id="myBookingList"></div>
     </div>
 
@@ -129,12 +158,23 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyRNkxBJsDhMGpgX333lrzxtc-APAkWn4gCzZGDhvcBJjBsJSfnlsobaXrbngHZX2A/exec";
+    let currentDate = new Date();
 
     function showLoader(){ document.getElementById("loader").style.display="flex"; }
     function hideLoader(){ document.getElementById("loader").style.display="none"; }
     function logout(){ localStorage.removeItem("loggedInUser"); window.location.href="login.html"; }
 
     function formatDate(d){ return d.toISOString().split("T")[0]; }
+
+    function changeDate(offset){
+      currentDate.setDate(currentDate.getDate()+offset);
+      loadMyBookings();
+    }
+
+    function goToday(){
+      currentDate = new Date();
+      loadMyBookings();
+    }
 
     async function loadMyBookings(){
       const user = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -143,6 +183,7 @@
         return;
       }
       document.getElementById("userInfo").innerText = `👤 ${user.username} (${user.role})`;
+      document.getElementById("jobHeader").innerText = `My Job (${formatDate(currentDate)})`;
 
       try {
         showLoader();
@@ -154,7 +195,9 @@
         window.allMyBookings = myBookings;
 
         updateSummaryCards(myBookings);
-        renderMyBookings(myBookings.filter(b => b.status !== "CANCELED" && b.date === formatDate(new Date())));
+        const selectedDate = formatDate(currentDate);
+        const todays = myBookings.filter(b=> b.date === selectedDate && b.status !== "CANCELED");
+        renderMyBookings(todays);
       } catch(err){
         hideLoader();
         Swal.fire("Error", err.message,"error");
@@ -187,28 +230,33 @@
     function renderMyBookings(list){
       const container = document.getElementById("myBookingList");
       container.innerHTML="";
-      if(list.length===0){ container.innerHTML="<p>No bookings</p>"; return; }
+      if(list.length===0){ container.innerHTML="<p>No jobs found</p>"; return; }
 
-      list.forEach((b,i)=>{
+      list.forEach(b=>{
         let [eh, em] = b.endTime.split(":").map(Number);
-        em += 1; if (em >= 60) { em -= 60; eh += 1; }
+        em += 1;
+        if (em >= 60) { em -= 60; eh += 1; }
         const displayEnd = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
 
-        let color = "#333";
-        if (b.status === "BOOKED") color = "#28a745";
-        else if (b.status === "UNAVAILABLE") color = "#ffc107";
-        else if (b.status === "CANCELED") color = "#dc3545";
+        let colorClass = "";
+        if (b.status === "BOOKED") colorClass = "booked";
+        else if (b.status === "UNAVAILABLE") colorClass = "unavailable";
+        else if (b.status === "CANCELED") colorClass = "canceled";
 
-        const div = document.createElement("div");
-        div.className = "booking-item";
-        div.innerHTML = `
-          <div class="status-bar" style="background:${color}"></div>
+        const div=document.createElement("div");
+        div.className="booking-item";
+        div.innerHTML=`
+          <div class="status-bar" style="background:${
+            colorClass==='booked'?'#28a745':
+            colorClass==='unavailable'?'#ffc107':
+            colorClass==='canceled'?'#dc3545':'#999'
+          }"></div>
           <div class="booking-content">
             <div class="title">${b.title}</div>
             <div><b>Date(Time):</b> ${b.date} (${b.startTime}-${displayEnd})</div>
             <div><b>Location:</b> ${b.location}</div>
             <div><b>User:</b> ${b.userEmail || '—'}</div>
-            <div><b>Status:</b> <span style="color:${color}">${b.status}</span></div>
+            <div><b>Status:</b> <span class="badge ${colorClass}">${b.status}</span></div>
           </div>
         `;
         container.appendChild(div);
