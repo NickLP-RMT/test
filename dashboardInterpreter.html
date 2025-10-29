@@ -29,20 +29,29 @@
       display:flex; justify-content:space-between; align-items:center;
       margin-bottom:8px;
     }
-    .mybooking-header h3 { margin:0; font-size:16px; }
     .see-more {
-      display:block; margin-top:10px; text-align:right;
+      display:block; text-align:right;
       font-size:14px; color:#007bff; cursor:pointer;
     }
-    .new-booking-btn {
-      display:block; width:100%; margin-bottom:15px; padding:10px;
-      background:#ffc107; color:#000; border:none; border-radius:6px;
-      font-size:16px; font-weight:bold; cursor:pointer;
+
+    /* 🔹 Summary Section */
+    .summary-box {
+      display:flex; justify-content:center; align-items:center;
+      background:#e9f2ff; padding:8px 12px; border-radius:8px; margin-bottom:10px;
+      gap:10px;
     }
+    .summary-box h3 { margin:0; font-size:16px; color:#007bff; flex:1; text-align:center; }
+    .nav-date-btn {
+      background:#007bff; color:white; border:none; border-radius:5px;
+      padding:4px 8px; font-size:14px; cursor:pointer;
+    }
+    .nav-date-btn:hover { background:#0056b3; }
+
     .calendar-box {
       background:#fff; border-radius:10px; padding:15px;
       box-shadow:0 2px 6px rgba(0,0,0,0.1);
     }
+
     #loader {
       display:none; position:fixed; top:0;left:0;right:0;bottom:0;
       background:rgba(255,255,255,0.7); z-index:9999;
@@ -55,47 +64,11 @@
     }
     @keyframes spin {0%{transform:rotate(0deg);}100%{transform:rotate(360deg);} }
 
-    .modal {
-      display:none; position:fixed; z-index:10000; left:0; top:0;
-      width:100%; height:100%; overflow:auto;
-      background-color:rgba(0,0,0,0.5);
-    }
-    .modal-content {
-      background-color: #fefefe;
-      margin: 4% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 95%;
-      max-width: 900px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    }
-    .modal-header { display:flex; justify-content:space-between; align-items:center; }
-    .modal-header h3 { margin:0; }
-    .close { color:#aaa; font-size:28px; font-weight:bold; cursor:pointer; }
-    .close:hover { color:#000; }
-
-    label { display:block; margin-top:10px; font-weight:bold; }
-    input, textarea, select {
-      width:100%; padding:6px; margin-top:5px;
-      border:1px solid #ccc; border-radius:4px;
-    }
-    textarea { resize:vertical; }
-
-    button.submit-btn {
-      margin-top:15px; padding:8px 16px; background:#28a745;
-      color:#fff; border:none; border-radius:4px; cursor:pointer;
-    }
-
     table { width:100%; border-collapse:collapse; margin-top:10px; }
     th, td { padding:8px; border-bottom:1px solid #ddd; text-align:left; }
     th { background:#f8f9fa; }
 
-    /* ✅ SweetAlert อยู่บน modal เสมอ */
-    .swal2-container {
-      z-index: 30000 !important;
-      position: fixed !important;
-    }
+    .swal2-container { z-index:30000 !important; position:fixed !important; }
   </style>
 </head>
 <body>
@@ -110,9 +83,15 @@
   <div class="main">
     <!-- My Bookings -->
     <div class="mybooking">
-      <button class="new-booking-btn" onclick="openUnavailableModal()">🕒 Set Not Available</button>
+      <div class="summary-box">
+        <button class="nav-date-btn" onclick="changeDate(-1)">&lt;</button>
+        <button class="nav-date-btn" onclick="goToday()">Today</button>
+        <button class="nav-date-btn" onclick="changeDate(1)">&gt;</button>
+      </div>
+      <h3 id="summaryText" style="text-align:center; color:#007bff; margin-bottom:10px;">Today: 0 Jobs</h3>
+
       <div class="mybooking-header">
-        <h3>My Bookings (Latest)</h3>
+        <h3>My Bookings</h3>
         <span class="see-more" onclick="openModal()">See more →</span>
       </div>
       <div id="myBookingList"></div>
@@ -153,64 +132,10 @@
     </div>
   </div>
 
-  <!-- Modal Set Not Available -->
-  <div id="unavailableModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>🕒 Set Not Available</h3>
-        <span class="close" onclick="closeUnavailableModal()">&times;</span>
-      </div>
-      <form id="unavailableForm">
-        <label>Date:</label>
-        <input type="date" id="na_date" required>
-
-        <label>Start Time:</label>
-        <select id="na_start" required>
-          <option value="" disabled selected>HH:MM</option>
-          <option value="07:00">07:00</option><option value="07:30">07:30</option>
-          <option value="08:00">08:00</option><option value="08:30">08:30</option>
-          <option value="09:00">09:00</option><option value="09:30">09:30</option>
-          <option value="10:00">10:00</option><option value="10:30">10:30</option>
-          <option value="11:00">11:00</option><option value="11:30">11:30</option>
-          <option value="12:00">12:00</option><option value="12:30">12:30</option>
-          <option value="13:00">13:00</option><option value="13:30">13:30</option>
-          <option value="14:00">14:00</option><option value="14:30">14:30</option>
-          <option value="15:00">15:00</option><option value="15:30">15:30</option>
-          <option value="16:00">16:00</option><option value="16:30">16:30</option>
-          <option value="17:00">17:00</option><option value="17:30">17:30</option>
-          <option value="18:00">18:00</option><option value="18:30">18:30</option>
-          <option value="19:00">19:00</option><option value="19:30">19:30</option>
-          <option value="20:00">20:00</option>
-        </select>
-
-        <label>End Time:</label>
-        <select id="na_end" required>
-          <option value="" disabled selected>HH:MM</option>
-          <option value="07:29">07:30</option><option value="07:59">08:00</option>
-          <option value="08:29">08:30</option><option value="08:59">09:00</option>
-          <option value="09:29">09:30</option><option value="09:59">10:00</option>
-          <option value="10:29">10:30</option><option value="10:59">11:00</option>
-          <option value="11:29">11:30</option><option value="11:59">12:00</option>
-          <option value="12:29">12:30</option><option value="12:59">13:00</option>
-          <option value="13:29">13:30</option><option value="13:59">14:00</option>
-          <option value="14:29">14:30</option><option value="14:59">15:00</option>
-          <option value="15:29">15:30</option><option value="15:59">16:00</option>
-          <option value="16:29">16:30</option><option value="16:59">17:00</option>
-          <option value="17:29">17:30</option><option value="17:59">18:00</option>
-          <option value="18:29">18:30</option><option value="18:59">19:00</option>
-          <option value="19:29">19:30</option><option value="19:59">20:00</option>
-        </select>
-
-        <label>Reason:</label>
-        <textarea id="na_reason" placeholder="e.g. Meeting, Leave, etc."></textarea>
-
-        <button type="submit" class="submit-btn">Save</button>
-      </form>
-    </div>
-  </div>
-
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyRNkxBJsDhMGpgX333lrzxtc-APAkWn4gCzZGDhvcBJjBsJSfnlsobaXrbngHZX2A/exec";
+
+    let currentDate = new Date();
 
     function showLoader(){ document.getElementById("loader").style.display="flex"; }
     function hideLoader(){ document.getElementById("loader").style.display="none"; }
@@ -218,8 +143,18 @@
 
     function openModal(){ document.getElementById("myModal").style.display="block"; renderAllMyBookings(); }
     function closeModal(){ document.getElementById("myModal").style.display="none"; }
-    function openUnavailableModal(){ document.getElementById("unavailableModal").style.display="block"; }
-    function closeUnavailableModal(){ document.getElementById("unavailableModal").style.display="none"; }
+
+    function formatDate(d){ return d.toISOString().split("T")[0]; }
+
+    function changeDate(offset){
+      currentDate.setDate(currentDate.getDate()+offset);
+      loadMyBookings();
+    }
+
+    function goToday(){
+      currentDate = new Date();
+      loadMyBookings();
+    }
 
     async function loadMyBookings(){
       const user = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -236,127 +171,75 @@
         hideLoader();
 
         const myBookings = bookings.filter(b=> b.interpreterEmail === user.email);
-        myBookings.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-        renderMyBookings(myBookings.slice(0,5));
         window.allMyBookings = myBookings;
+
+        const todayStr = formatDate(currentDate);
+        const todays = myBookings.filter(b=> b.date === todayStr && b.status !== "CANCELED");
+        renderMyBookings(todays);
+        document.getElementById("summaryText").innerText = `${todayStr}: ${todays.length} Job${todays.length!==1?"s":""}`;
       } catch(err){
         hideLoader();
         Swal.fire("Error", err.message,"error");
       }
     }
 
-function renderMyBookings(list){
-  const container = document.getElementById("myBookingList");
-  container.innerHTML="";
-  if(list.length===0){ container.innerHTML="<p>No bookings</p>"; return; }
+    function renderMyBookings(list){
+      const container = document.getElementById("myBookingList");
+      container.innerHTML="";
+      if(list.length===0){ container.innerHTML="<p>No bookings</p>"; return; }
 
-  list.forEach(b=>{
-    // ✅ แปลง endTime +1 นาทีสำหรับแสดงผล
-    let [eh, em] = b.endTime.split(":").map(Number);
-    em += 1;
-    if (em >= 60) { em -= 60; eh += 1; }
-    const displayEnd = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
+      list.forEach(b=>{
+        let [eh, em] = b.endTime.split(":").map(Number);
+        em += 1;
+        if (em >= 60) { em -= 60; eh += 1; }
+        const displayEnd = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
 
-    const div=document.createElement("div");
-    div.className="booking-item";
-    div.innerHTML=`
-      <div><b>${b.title}</b></div>
-      <div>${b.date} (${b.startTime}-${displayEnd})</div>
-      <div>${b.location}</div>
-      <div><b>User:</b> ${b.userEmail || '—'}</div>
-      <div><b>Status:</b> <span style="color:${
-        b.status==='BOOKED'?'#28a745': 
-        b.status==='UNAVAILABLE'?'#ffc107': 
-        b.status==='CANCELED'?'#dc3545':'#333'
-      }">${b.status}</span></div>
-    `;
-    container.appendChild(div);
-  });
-}
+        const div=document.createElement("div");
+        div.className="booking-item";
+        div.innerHTML=`
+          <div><b>${b.title}</b></div>
+          <div>${b.date} (${b.startTime}-${displayEnd})</div>
+          <div>${b.location}</div>
+          <div><b>User:</b> ${b.userEmail || '—'}</div>
+          <div><b>Status:</b> <span style="color:${
+            b.status==='BOOKED'?'#28a745': 
+            b.status==='UNAVAILABLE'?'#ffc107': 
+            b.status==='CANCELED'?'#dc3545':'#333'
+          }">${b.status}</span></div>
+        `;
+        container.appendChild(div);
+      });
+    }
 
-
-function renderAllMyBookings(){
-  const tbody=document.querySelector("#myBookingTable tbody");
-  tbody.innerHTML="";
-  if(!window.allMyBookings || window.allMyBookings.length===0){
-    tbody.innerHTML="<tr><td colspan='5'>No data</td></tr>"; return;
-  }
-
-  window.allMyBookings.forEach(b=>{
-    // ✅ endTime +1 นาทีเพื่อแสดงผล
-    let [eh, em] = b.endTime.split(":").map(Number);
-    em += 1;
-    if (em >= 60) { em -= 60; eh += 1; }
-    const displayEnd = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
-
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${b.title}</td>
-      <td>${b.date} ${b.startTime}-${displayEnd}</td>
-      <td>${b.location}</td>
-      <td>${b.userEmail || '-'}</td>
-      <td style="color:${
-        b.status==='BOOKED'?'#28a745': 
-        b.status==='UNAVAILABLE'?'#ffc107': 
-        b.status==='CANCELED'?'#dc3545':'#333'
-      }">${b.status}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-
-    // 📌 Save "Unavailable"
-    document.getElementById("unavailableForm").addEventListener("submit", async function(e){
-      e.preventDefault();
-      const user = JSON.parse(localStorage.getItem("loggedInUser"));
-      const start = document.getElementById("na_start").value;
-      const end = document.getElementById("na_end").value;
-
-      // ตรวจสอบเวลาเริ่ม < สิ้นสุด
-      const sM = parseInt(start.split(":")[0])*60 + parseInt(start.split(":")[1]);
-      const eM = parseInt(end.split(":")[0])*60 + parseInt(end.split(":")[1]);
-      if(sM >= eM){
-        Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
-        return;
+    function renderAllMyBookings(){
+      const tbody=document.querySelector("#myBookingTable tbody");
+      tbody.innerHTML="";
+      if(!window.allMyBookings || window.allMyBookings.length===0){
+        tbody.innerHTML="<tr><td colspan='5'>No data</td></tr>"; return;
       }
 
-      const form = new URLSearchParams();
-      form.append("page", "newBooking");
-      form.append("userId", user.id);
-      form.append("userEmail", user.email);
-      form.append("interpreterId", user.id);
-      form.append("interpreterEmail", user.email);
-      form.append("date", document.getElementById("na_date").value);
-      form.append("startTime", start);
-      form.append("endTime", end);
-      form.append("title", "Unavailable");
-      form.append("location", document.getElementById("na_reason").value || "Not Available");
-      form.append("status", "UNAVAILABLE");
-      form.append("createdAt", new Date().toISOString());
+      window.allMyBookings.forEach(b=>{
+        let [eh, em] = b.endTime.split(":").map(Number);
+        em += 1;
+        if (em >= 60) { em -= 60; eh += 1; }
+        const displayEnd = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
 
-      try {
-        showLoader();
-        const res = await fetch(API_URL, {method:"POST", body:form});
-        const data = await res.json();
-        hideLoader();
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td>${b.title}</td>
+          <td>${b.date} ${b.startTime}-${displayEnd}</td>
+          <td>${b.location}</td>
+          <td>${b.userEmail || '-'}</td>
+          <td style="color:${
+            b.status==='BOOKED'?'#28a745': 
+            b.status==='UNAVAILABLE'?'#ffc107': 
+            b.status==='CANCELED'?'#dc3545':'#333'
+          }">${b.status}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
 
-        if(data.success){
-          Swal.fire("✅ Saved", "Your unavailable time has been recorded.", "success")
-          .then(()=>{
-            closeUnavailableModal();
-            loadMyBookings();
-            const iframe = document.getElementById("calendarFrame");
-            if (iframe) iframe.src = `calendar.html?v=${new Date().getTime()}`;
-          });
-        } else {
-          Swal.fire("Error", data.message,"error");
-        }
-      } catch(err){
-        hideLoader();
-        Swal.fire("Error", err.message,"error");
-      }
-    });
     loadMyBookings();
   </script>
 </body>
