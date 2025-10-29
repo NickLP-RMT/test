@@ -17,24 +17,31 @@
       background:#dc3545; color:#fff; border:none;
       padding:6px 12px; border-radius:4px; cursor:pointer;
     }
+
     .main { display:grid; grid-template-columns:1fr 2fr; gap:20px; padding:20px; }
+
     .mybooking {
       background:#fff; border-radius:10px; padding:15px;
       box-shadow:0 2px 6px rgba(0,0,0,0.1);
     }
     .mybooking h3 { margin-top:0; }
-    .booking-item { border-bottom:1px solid #ddd; padding:8px 0; }
-    .booking-item:last-child { border-bottom:none; }
-    .mybooking-header {
-      display:flex; justify-content:space-between; align-items:center;
-      margin-bottom:8px;
+
+    .booking-item {
+      display:flex; align-items:flex-start;
+      border-bottom:1px solid #ddd; padding:10px 0; line-height:1.6;
     }
-    .see-more {
-      display:block; text-align:right;
-      font-size:14px; color:#007bff; cursor:pointer;
+    .booking-item:last-child { border-bottom:none; }
+
+    .status-bar {
+      width:6px; border-radius:4px; margin-right:10px; flex-shrink:0;
     }
 
-    /* 🔹 Summary Section */
+    .booking-content { flex:1; }
+
+    .booking-item .title {
+      color:#007bff; font-size:16px; font-weight:bold; margin-bottom:5px;
+    }
+
     .summary-box {
       display:flex; justify-content:center; align-items:center;
       background:#e9f2ff; padding:8px 12px; border-radius:8px; margin-bottom:10px;
@@ -64,10 +71,6 @@
     }
     @keyframes spin {0%{transform:rotate(0deg);}100%{transform:rotate(360deg);} }
 
-    table { width:100%; border-collapse:collapse; margin-top:10px; }
-    th, td { padding:8px; border-bottom:1px solid #ddd; text-align:left; }
-    th { background:#f8f9fa; }
-
     .swal2-container { z-index:30000 !important; position:fixed !important; }
   </style>
 </head>
@@ -92,7 +95,6 @@
 
       <div class="mybooking-header">
         <h3>My Bookings</h3>
-        <span class="see-more" onclick="openModal()">See more →</span>
       </div>
       <div id="myBookingList"></div>
     </div>
@@ -110,39 +112,13 @@
   <!-- Loader -->
   <div id="loader"><div></div></div>
 
-  <!-- Modal All Bookings -->
-  <div id="myModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>My All Bookings</h3>
-        <span class="close" onclick="closeModal()">&times;</span>
-      </div>
-      <table id="myBookingTable">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Time</th>
-            <th>Location</th>
-            <th>User</th>    
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyRNkxBJsDhMGpgX333lrzxtc-APAkWn4gCzZGDhvcBJjBsJSfnlsobaXrbngHZX2A/exec";
-
     let currentDate = new Date();
 
     function showLoader(){ document.getElementById("loader").style.display="flex"; }
     function hideLoader(){ document.getElementById("loader").style.display="none"; }
     function logout(){ localStorage.removeItem("loggedInUser"); window.location.href="login.html"; }
-
-    function openModal(){ document.getElementById("myModal").style.display="block"; renderAllMyBookings(); }
-    function closeModal(){ document.getElementById("myModal").style.display="none"; }
 
     function formatDate(d){ return d.toISOString().split("T")[0]; }
 
@@ -194,49 +170,24 @@
         if (em >= 60) { em -= 60; eh += 1; }
         const displayEnd = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
 
-        const div=document.createElement("div");
-        div.className="booking-item";
-        div.innerHTML=`
-          <div><b>${b.title}</b></div>
-          <div>${b.date} (${b.startTime}-${displayEnd})</div>
-          <div>${b.location}</div>
-          <div><b>User:</b> ${b.userEmail || '—'}</div>
-          <div><b>Status:</b> <span style="color:${
-            b.status==='BOOKED'?'#28a745': 
-            b.status==='UNAVAILABLE'?'#ffc107': 
-            b.status==='CANCELED'?'#dc3545':'#333'
-          }">${b.status}</span></div>
+        let color = "#333";
+        if (b.status === "BOOKED") color = "#28a745";
+        else if (b.status === "UNAVAILABLE") color = "#ffc107";
+        else if (b.status === "CANCELED") color = "#dc3545";
+
+        const div = document.createElement("div");
+        div.className = "booking-item";
+        div.innerHTML = `
+          <div class="status-bar" style="background:${color}"></div>
+          <div class="booking-content">
+            <div class="title">${b.title}</div>
+            <div>Date(Time): ${b.date} (${b.startTime}-${displayEnd})</div>
+            <div>Location: ${b.location}</div>
+            <div>User: ${b.userEmail || '—'}</div>
+            <div>Status: <span style="color:${color}">${b.status}</span></div>
+          </div>
         `;
         container.appendChild(div);
-      });
-    }
-
-    function renderAllMyBookings(){
-      const tbody=document.querySelector("#myBookingTable tbody");
-      tbody.innerHTML="";
-      if(!window.allMyBookings || window.allMyBookings.length===0){
-        tbody.innerHTML="<tr><td colspan='5'>No data</td></tr>"; return;
-      }
-
-      window.allMyBookings.forEach(b=>{
-        let [eh, em] = b.endTime.split(":").map(Number);
-        em += 1;
-        if (em >= 60) { em -= 60; eh += 1; }
-        const displayEnd = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
-
-        const tr=document.createElement("tr");
-        tr.innerHTML=`
-          <td>${b.title}</td>
-          <td>${b.date} ${b.startTime}-${displayEnd}</td>
-          <td>${b.location}</td>
-          <td>${b.userEmail || '-'}</td>
-          <td style="color:${
-            b.status==='BOOKED'?'#28a745': 
-            b.status==='UNAVAILABLE'?'#ffc107': 
-            b.status==='CANCELED'?'#dc3545':'#333'
-          }">${b.status}</td>
-        `;
-        tbody.appendChild(tr);
       });
     }
 
