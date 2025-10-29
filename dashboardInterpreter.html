@@ -23,8 +23,23 @@
     .mybooking {
       background:#fff; border-radius:10px; padding:15px;
       box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      display:flex; flex-direction:column;
     }
     .mybooking h3 { margin-top:0; }
+
+    /* ✅ scroll bar เมื่อมีหลายงาน */
+    #myBookingList {
+      max-height:500px;
+      overflow-y:auto;
+      padding-right:8px;
+    }
+    #myBookingList::-webkit-scrollbar { width:8px; }
+    #myBookingList::-webkit-scrollbar-thumb {
+      background:#ccc; border-radius:4px;
+    }
+    #myBookingList::-webkit-scrollbar-thumb:hover {
+      background:#999;
+    }
 
     .booking-item {
       display:flex; align-items:flex-start;
@@ -181,10 +196,10 @@
           <div class="status-bar" style="background:${color}"></div>
           <div class="booking-content">
             <div class="title">${b.title}</div>
-            <div>Date(Time): ${b.date} (${b.startTime}-${displayEnd})</div>
-            <div>Location: ${b.location}</div>
-            <div>User: ${b.userEmail || '—'}</div>
-            <div>Status: <span style="color:${color}">${b.status}</span></div>
+            <div><b>Date(Time):</b> ${b.date} (${b.startTime}-${displayEnd})</div>
+            <div><b>Location:</b> ${b.location}</div>
+            <div><b>User:</b> ${b.userEmail || '—'}</div>
+            <div><b>Status:</b> <span style="color:${color}">${b.status}</span></div>
           </div>
         `;
         container.appendChild(div);
