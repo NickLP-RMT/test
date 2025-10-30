@@ -194,6 +194,11 @@
     }
 
     .modal-header {
+       background: #28a745; /* สี default = green */
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 8px 8px 0 0;
+      transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -495,18 +500,39 @@ function logout(){ localStorage.removeItem("loggedInUser"); window.location.href
 function openModal(){ document.getElementById("myModal").style.display="block"; renderAllMyBookings(); }
 function closeModal(){ document.getElementById("myModal").style.display="none"; }
 function openNewBookingModal(){ 
-  document.getElementById("bookingForm").reset();
-  document.getElementById("bookingForm").setAttribute("data-mode", "new");
-  document.getElementById("bookingForm").removeAttribute("data-id");
+  const modal = document.getElementById("newBookingModal");
+  const header = modal.querySelector(".modal-header");
+  const title = header.querySelector("h3");
+  const form = document.getElementById("bookingForm");
 
-  // ✅ กลับชื่อหัวข้อเป็น "New Booking"
-  document.querySelector("#newBookingModal .modal-header h3").innerText = "New Booking";
+  // ✅ รีเซ็ตฟอร์มและโหมด
+  form.reset();
+  form.setAttribute("data-mode", "new");
+  form.removeAttribute("data-id");
 
-  document.getElementById("newBookingModal").style.display="block"; 
+  // ✅ ลบปุ่ม Save/Edit ออกถ้ามี
+  const oldButtons = document.getElementById("editButtons");
+  if (oldButtons) oldButtons.remove();
+
+  // ✅ ตั้งหัว modal เป็นสีเขียวและชื่อ New Booking
+  header.style.background = "#28a745";
+  header.style.color = "#fff";
+  title.innerText = "New Booking";
+
+  modal.style.display = "block";
 }
-
+  
 function closeNewBookingModal(){ 
-  document.getElementById("newBookingModal").style.display="none"; 
+  const modal = document.getElementById("newBookingModal");
+  const header = modal.querySelector(".modal-header");
+  const title = header.querySelector("h3");
+
+  // ✅ reset สีและหัวข้อกลับไป default
+  header.style.background = "#28a745";
+  header.style.color = "#fff";
+  title.innerText = "New Booking";
+
+  modal.style.display = "none"; 
 }
 
 // ================= LOAD MY BOOKINGS =================
@@ -680,18 +706,28 @@ async function loadMyBookingsForDate(dateObj){
 }
 updateBookingHeader(); // ✅ เรียกตอนโหลด
 
-// ---------------------- 🔹 OPEN EDIT FORM 🔹 ----------------------
+// ---------------------- 🔹 OPEN EDIT BOOKING MODAL 🔹 ----------------------
 function openEditBooking(id){
   const data = window.allMyBookings.find(x => x.bookingId === id);
   if(!data) return;
 
+  const modal = document.getElementById("newBookingModal");
+  const header = modal.querySelector(".modal-header");
+  const title = header.querySelector("h3");
   const f = document.getElementById("bookingForm");
+
+  // ✅ ลบปุ่มเดิมก่อนเพิ่มใหม่
+  const oldButtons = document.getElementById("editButtons");
+  if (oldButtons) oldButtons.remove();
+
+  // ✅ ตั้งหัว modal เป็นสีส้มและชื่อ Edit Booking
+  header.style.background = "#ff9800";
+  header.style.color = "#fff";
+  title.innerText = "Edit Booking";
+
+  // ✅ ใส่ค่าเดิมในช่อง
   f.setAttribute("data-mode","edit");
   f.setAttribute("data-id", id);
-
-  // ✅ เปลี่ยนชื่อหัวข้อเป็น "Edit Booking"
-  document.querySelector("#newBookingModal .modal-header h3").innerText = "Edit Booking";
-
   f.date.value = data.date;
   f.interpreterId.value = data.interpreterId;
   f.timeFrom.value = data.startTime;
@@ -699,24 +735,26 @@ function openEditBooking(id){
   f.title.value = data.title;
   f.location.value = data.location;
 
-  document.getElementById("newBookingModal").style.display = "block";
+  // ✅ เพิ่มปุ่ม Save Edit / Cancel Booking
+  const div = document.createElement("div");
+  div.id = "editButtons";
+  div.style.marginTop = "15px";
+  div.style.display = "flex";
+  div.style.justifyContent = "space-between";
+  div.innerHTML = `
+    <button id="saveEditBtn" style="flex:1;margin-right:5px;background:#28a745;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;">
+      💾 Save Edit
+    </button>
+    <button id="cancelEditBtn" style="flex:1;background:#dc3545;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;">
+      ❌ Cancel Booking
+    </button>
+  `;
+  f.appendChild(div);
 
-  // ✅ เพิ่มปุ่ม Save / Cancel ถ้ายังไม่มี
-  if(!document.getElementById("editButtons")){
-    const div = document.createElement("div");
-    div.id = "editButtons";
-    div.style.marginTop = "15px";
-    div.style.display = "flex";
-    div.style.justifyContent = "space-between";
-    div.innerHTML = `
-      <button id="saveEditBtn" style="flex:1;margin-right:5px;background:#28a745;color:#fff;border:none;padding:8px;border-radius:4px;cursor:pointer;">💾 Save Edit</button>
-      <button id="cancelEditBtn" style="flex:1;background:#dc3545;color:#fff;border:none;padding:8px;border-radius:4px;cursor:pointer;">❌ Cancel Booking</button>
-    `;
-    f.appendChild(div);
+  document.getElementById("saveEditBtn").onclick = ()=>saveEditBooking(id);
+  document.getElementById("cancelEditBtn").onclick = ()=>cancelBooking(id);
 
-    document.getElementById("saveEditBtn").onclick = ()=>saveEditBooking(id);
-    document.getElementById("cancelEditBtn").onclick = ()=>cancelBooking(id);
-  }
+  modal.style.display = "block";
 }
 
 
