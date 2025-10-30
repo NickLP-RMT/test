@@ -239,6 +239,37 @@
 #myBookingList::-webkit-scrollbar-thumb:hover {
   background: #999;
 }
+    /* ✅ จัด layout ฟอร์มใน modal ให้เรียงเป็นแนวตั้ง */
+#newBookingModal form {
+  display: flex;
+  flex-direction: column;
+}
+
+#newBookingModal label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+#newBookingModal input,
+#newBookingModal select {
+  margin-top: 5px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* ✅ ปรับขนาดและ spacing ของปุ่ม Submit */
+#newBookingModal button[type="submit"] {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
   </style>
 </head>
 <body>
