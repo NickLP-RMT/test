@@ -498,8 +498,13 @@ function openNewBookingModal(){
   document.getElementById("bookingForm").reset();
   document.getElementById("bookingForm").setAttribute("data-mode", "new");
   document.getElementById("bookingForm").removeAttribute("data-id");
+
+  // ✅ กลับชื่อหัวข้อเป็น "New Booking"
+  document.querySelector("#newBookingModal .modal-header h3").innerText = "New Booking";
+
   document.getElementById("newBookingModal").style.display="block"; 
 }
+
 function closeNewBookingModal(){ 
   document.getElementById("newBookingModal").style.display="none"; 
 }
@@ -684,6 +689,9 @@ function openEditBooking(id){
   f.setAttribute("data-mode","edit");
   f.setAttribute("data-id", id);
 
+  // ✅ เปลี่ยนชื่อหัวข้อเป็น "Edit Booking"
+  document.querySelector("#newBookingModal .modal-header h3").innerText = "Edit Booking";
+
   f.date.value = data.date;
   f.interpreterId.value = data.interpreterId;
   f.timeFrom.value = data.startTime;
@@ -693,7 +701,7 @@ function openEditBooking(id){
 
   document.getElementById("newBookingModal").style.display = "block";
 
-  // ✅ เพิ่มปุ่มด้านล่าง (Save / Cancel)
+  // ✅ เพิ่มปุ่ม Save / Cancel ถ้ายังไม่มี
   if(!document.getElementById("editButtons")){
     const div = document.createElement("div");
     div.id = "editButtons";
@@ -710,6 +718,7 @@ function openEditBooking(id){
     document.getElementById("cancelEditBtn").onclick = ()=>cancelBooking(id);
   }
 }
+
 
 // ---------------------- 🔹 SAVE EDIT 🔹 ----------------------
 async function saveEditBooking(bookingId){
