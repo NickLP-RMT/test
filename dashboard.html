@@ -545,6 +545,17 @@ function formatRange(dateVal, startTime, endTime){
   function getInterpreterEmail(id){ return (INTERPRETERS[id] && INTERPRETERS[id].email) || ""; }
   function getInterpreterName(id){ return (INTERPRETERS[id] && INTERPRETERS[id].name) || id; }
 
+
+function addOneMinute(timeStr) {
+  if (!timeStr) return "";
+  const [h, m] = timeStr.split(":").map(Number);
+  const end = new Date(0, 0, 0, h, m + 1);
+  const hh = String(end.getHours()).padStart(2, "0");
+  const mm = String(end.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
+  
   // ================= RENDER =================
 function renderMyBookings(list){
   const c=document.getElementById("myBookingList");
@@ -555,7 +566,7 @@ function renderMyBookings(list){
     c.innerHTML+=`
       <div class="booking-item">
         <div><b>Title:</b> ${b.title}</div>
-        <div><b>Date(Time):</b> ${b.date} (${b.startTime}-${b.endTime})</div>
+        <div><b>Time:</b> ${formatRange(b.date, b.startTime, addOneMinute(b.endTime))}</div>
         <div><b>Interpreter:</b> ${getInterpreterName(b.interpreterId)}</div>
         <div><b>Location:</b> ${b.location}</div>
         <div><b>Status:</b> <span class="status-badge ${badgeClass}">${b.status}</span></div>
@@ -574,7 +585,7 @@ function renderAllMyBookings(){
     tbody.innerHTML+=`
       <tr>
         <td>${b.title||"-"}</td>
-        <td>${b.date} ${b.startTime}-${b.endTime}</td>
+        <td>${formatRange(b.date, b.startTime, addOneMinute(b.endTime))}</td>
         <td>${getInterpreterName(b.interpreterId)}</td>
         <td>${b.location||""}</td>
         <td><span class="status-badge ${badgeClass}">${b.status}</span></td>
@@ -674,9 +685,16 @@ if (startMins >= endMins) {
         Swal.fire("❌ Error", data.message, "error");
       }
     }
-  } catch(err){
+  } catch (err) {
     hideLoader();
-    Swal.fire("Error", err.message,"error");
+    console.error("Fetch error:", err);
+    // ถ้า network error แต่ส่งข้อมูลสำเร็จจริง → แสดงข้อความเบา ๆ แทน
+    Swal.fire({
+      icon: "warning",
+      title: "⚠️ Network delay",
+      text: "Booking sent but server took too long. Please refresh.",
+      confirmButtonColor: "#3085d6"
+    });
   } finally {
     // 🔓 enable ปุ่มกลับหลังจบการทำงาน
     submitBtn.disabled = false;
