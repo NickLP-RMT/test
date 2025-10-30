@@ -526,14 +526,23 @@ function closeNewBookingModal(){
   const modal = document.getElementById("newBookingModal");
   const header = modal.querySelector(".modal-header");
   const title = header.querySelector("h3");
+  const submitBtn = modal.querySelector("button[type='submit']");
 
-  // ✅ reset สีและหัวข้อกลับไป default
+  // ✅ คืนค่า default
   header.style.background = "#28a745";
   header.style.color = "#fff";
   title.innerText = "New Booking";
 
+  // ✅ แสดงปุ่ม Submit กลับมา
+  if (submitBtn) submitBtn.style.display = "inline-block";
+
+  // ✅ ลบปุ่ม edit ด้านล่างถ้ามี
+  const oldButtons = document.getElementById("editButtons");
+  if (oldButtons) oldButtons.remove();
+
   modal.style.display = "none"; 
 }
+
 
 // ================= LOAD MY BOOKINGS =================
 async function loadMyBookings(){
@@ -725,6 +734,10 @@ function openEditBooking(id){
   header.style.color = "#fff";
   title.innerText = "Edit Booking";
 
+  // ✅ ซ่อนปุ่ม Submit ตอนเป็นโหมด Edit
+  const submitBtn = f.querySelector("button[type='submit']");
+  if (submitBtn) submitBtn.style.display = "none";
+
   // ✅ ใส่ค่าเดิมในช่อง
   f.setAttribute("data-mode","edit");
   f.setAttribute("data-id", id);
@@ -742,10 +755,12 @@ function openEditBooking(id){
   div.style.display = "flex";
   div.style.justifyContent = "space-between";
   div.innerHTML = `
-    <button id="saveEditBtn" style="flex:1;margin-right:5px;background:#28a745;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;">
+    <button id="saveEditBtn" 
+      style="flex:1;margin-right:5px;background:#ff9800;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;">
       💾 Save Edit
     </button>
-    <button id="cancelEditBtn" style="flex:1;background:#dc3545;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;">
+    <button id="cancelEditBtn" 
+      style="flex:1;background:#dc3545;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;">
       ❌ Cancel Booking
     </button>
   `;
@@ -756,6 +771,7 @@ function openEditBooking(id){
 
   modal.style.display = "block";
 }
+
 
 
 // ---------------------- 🔹 SAVE EDIT (with validation like NEW BOOKING) 🔹 ----------------------
