@@ -720,22 +720,45 @@ function openEditBooking(id){
 }
 
 
-// ---------------------- 🔹 SAVE EDIT 🔹 ----------------------
+// ---------------------- 🔹 SAVE EDIT (with validation like NEW BOOKING) 🔹 ----------------------
 async function saveEditBooking(bookingId){
   const f = document.getElementById("bookingForm");
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
   if(!user) return;
 
+  // ✅ ตรวจสอบค่าว่าง
+  const dateVal = f.date.value;
+  const interpreterVal = f.interpreterId.value;
+  const startVal = f.timeFrom.value;
+  const endVal = f.timeTo.value;
+  const titleVal = f.title.value.trim();
+  const locationVal = f.location.value;
+
+  if(!dateVal || !interpreterVal || !startVal || !endVal || !titleVal || !locationVal){
+    Swal.fire("⚠️ Warning","Please fill in all required fields.","warning");
+    return;
+  }
+
+  // ✅ ตรวจสอบว่า Start < End
+  const startMins = parseInt(startVal.split(":")[0]) * 60 + parseInt(startVal.split(":")[1]);
+  const endMins   = parseInt(endVal.split(":")[0]) * 60 + parseInt(endVal.split(":")[1]);
+  if (startMins >= endMins) {
+    Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
+    return;
+  }
+
+  // ✅ เตรียมข้อมูลส่งแก้ไข
   const form = new URLSearchParams();
   form.append("page","editBooking");
   form.append("bookingId", bookingId);
   form.append("userId", user.id);
-  form.append("interpreterId", f.interpreterId.value);
-  form.append("date", f.date.value);
-  form.append("startTime", f.timeFrom.value);
-  form.append("endTime", f.timeTo.value);
-  form.append("title", f.title.value);
-  form.append("location", f.location.value);
+  form.append("interpreterId", interpreterVal);
+  form.append("interpreterEmail", getInterpreterEmail(interpreterVal));
+  form.append("date", dateVal);
+  form.append("startTime", startVal);
+  form.append("endTime", endVal);
+  form.append("title", titleVal);
+  form.append("location", locationVal);
 
   try {
     showLoader();
@@ -751,13 +774,24 @@ async function saveEditBooking(bookingId){
         if(iframe) iframe.src="calendar.html?v="+new Date().getTime();
       });
     } else {
-      Swal.fire("❌ Error", data.message,"error");
+      // ถ้าเป็น Duplicate
+      if (data.message && data.message.includes("Duplicate")) {
+        Swal.fire({
+          title: "⚠️ Duplicate Booking",
+          text: data.message,
+          icon: "warning",
+          didOpen: () => { document.querySelector('.swal2-container').style.zIndex = 30000; }
+        });
+      } else {
+        Swal.fire("❌ Error", data.message,"error");
+      }
     }
   }catch(err){
     hideLoader();
-    Swal.fire("Error",err.message,"error");
+    Swal.fire("Error", err.message,"error");
   }
 }
+
 
 // ---------------------- 🔹 SUBMIT NEW BOOKING 🔹 ----------------------
 document.getElementById("bookingForm").addEventListener("submit", async function(e){ 
