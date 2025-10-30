@@ -28,12 +28,17 @@
 
     /* ✅ Job Summary Cards */
     .job-summary {
-      display:flex; justify-content:space-between; margin-bottom:12px; gap:8px;
+      display:flex; justify-content:space-between; margin-bottom:12px; gap:10px;
     }
     .job-card {
-      flex:1; background:#e9f2ff; color:#007bff;
-      text-align:center; padding:10px 0; border-radius:8px;
+      flex:1; text-align:center; padding:10px 0; border-radius:8px;
       font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.1);
+    }
+    .job-today {
+      background:#e9f2ff; color:#007bff;
+    }
+    .job-month {
+      background:#e9fbe9; color:#198754;
     }
 
     /* ✅ scroll bar */
@@ -124,9 +129,8 @@
     <div class="mybooking">
       <!-- ✅ Job Summary Cards -->
       <div class="job-summary">
-        <div class="job-card" id="todayCard">🗓️ Today: 0</div>
-        <div class="job-card" id="weekCard">📅 Week: 0</div>
-        <div class="job-card" id="monthCard">📆 Month: 0</div>
+        <div class="job-card job-today" id="todayCard">🗓️ Today: 0</div>
+        <div class="job-card job-month" id="monthCard">📆 Total This Month: 0</div>
       </div>
 
       <div class="mybooking-header">
@@ -210,25 +214,17 @@
 
     function updateSummaryCards(bookings){
       const today = formatDate(new Date());
-      const startOfWeek = new Date(); startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-      const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(endOfWeek.getDate() + 6);
-
       const startOfMonth = new Date(); startOfMonth.setDate(1);
       const endOfMonth = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth()+1, 0);
 
       const todayCount = bookings.filter(b => b.date === today && b.status !== "CANCELED").length;
-      const weekCount = bookings.filter(b => {
-        const d = new Date(b.date);
-        return d >= startOfWeek && d <= endOfWeek && b.status !== "CANCELED";
-      }).length;
       const monthCount = bookings.filter(b => {
         const d = new Date(b.date);
         return d >= startOfMonth && d <= endOfMonth && b.status !== "CANCELED";
       }).length;
 
       document.getElementById("todayCard").innerText = `🗓️ Today: ${todayCount}`;
-      document.getElementById("weekCard").innerText = `📅 Week: ${weekCount}`;
-      document.getElementById("monthCard").innerText = `📆 Month: ${monthCount}`;
+      document.getElementById("monthCard").innerText = `📆 Total This Month: ${monthCount}`;
     }
 
     function renderMyBookings(list){
