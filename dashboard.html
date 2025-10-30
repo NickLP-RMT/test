@@ -5,146 +5,268 @@
   <title>Resonac Interpreter Booking System</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    body { margin:0; font-family:Arial,sans-serif; background:#f4f6f9; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      font-size: 14px;
+    }
+
     .navbar {
-  background:#007bff; color:#fff; padding:12px 20px;
-  display:flex; justify-content:space-between; align-items:center;
-}
-.navbar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-    .navbar .title { font-size:18px; font-weight:bold; }
-    .navbar .user-info { font-size:14px; }
+      background: #007bff;
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .navbar .user-info {
+      font-size: 13px;
+    }
+
     .navbar button {
-      background:#dc3545; color:#fff; border:none;
-      padding:6px 12px; border-radius:4px; cursor:pointer;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
     }
-    .main { display:grid; grid-template-columns:1fr 2fr; gap:20px; padding:20px; }
+
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
     .mybooking {
-      background:#fff; border-radius:10px; padding:15px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
-    .mybooking h3 { margin-top:0; }
-    .booking-item { border-bottom:1px solid #ddd; padding:8px 0; }
-    .booking-item:last-child { border-bottom:none; }
-    .booking-actions button {
-      margin-left:5px; padding:3px 8px; border:none;
-      border-radius:4px; cursor:pointer;
+
+    .mybooking h3 {
+      margin-top: 0;
     }
-    .mybooking-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
 
-.mybooking-header h3 {
-  margin: 0;
-  font-size: 16px;
-}
+    .booking-item {
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
+      font-size: 13px;
+    }
 
-    .edit-btn { background:#ffc107; color:#000; }
-    .cancel-btn { background:#dc3545; color:#fff; }
+    .booking-item:last-child {
+      border-bottom: none;
+    }
+
+    .booking-item b {
+      color: #333;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 12px;
+      color: #fff;
+    }
+
+    .status-badge.booked {
+      background: #28a745;
+    }
+
+    .status-badge.canceled {
+      background: #dc3545;
+    }
+
     .see-more {
-      display:block; margin-top:10px; text-align:right;
-      font-size:14px; color:#007bff; cursor:pointer;
+      display: block;
+      margin-top: 10px;
+      text-align: right;
+      font-size: 13px;
+      color: #007bff;
+      cursor: pointer;
     }
+
     .new-booking-btn {
-      display:block; width:100%; margin-bottom:15px; padding:10px;
-      background:#28a745; color:#fff; border:none; border-radius:6px;
-      font-size:16px; cursor:pointer;
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
     }
+
     .calendar-box {
-      background:#fff; border-radius:10px; padding:15px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
+
     #loader {
-      display:none; position:fixed; top:0;left:0;right:0;bottom:0;
-      background:rgba(255,255,255,0.7); z-index:9999;
-      align-items:center; justify-content:center;
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.7);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
     }
+
     #loader div {
-      border:6px solid #f3f3f3; border-top:6px solid #3498db;
-      border-radius:50%; width:60px; height:60px;
-      animation:spin 1s linear infinite;
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
     }
-    @keyframes spin {0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f8f9fa;
+    }
+
     .modal {
-      display:none; position:fixed; z-index:10000; left:0; top:0;
-      width:100%; height:100%; overflow:auto;
-      background-color:rgba(0,0,0,0.5);
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
     }
+
     .modal-content {
-  background-color: #fefefe;
-  margin: 1% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 95%;          /* 🔥 เดิมอาจเป็น 80% → ขยายเป็น 95% */
-  max-width: 1200px;   /* 🔥 เดิมอาจเป็น 600px → ขยายได้ เช่น 1200px */
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-}
+      background: #fff;
+      margin: 1% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 95%;
+      max-width: 1200px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
 
-    .modal-header { display:flex; justify-content:space-between; align-items:center; }
-    .modal-header h3 { margin:0; }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+    }
+
     .close {
-      color:#aaa; font-size:28px; font-weight:bold; cursor:pointer;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
     }
-    .close:hover { color:#000; }
-    table { width:100%; border-collapse:collapse; margin-top:10px; }
-    th, td { padding:8px; border-bottom:1px solid #ddd; text-align:left; }
-    th { background:#f8f9fa; }
-    form label { display:block; margin-top:10px; font-weight:bold; }
-    form input, form select, form textarea {
-      width:100%; padding:6px; margin-top:5px; border:1px solid #ccc; border-radius:4px;
+
+    .close:hover {
+      color: #000;
     }
-    form textarea { resize:vertical; }
-    
-/* ✅ SweetAlert อยู่บน modal เสมอ */
-.swal2-container {
-  z-index: 30000 !important;
-  position: fixed !important;  /* บังคับให้อยู่ layer บนสุด */
+
+    .swal2-container {
+      z-index: 30000 !important;
+      position: fixed !important;
+    }
+
+    /* ✅ เพิ่ม Scroll Bar ให้กับรายการจอง */
+#myBookingList {
+  max-height: 420px;       /* กำหนดความสูงสูงสุด */
+  overflow-y: auto;        /* ให้เลื่อนลงได้ */
+  padding-right: 6px;
 }
 
+/* ✅ scrollbar ดีไซน์เรียบหรู */
+#myBookingList::-webkit-scrollbar {
+  width: 6px;
+}
 
+#myBookingList::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 6px;
+}
+
+#myBookingList::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
   </style>
 </head>
 <body>
   <div class="navbar">
-  <div class="title">🗓️ Resonac Interpreter Booking System</div>
-  <div class="navbar-right">
-    <div class="user-info" id="userInfo"></div>
-    <button onclick="logout()">Logout</button>
+    <div class="title">🗓️ Resonac Interpreter Booking System</div>
+    <div class="navbar-right">
+      <div class="user-info" id="userInfo"></div>
+      <button onclick="logout()">Logout</button>
+    </div>
   </div>
-</div>
-
 
   <div class="main">
     <!-- My Bookings -->
     <div class="mybooking">
-  <button class="new-booking-btn" onclick="openNewBookingModal()">+ New Booking</button>
-  <div class="mybooking-header">
-    <h3>My Bookings (Latest)</h3>
-    <span class="see-more" onclick="openModal()">See more →</span>
-  </div>
-  <div id="myBookingList"></div>
-</div>
-
+      <button class="new-booking-btn" onclick="openNewBookingModal()">+ New Booking</button>
+      <div class="mybooking-header">
+        <h3>My Bookings (Today)</h3>
+        <span class="see-more" onclick="openModal()">See more →</span>
+      </div>
+      <div id="myBookingList"></div>
+    </div>
 
     <!-- Calendar -->
     <div class="calendar-box">
-      <iframe
-  id="calendarFrame"
-  src="calendar.html"
-  style="width:100%; height:600px; border:none; border-radius:10px;">
-</iframe>
-
+      <iframe id="calendarFrame" src="calendar.html" style="width:100%; height:600px; border:none; border-radius:10px;"></iframe>
     </div>
   </div>
 
-  <!-- Loader -->
   <div id="loader"><div></div></div>
 
   <!-- Modal All Bookings -->
@@ -155,19 +277,18 @@
         <span class="close" onclick="closeModal()">&times;</span>
       </div>
       <table id="myBookingTable">
-  <thead>
-    <tr>
-      <th>Title Meeting</th>
-      <th>Time</th>
-      <th>Interpreter</th>
-      <th>Location</th>
-      <th>Status</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
+        <thead>
+          <tr>
+            <th>Title Meeting</th>
+            <th>Time</th>
+            <th>Interpreter</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
@@ -305,29 +426,35 @@
     document.getElementById("newBookingModal").style.display="none"; 
   }
 
-  async function loadMyBookings(){
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
-    if(!user){
-      Swal.fire("กรุณา Login ก่อน","","warning").then(()=> window.location.href="login.html");
-      return;
-    }
-    document.getElementById("userInfo").innerText = `👤 ${user.username} (${user.role})`;
-
-    try {
-      showLoader();
-      const res = await fetch(API_URL+"?page=listBookings");
-      const bookings = await res.json();
-      hideLoader();
-
-      const myBookings = bookings.filter(b=> b.userId === user.id);
-      myBookings.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-      renderMyBookings(myBookings.slice(0,5));
-      window.allMyBookings = myBookings;
-    } catch(err){
-      hideLoader();
-      Swal.fire("Error", err.message,"error");
-    }
+async function loadMyBookings(){
+  const user=JSON.parse(localStorage.getItem("loggedInUser"));
+  if(!user){
+    Swal.fire("กรุณา Login ก่อน","","warning").then(()=>window.location.href="login.html");
+    return;
   }
+  document.getElementById("userInfo").innerText=`👤 ${user.username} (${user.role})`;
+
+  try{
+    showLoader();
+    const res=await fetch(API_URL+"?page=listBookings");
+    const bookings=await res.json();
+    hideLoader();
+
+    const today=new Date().toISOString().split("T")[0];
+    const myBookings=bookings
+      .filter(b=>b.userId===user.id&&b.date===today&&b.status!=="CANCELED")
+      .sort((a,b)=>{
+        const [ah,am]=a.startTime.split(":").map(Number);
+        const [bh,bm]=b.startTime.split(":").map(Number);
+        return ah*60+am-(bh*60+bm);
+      });
+    renderMyBookings(myBookings);
+    window.allMyBookings=bookings.filter(b=>b.userId===user.id);
+  }catch(err){
+    hideLoader();
+    Swal.fire("Error",err.message,"error");
+  }
+}
   // ================= TIME FORMAT =================
   function parseDatePart(dateVal){
     if (!dateVal) return null;
@@ -388,57 +515,40 @@ function formatRange(dateVal, startTime, endTime){
   function getInterpreterName(id){ return (INTERPRETERS[id] && INTERPRETERS[id].name) || id; }
 
   // ================= RENDER =================
-  function renderMyBookings(list){
-    const container = document.getElementById("myBookingList");
-    container.innerHTML="";
-    if(list.length===0){ 
-      container.innerHTML="<p>No bookings</p>"; 
-      return; 
-    }
-    list.forEach(b=>{
-      const div=document.createElement("div");
-      div.className="booking-item";
-      div.innerHTML=`
-        <div><b>Title Meeting:</b> ${b.title || "-"}</div>
-        <div><b>Time:</b> ${formatRange(b.date, b.startTime, b.endTime)}</div>
+function renderMyBookings(list){
+  const c=document.getElementById("myBookingList");
+  c.innerHTML="";
+  if(list.length===0){c.innerHTML="<p>No bookings today</p>";return;}
+  list.forEach(b=>{
+    const badgeClass=b.status==="BOOKED"?"booked":"canceled";
+    c.innerHTML+=`
+      <div class="booking-item">
+        <div><b>Title:</b> ${b.title}</div>
+        <div><b>Date(Time):</b> ${b.date} (${b.startTime}-${b.endTime})</div>
         <div><b>Interpreter:</b> ${getInterpreterName(b.interpreterId)}</div>
-        <div><b>Location:</b> ${b.location || ""}</div>
-        <div>
-  <b>Status:</b>
-  <span style="color:${
-    b.status === 'BOOKED' ? '#28a745' :
-    b.status === 'CANCELED' ? '#dc3545' : '#333'
-  }">
-    ${b.status || ""}
-  </span>
-</div>
-
-      `;
-      container.appendChild(div);
-    });
-  }
+        <div><b>Location:</b> ${b.location}</div>
+        <div><b>Status:</b> <span class="status-badge ${badgeClass}">${b.status}</span></div>
+      </div>`;
+  });
+}
 
 function renderAllMyBookings(){
   const tbody=document.querySelector("#myBookingTable tbody");
   tbody.innerHTML="";
-  if(!window.allMyBookings || window.allMyBookings.length===0){
-    tbody.innerHTML="<tr><td colspan='6'>No bookings</td></tr>"; 
-    return;
+  if(!window.allMyBookings||window.allMyBookings.length===0){
+    tbody.innerHTML="<tr><td colspan='6'>No bookings</td></tr>";return;
   }
   window.allMyBookings.forEach(b=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${b.title || "-"}</td>
-      <td>${formatRange(b.date, b.startTime, b.endTime)}</td>
-      <td>${getInterpreterName(b.interpreterId)}</td>
-      <td>${b.location||""}</td>
-      <td style="color:${
-        b.status === 'BOOKED' ? '#28a745' :
-        b.status === 'CANCELED' ? '#dc3545' : '#333'
-      }">${b.status||""}</td>
-      <td><button class="cancel-btn" onclick="cancelBooking('${b.bookingId}')">Cancel</button></td>
-    `;
-    tbody.appendChild(tr);
+    const badgeClass=b.status==="BOOKED"?"booked":"canceled";
+    tbody.innerHTML+=`
+      <tr>
+        <td>${b.title||"-"}</td>
+        <td>${b.date} ${b.startTime}-${b.endTime}</td>
+        <td>${getInterpreterName(b.interpreterId)}</td>
+        <td>${b.location||""}</td>
+        <td><span class="status-badge ${badgeClass}">${b.status}</span></td>
+        <td><button class="cancel-btn" onclick="cancelBooking('${b.bookingId}')">Cancel</button></td>
+      </tr>`;
   });
 }
 
