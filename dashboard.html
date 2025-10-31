@@ -949,6 +949,12 @@ document.getElementById("bookingForm").addEventListener("submit", async function
 
     // ✅ ตรวจสอบผลลัพธ์จาก backend
     if (data.success){
+      // ✅ คืนค่าปุ่มกลับก่อนปิด modal
+      submitBtn.disabled = false;
+      submitBtn.style.background = "#28a745";
+      submitBtn.style.cursor = "pointer";
+      submitBtn.innerText = "Submit";
+
       closeNewBookingModal();
       this.reset();
       Swal.fire("✅ Success", data.message,"success").then(()=>{
@@ -976,7 +982,7 @@ document.getElementById("bookingForm").addEventListener("submit", async function
     Swal.fire("Error", err.message,"error");
 
   } finally {
-    // ✅ คืนปุ่มกลับสู่สถานะปกติ
+    // ✅ คืนปุ่มกลับสู่สถานะปกติ (กันกรณี error หรือ modal ปิดก่อน)
     submitBtn.disabled = false;
     submitBtn.style.background = "#28a745";
     submitBtn.style.cursor = "pointer";
@@ -984,8 +990,6 @@ document.getElementById("bookingForm").addEventListener("submit", async function
   }
 });
 
-
-});
 function addOneMinute(timeStr) {
   const [h,m] = timeStr.split(":").map(Number);
   let total = h * 60 + m + 1;
