@@ -13,15 +13,15 @@
       justify-content: center;
       align-items: center;
 
-      /* 🖼️ เพิ่มภาพพื้นหลัง */
-      background-image: url("images/login-bg2.png"); /* เปลี่ยน path ตามจริง */
-      background-size: cover;        /* ให้เต็มหน้าจอ */
-      background-position: center;   /* จัดให้อยู่ตรงกลาง */
-      background-repeat: no-repeat;  /* ไม่ให้ซ้ำ */
-      background-attachment: fixed;  /* ให้ภาพนิ่งเวลา scroll */
+      /* 🖼️ พื้นหลัง */
+      background-image: url("images/login-bg2.png"); /* ✅ เปลี่ยน path ตามจริง */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
     }
 
-    /* เพิ่ม overlay มืดบาง ๆ ให้ข้อความชัดขึ้น */
+    /* Overlay มืดบาง ๆ */
     body::before {
       content: "";
       position: absolute;
@@ -39,6 +39,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       width: 350px;
       backdrop-filter: blur(5px);
+      transition: transform 0.2s ease; /* ✅ ป้องกันกระตุก */
     }
 
     h2 { margin-top: 0; text-align: center; color: #333; }
@@ -71,6 +72,16 @@
       animation: spin 1s linear infinite;
     }
     @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+
+    /* ✅ ป้องกันหน้า flex ขยับเวลา Swal แสดง */
+    .swal2-container {
+      position: fixed !important;
+    }
+
+    body.swal2-shown {
+      overflow-y: auto !important;
+      height: 100vh !important;
+    }
   </style>
 </head>
 <body>
@@ -92,7 +103,7 @@
   <div id="loader"><div></div></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyjfMOppILw_GmQxRAawJF-wSx6WojVrMYs7FM4utc8d6hqlGwwGduFVdnLrMRbWQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbw2DCRMiQMNDh7gFZL1o3zMyKwDQNopAFOTCWlkp0CD8ID3vm146j4wwhTlVeL-cDc/exec";
 
     function showLoader(){ document.getElementById("loader").style.display="flex"; }
     function hideLoader(){ document.getElementById("loader").style.display="none"; }
@@ -119,14 +130,20 @@
         hideLoader();
 
         if (data.success) {
+          document.body.style.overflow = "hidden"; // 🔒 ล็อกไม่ให้ body ขยับ
+
           Swal.fire("Success", data.message, "success").then(()=>{
+            document.body.style.overflow = ""; // 🔓 คืนค่าปกติ
+
             localStorage.setItem("loggedInUser", JSON.stringify(data.user));
             const role = (data.user.role || "").toLowerCase();
             if (role === "admin") window.location.href = "dashboard_admin.html";
             else if (role === "interpreter") window.location.href = "dashboardInterpreter.html";
             else window.location.href = "dashboard.html";
           });
-        } else Swal.fire("Error", data.message, "error");
+        } else {
+          Swal.fire("Error", data.message, "error");
+        }
       } catch(err){
         hideLoader();
         Swal.fire("Error", err.message, "error");
