@@ -951,10 +951,13 @@ document.getElementById("bookingForm").addEventListener("submit", async function
   }catch(err){
     hideLoader();
     Swal.fire("Error", err.message,"error");
-  }finally{
-    submitBtn.disabled=false;
-    submitBtn.innerText="Submit";
-  }
+  } finally {
+  submitBtn.disabled = false;
+  submitBtn.style.background = "#28a745";   // ✅ คืนสีเขียว
+  submitBtn.style.cursor = "pointer";       // ✅ คืน cursor ปกติ
+  submitBtn.innerText = "Submit";           // ✅ คืนข้อความเดิม
+}
+
 });
 function addOneMinute(timeStr) {
   const [h,m] = timeStr.split(":").map(Number);
