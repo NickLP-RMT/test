@@ -790,13 +790,20 @@ function openEditBooking(id){
 
   modal.style.display = "block";
 }
-// ---------------------- 🔹 SAVE EDIT (with validation like NEW BOOKING) 🔹 ----------------------
+
+// ✅ ล้าง email ไม่ให้มี ' หรือช่องว่าง
+function sanitizeEmail(email) {
+  if (!email) return "";
+  return String(email).replace(/^'/, "").replace(/'$/, "").trim();
+}
+
+// ---------------------- 🔹 SAVE EDIT (Final Clean Version) 🔹 ----------------------
 async function saveEditBooking(bookingId){
   const f = document.getElementById("bookingForm");
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
   if(!user) return;
 
-  const saveBtn = document.getElementById("saveEditBtn"); // ✅ เพิ่ม
+  const saveBtn = document.getElementById("saveEditBtn");
   if (saveBtn) {
     saveBtn.disabled = true;
     saveBtn.style.background = "#999";
@@ -814,42 +821,32 @@ async function saveEditBooking(bookingId){
 
   if(!dateVal || !interpreterVal || !startVal || !endVal || !titleVal || !locationVal){
     Swal.fire("⚠️ Warning","Please fill in all required fields.","warning");
-    if (saveBtn) {
-      saveBtn.disabled = false;
-      saveBtn.style.background = "#ff9800";
-      saveBtn.style.cursor = "pointer";
-      saveBtn.innerText = "💾 Save Edit";
-    }
+    resetSaveButton();
     return;
   }
 
-  // ✅ ตรวจสอบว่า Start < End
+  // ✅ ตรวจสอบเวลาเริ่ม < เวลาสิ้นสุด
   const startMins = parseInt(startVal.split(":")[0]) * 60 + parseInt(startVal.split(":")[1]);
   const endMins   = parseInt(endVal.split(":")[0]) * 60 + parseInt(endVal.split(":")[1]);
   if (startMins >= endMins) {
     Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
-    if (saveBtn) {
-      saveBtn.disabled = false;
-      saveBtn.style.background = "#ff9800";
-      saveBtn.style.cursor = "pointer";
-      saveBtn.innerText = "💾 Save Edit";
-    }
+    resetSaveButton();
     return;
   }
 
   // ✅ เตรียมข้อมูลส่งแก้ไข
-const form = new URLSearchParams();
-form.append("page","editBooking");
-form.append("bookingId", bookingId);
-form.append("userId", user.id);
-form.append("userEmail", user.email); // ✅ ต้องมีบรรทัดนี้
-form.append("interpreterId", interpreterVal);
-form.append("interpreterEmail", getInterpreterEmail(interpreterVal));
-form.append("date", dateVal);
-form.append("startTime", startVal);
-form.append("endTime", endVal);
-form.append("title", titleVal);
-form.append("location", locationVal);
+  const form = new URLSearchParams();
+  form.append("page","editBooking");
+  form.append("bookingId", bookingId);
+  form.append("userId", user.id);
+  form.append("userEmail", sanitizeEmail(user.email));
+  form.append("interpreterId", interpreterVal);
+  form.append("interpreterEmail", sanitizeEmail(getInterpreterEmail(interpreterVal)));
+  form.append("date", dateVal);
+  form.append("startTime", startVal);
+  form.append("endTime", endVal);
+  form.append("title", titleVal);
+  form.append("location", locationVal);
 
   try {
     showLoader();
@@ -864,24 +861,24 @@ form.append("location", locationVal);
         const iframe=document.getElementById("calendarFrame");
         if(iframe) iframe.src="calendar.html?v="+new Date().getTime();
       });
+    } else if (data.message && data.message.includes("Duplicate")) {
+      Swal.fire({
+        title: "⚠️ Duplicate Booking",
+        text: data.message,
+        icon: "warning",
+        didOpen: () => { document.querySelector('.swal2-container').style.zIndex = 30000; }
+      });
     } else {
-      // ถ้าเป็น Duplicate
-      if (data.message && data.message.includes("Duplicate")) {
-        Swal.fire({
-          title: "⚠️ Duplicate Booking",
-          text: data.message,
-          icon: "warning",
-          didOpen: () => { document.querySelector('.swal2-container').style.zIndex = 30000; }
-        });
-      } else {
-        Swal.fire("❌ Error", data.message,"error");
-      }
+      Swal.fire("❌ Error", data.message, "error");
     }
-  }catch(err){
+  } catch(err) {
     hideLoader();
-    Swal.fire("Error", err.message,"error");
+    Swal.fire("Error", err.message, "error");
   } finally {
-    // ✅ คืนค่าปุ่มกลับหลังทำงานเสร็จ
+    resetSaveButton();
+  }
+
+  function resetSaveButton(){
     if (saveBtn) {
       saveBtn.disabled = false;
       saveBtn.style.background = "#ff9800";
@@ -890,6 +887,7 @@ form.append("location", locationVal);
     }
   }
 }
+
 
 // ---------------------- 🔹 SUBMIT NEW BOOKING (FINAL VERSION) 🔹 ----------------------
 document.getElementById("bookingForm").addEventListener("submit", async function(e){ 
@@ -1042,6 +1040,7 @@ async function cancelBooking(bookingId) {
 }
 
 loadMyBookings();
+console.log("✅ Booking System Loaded:", new Date().toLocaleString());
 </script>
 
 </body>
