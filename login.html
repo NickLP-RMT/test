@@ -119,7 +119,7 @@
         hideLoader();
 
         if (data.success) {
-          Swal.fire("เข้าสู่ระบบสำเร็จ", data.message, "success").then(()=>{
+          Swal.fire("Success", data.message, "success").then(()=>{
             localStorage.setItem("loggedInUser", JSON.stringify(data.user));
             const role = (data.user.role || "").toLowerCase();
             if (role === "admin") window.location.href = "dashboard_admin.html";
