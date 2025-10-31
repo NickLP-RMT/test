@@ -7,22 +7,42 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #eef2f7;
+      height: 100vh;
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+
+      /* 🖼️ เพิ่มภาพพื้นหลัง */
+      background-image: url("images/login-bg.png"); /* เปลี่ยน path ตามจริง */
+      background-size: cover;        /* ให้เต็มหน้าจอ */
+      background-position: center;   /* จัดให้อยู่ตรงกลาง */
+      background-repeat: no-repeat;  /* ไม่ให้ซ้ำ */
+      background-attachment: fixed;  /* ให้ภาพนิ่งเวลา scroll */
     }
+
+    /* เพิ่ม overlay มืดบาง ๆ ให้ข้อความชัดขึ้น */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 0;
+    }
+
     .login-box {
-      background: #fff;
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.9);
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       width: 350px;
+      backdrop-filter: blur(5px);
     }
+
     h2 { margin-top: 0; text-align: center; color: #333; }
-    label { display: block; margin: 10px 0 5px; font-weight: bold; }
+    label { display: block; margin: 10px 0 5px; font-weight: bold; color: #333; }
     input {
       width: 100%; padding: 10px; margin-bottom: 15px;
       border-radius: 6px; border: 1px solid #ccc; font-size: 14px;
@@ -32,9 +52,10 @@
       border: none; border-radius: 6px; font-size: 16px; cursor: pointer;
     }
     button:hover { background: #218838; }
-    .link { text-align:center; margin-top:10px; }
+    .link { text-align:center; margin-top:10px; color: #333; }
     .link a { color:#007bff; text-decoration:none; }
     .link a:hover { text-decoration:underline; }
+
     /* Loader */
     #loader {
       display:none;
@@ -78,11 +99,9 @@
 
     document.getElementById("loginForm").addEventListener("submit", async function(e) {
       e.preventDefault();
-
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      // hash password
       const msgUint8 = new TextEncoder().encode(password);
       const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -102,20 +121,12 @@
         if (data.success) {
           Swal.fire("เข้าสู่ระบบสำเร็จ", data.message, "success").then(()=>{
             localStorage.setItem("loggedInUser", JSON.stringify(data.user));
-
             const role = (data.user.role || "").toLowerCase();
-
-            if (role === "admin") {
-              window.location.href = "dashboard_admin.html";
-            } else if (role === "interpreter") {
-              window.location.href = "dashboardInterpreter.html";
-            } else {
-              window.location.href = "dashboard.html";
-            }
+            if (role === "admin") window.location.href = "dashboard_admin.html";
+            else if (role === "interpreter") window.location.href = "dashboardInterpreter.html";
+            else window.location.href = "dashboard.html";
           });
-        } else {
-          Swal.fire("Error", data.message, "error");
-        }
+        } else Swal.fire("Error", data.message, "error");
       } catch(err){
         hideLoader();
         Swal.fire("Error", err.message, "error");
