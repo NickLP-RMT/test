@@ -838,17 +838,18 @@ async function saveEditBooking(bookingId){
   }
 
   // ✅ เตรียมข้อมูลส่งแก้ไข
-  const form = new URLSearchParams();
-  form.append("page","editBooking");
-  form.append("bookingId", bookingId);
-  form.append("userId", user.id);
-  form.append("interpreterId", interpreterVal);
-  form.append("interpreterEmail", getInterpreterEmail(interpreterVal));
-  form.append("date", dateVal);
-  form.append("startTime", startVal);
-  form.append("endTime", endVal);
-  form.append("title", titleVal);
-  form.append("location", locationVal);
+const form = new URLSearchParams();
+form.append("page","editBooking");
+form.append("bookingId", bookingId);
+form.append("userId", user.id);
+form.append("userEmail", user.email); // ✅ ต้องมีบรรทัดนี้
+form.append("interpreterId", interpreterVal);
+form.append("interpreterEmail", getInterpreterEmail(interpreterVal));
+form.append("date", dateVal);
+form.append("startTime", startVal);
+form.append("endTime", endVal);
+form.append("title", titleVal);
+form.append("location", locationVal);
 
   try {
     showLoader();
