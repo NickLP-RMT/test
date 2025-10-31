@@ -321,7 +321,14 @@
   transform: scale(1.05);
   opacity: 0.9;
 }
-
+.new-booking-btn {
+  transition: all 0.25s ease-in-out;
+}
+.new-booking-btn:hover {
+  background: #218838;
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
 
   </style>
 </head>
@@ -642,8 +649,9 @@ function renderMyBookings(list){
     c.innerHTML += `
       <div class="booking-item" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
         <div>
-          <div><b>Title:</b> ${b.title}</div>
-          <div><b>Time:</b> ${formatRange(b.date, b.startTime, b.endTime)}</div>
+          <div style="font-weight:bold;color:#007bff;font-size:15px;margin-bottom:2px;">${b.title}</div>
+          <div><b>Time:</b> ${formatRange(b.date, b.startTime, addOneMinute(b.endTime))}</div>
+
           <div><b>Interpreter:</b> ${getInterpreterName(b.interpreterId)}</div>
           <div><b>Location:</b> ${b.location}</div>
           <div><b>Status:</b> <span class="status-badge ${badgeClass}">${b.status}</span></div>
@@ -782,15 +790,19 @@ function openEditBooking(id){
 
   modal.style.display = "block";
 }
-
-
-
-
 // ---------------------- 🔹 SAVE EDIT (with validation like NEW BOOKING) 🔹 ----------------------
 async function saveEditBooking(bookingId){
   const f = document.getElementById("bookingForm");
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
   if(!user) return;
+
+  const saveBtn = document.getElementById("saveEditBtn"); // ✅ เพิ่ม
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.style.background = "#999";
+    saveBtn.style.cursor = "not-allowed";
+    saveBtn.innerText = "Saving...";
+  }
 
   // ✅ ตรวจสอบค่าว่าง
   const dateVal = f.date.value;
@@ -802,6 +814,12 @@ async function saveEditBooking(bookingId){
 
   if(!dateVal || !interpreterVal || !startVal || !endVal || !titleVal || !locationVal){
     Swal.fire("⚠️ Warning","Please fill in all required fields.","warning");
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.style.background = "#ff9800";
+      saveBtn.style.cursor = "pointer";
+      saveBtn.innerText = "💾 Save Edit";
+    }
     return;
   }
 
@@ -810,6 +828,12 @@ async function saveEditBooking(bookingId){
   const endMins   = parseInt(endVal.split(":")[0]) * 60 + parseInt(endVal.split(":")[1]);
   if (startMins >= endMins) {
     Swal.fire("⚠️ Warning", "Start time must be less than end time", "warning");
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.style.background = "#ff9800";
+      saveBtn.style.cursor = "pointer";
+      saveBtn.innerText = "💾 Save Edit";
+    }
     return;
   }
 
@@ -855,20 +879,30 @@ async function saveEditBooking(bookingId){
   }catch(err){
     hideLoader();
     Swal.fire("Error", err.message,"error");
+  } finally {
+    // ✅ คืนค่าปุ่มกลับหลังทำงานเสร็จ
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.style.background = "#ff9800";
+      saveBtn.style.cursor = "pointer";
+      saveBtn.innerText = "💾 Save Edit";
+    }
   }
 }
-
 
 // ---------------------- 🔹 SUBMIT NEW BOOKING 🔹 ----------------------
 document.getElementById("bookingForm").addEventListener("submit", async function(e){ 
   e.preventDefault();
   const mode = this.getAttribute("data-mode");
-  if(mode === "edit") return; // ป้องกันชนกับ saveEdit
+  if(mode === "edit") return;
 
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
   const submitBtn = this.querySelector("button[type='submit']");
   submitBtn.disabled = true;
+  submitBtn.style.background = "#999";   // ✅ เปลี่ยนเป็นเทา
+  submitBtn.style.cursor = "not-allowed";
   submitBtn.innerText = "Submitting...";
+
 
   const startVal = this.timeFrom.value;
   const endVal   = this.timeTo.value;
@@ -922,6 +956,13 @@ document.getElementById("bookingForm").addEventListener("submit", async function
     submitBtn.innerText="Submit";
   }
 });
+function addOneMinute(timeStr) {
+  const [h,m] = timeStr.split(":").map(Number);
+  let total = h * 60 + m + 1;
+  const hh = String(Math.floor(total / 60)).padStart(2,"0");
+  const mm = String(total % 60).padStart(2,"0");
+  return `${hh}:${mm}`;
+}
 
 // ---------------------- 🔹 CANCEL BOOKING 🔹 ----------------------
 async function cancelBooking(bookingId) {
