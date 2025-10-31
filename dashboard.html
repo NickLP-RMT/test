@@ -622,12 +622,15 @@ function getInterpreterName(id){ return (INTERPRETERS[id] && INTERPRETERS[id].na
 
 // ================= RENDER =================
 function renderMyBookings(list){
-  const c=document.getElementById("myBookingList");
-  c.innerHTML="";
-  if(list.length===0){c.innerHTML="<p>No bookings today</p>";return;}
-  list.forEach(b=>{
-    const badgeClass=b.status==="BOOKED"?"booked":"canceled";
-    c.innerHTML+=`
+  const c = document.getElementById("myBookingList");
+  c.innerHTML = "";
+  if (list.length === 0) {
+    c.innerHTML = "<p>No bookings today</p>";
+    return;
+  }
+  list.forEach(b => {
+    const badgeClass = b.status === "BOOKED" ? "booked" : "canceled";
+    c.innerHTML += `
       <div class="booking-item" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
         <div>
           <div><b>Title:</b> ${b.title}</div>
@@ -636,11 +639,16 @@ function renderMyBookings(list){
           <div><b>Location:</b> ${b.location}</div>
           <div><b>Status:</b> <span class="status-badge ${badgeClass}">${b.status}</span></div>
         </div>
-        <button style="background:#ffc107;border:none;color:#000;padding:4px 8px;border-radius:5px;cursor:pointer;" 
-          onclick="openEditBooking('${b.bookingId}')">✏️ Edit</button>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <button style="background:#ffc107;border:none;color:#000;padding:4px 8px;border-radius:5px;cursor:pointer;"
+            onclick="openEditBooking('${b.bookingId}')">✏️ Edit</button>
+          <button style="background:#dc3545;border:none;color:#fff;padding:4px 8px;border-radius:5px;cursor:pointer;"
+            onclick="cancelBooking('${b.bookingId}')">❌ Cancel</button>
+        </div>
       </div>`;
   });
 }
+
 
 function renderAllMyBookings(){
   const tbody=document.querySelector("#myBookingTable tbody");
@@ -715,7 +723,6 @@ async function loadMyBookingsForDate(dateObj){
 }
 updateBookingHeader(); // ✅ เรียกตอนโหลด
 
-// ---------------------- 🔹 OPEN EDIT BOOKING MODAL 🔹 ----------------------
 function openEditBooking(id){
   const data = window.allMyBookings.find(x => x.bookingId === id);
   if(!data) return;
@@ -748,29 +755,25 @@ function openEditBooking(id){
   f.title.value = data.title;
   f.location.value = data.location;
 
-  // ✅ เพิ่มปุ่ม Save Edit / Cancel Booking
+  // ✅ เพิ่มเฉพาะปุ่ม Save Edit เท่านั้น
   const div = document.createElement("div");
   div.id = "editButtons";
   div.style.marginTop = "15px";
   div.style.display = "flex";
-  div.style.justifyContent = "space-between";
+  div.style.justifyContent = "flex-end";
   div.innerHTML = `
-    <button id="saveEditBtn" 
-      style="flex:1;margin-right:5px;background:#ff9800;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;">
+    <button id="saveEditBtn"
+      style="background:#ff9800;color:#fff;border:none;padding:10px 20px;border-radius:4px;cursor:pointer;">
       💾 Save Edit
-    </button>
-    <button id="cancelEditBtn" 
-      style="flex:1;background:#dc3545;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer;">
-      ❌ Cancel Booking
     </button>
   `;
   f.appendChild(div);
 
-  document.getElementById("saveEditBtn").onclick = ()=>saveEditBooking(id);
-  document.getElementById("cancelEditBtn").onclick = ()=>cancelBooking(id);
+  document.getElementById("saveEditBtn").onclick = () => saveEditBooking(id);
 
   modal.style.display = "block";
 }
+
 
 
 
