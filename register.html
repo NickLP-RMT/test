@@ -7,30 +7,54 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f6f9;
+      height: 100vh;
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+
+      /* 🖼️ พื้นหลัง */
+      background-image: url("images/login-bg2.png"); /* ✅ ใช้ภาพเดียวกับหน้า login */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
     }
+
+    /* Overlay มืดบาง ๆ */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 0;
+    }
+
     .register-box {
-      background: #fff;
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.9);
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       width: 350px;
+      backdrop-filter: blur(5px);
+      transition: transform 0.2s ease;
     }
+
     h2 {
       margin-top: 0;
       color: #333;
       text-align: center;
     }
+
     label {
       display: block;
       margin: 10px 0 5px;
       font-weight: bold;
+      color: #333;
     }
+
     input, select {
       width: 100%;
       padding: 10px;
@@ -39,6 +63,7 @@
       border: 1px solid #ccc;
       font-size: 14px;
     }
+
     button {
       width: 100%;
       padding: 12px;
@@ -49,12 +74,29 @@
       font-size: 16px;
       cursor: pointer;
     }
+
     button:hover {
       background: #0056b3;
     }
+
+    .link {
+      text-align: center;
+      margin-top: 10px;
+      color: #333;
+    }
+
+    .link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
+    }
+
     /* Loader */
     #loader {
-      display: none; /* 👈 เริ่มต้นซ่อน */
+      display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(255,255,255,0.7);
@@ -62,6 +104,7 @@
       align-items: center;
       justify-content: center;
     }
+
     #loader div {
       border: 6px solid #f3f3f3;
       border-top: 6px solid #3498db;
@@ -70,9 +113,20 @@
       height: 60px;
       animation: spin 1s linear infinite;
     }
-    @keyframes spin { 
+
+    @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+
+    /* ✅ ป้องกันหน้าเด้งเมื่อ Swal ขึ้น */
+    .swal2-container {
+      position: fixed !important;
+    }
+
+    body.swal2-shown {
+      overflow-y: auto !important;
+      height: 100vh !important;
     }
   </style>
 </head>
@@ -82,21 +136,26 @@
     <form id="registerForm">
       <label for="username">Username</label>
       <input type="text" id="username" required>
-      
+
       <label for="email">Email (Company Email)</label>
       <input type="email" id="email" required>
-      
+
       <label for="password">Password</label>
       <input type="password" id="password" required>
-      
+
       <label for="role">Role</label>
       <select id="role" required>
         <option value="">-- Select Role --</option>
         <option value="user">User (ผู้จอง)</option>
         <option value="interpreter">Interpreter (ล่าม)</option>
-      </select>     
+      </select>
+
       <button type="submit">Register</button>
     </form>
+
+    <div class="link">
+      Already have an account? <a href="login.html">Login</a>
+    </div>
   </div>
 
   <!-- Loader -->
@@ -130,14 +189,18 @@
       form.append("role",role);
 
       try {
-        showLoader(); // ✅ Loader ทำงานตอนกดปุ่ม
+        showLoader();
         const res = await fetch(API_URL, { method:"POST", body:form });
         const data = await res.json();
         hideLoader();
 
         if(data.success){
-          Swal.fire("สำเร็จ", data.message, "success")
-            .then(()=> window.location.href="login.html");
+          document.body.style.overflow = "hidden"; // 🔒 ล็อกไม่ให้ body ขยับ
+
+          Swal.fire("Success", data.message, "success").then(()=>{
+            document.body.style.overflow = ""; // 🔓 คืนค่าปกติ
+            window.location.href = "login.html";
+          });
         } else {
           Swal.fire("Error", data.message, "error");
         }
