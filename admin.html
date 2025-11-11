@@ -26,7 +26,7 @@
       margin: 0;
     }
     .container {
-      max-width: 850px;
+      max-width: 900px;
       margin: 30px auto;
       background: #fff;
       padding: 25px 30px;
@@ -51,14 +51,18 @@
       background: #007bff;
       border: none;
       color: white;
-      padding: 7px 12px;
+      padding: 6px 10px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 13px;
       transition: 0.25s;
     }
     button:hover { background: #0056b3; }
-    .actions { display: flex; gap: 8px; }
+    .btn-secondary {
+      background: #6b7280;
+    }
+    .btn-secondary:hover { background: #4b5563; }
+    .actions { display: flex; gap: 6px; }
     input, select {
       padding: 7px 10px;
       border: 1px solid #cbd5e1;
@@ -68,15 +72,11 @@
     }
     .form-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
       gap: 15px;
       margin-top: 15px;
     }
     .form-actions { margin-top: 15px; text-align: right; }
-    .btn-secondary {
-      background: #6b7280;
-    }
-    .btn-secondary:hover { background: #4b5563; }
   </style>
 </head>
 <body>
@@ -116,23 +116,6 @@
 
     <hr style="margin: 25px 0;">
 
-    <h3>🔑 Change Password</h3>
-    <div class="form-row">
-      <div>
-        <label>Username</label>
-        <input id="targetUsername" placeholder="Username to update">
-      </div>
-      <div>
-        <label>New Password</label>
-        <input id="newPassword" type="password" placeholder="Enter new password">
-      </div>
-    </div>
-    <div class="form-actions">
-      <button onclick="updatePassword()">📝 Update Password</button>
-    </div>
-
-    <hr style="margin: 25px 0;">
-
     <h3>📋 User List</h3>
     <table id="userTable">
       <thead>
@@ -142,6 +125,7 @@
           <th>Email</th>
           <th>Role</th>
           <th>Active</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -149,7 +133,7 @@
   </div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzs7NdZGjjZTivIBIqR0OKRciTADISJGxQ9pGuriuwzmjaUaBng9HZfYSiqxFBQnUk/exec"; // ⚠️ ใส่ URL จาก Deploy as Web App
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzs7NdZGjjZTivIBIqR0OKRciTADISJGxQ9pGuriuwzmjaUaBng9HZfYSiqxFBQnUk/exec"; // ⚠️ เปลี่ยนเป็น URL ของคุณ
 
     async function loadUsers() {
       try {
@@ -165,6 +149,9 @@
             <td>${u.email}</td>
             <td>${u.role}</td>
             <td>${u.active}</td>
+            <td class="actions">
+              <button onclick="changePasswordPrompt('${u.username}')">🔑 Change Password</button>
+            </td>
           `;
           tbody.appendChild(tr);
         });
@@ -197,13 +184,19 @@
       if (json.success) loadUsers();
     }
 
-    async function updatePassword() {
-      const username = document.getElementById("targetUsername").value.trim();
-      const newPassword = document.getElementById("newPassword").value.trim();
-      if (!username || !newPassword) {
-        Swal.fire("⚠️ Missing info", "Please enter username and new password", "warning");
-        return;
-      }
+    async function changePasswordPrompt(username) {
+      const { value: newPassword } = await Swal.fire({
+        title: `🔑 Change Password for ${username}`,
+        input: "password",
+        inputPlaceholder: "Enter new password",
+        inputAttributes: { autocapitalize: "off" },
+        showCancelButton: true,
+        confirmButtonText: "Update",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#007bff"
+      });
+
+      if (!newPassword) return;
 
       const passwordHash = await sha256(newPassword);
       const formData = new URLSearchParams();
