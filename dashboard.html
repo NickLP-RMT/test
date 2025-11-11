@@ -299,12 +299,11 @@
   gap: 5px;
 }
 
-/* ปุ่มทั้งหมดเริ่มต้นเป็นสีเทา */
 .nav-btn {
-  background: #b0b0b0;
+  background: #007bff;
   color: #fff;
   border: none;
-  padding: 5px 12px;
+  padding: 3px 10px;
   border-radius: 5px;
   font-size: 13px;
   cursor: pointer;
@@ -312,16 +311,8 @@
 }
 
 .nav-btn:hover {
-  background: #8d8d8d;
+  background: #0056b3;
 }
-
-/* ปุ่ม active = สีน้ำเงิน */
-.nav-buttons .nav-btn.active {
-  background: #007bff;
-  transform: scale(1.05);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-}
-
 .mybooking-header {
   display: flex;
   justify-content: space-between;  /* แยก My Bookings กับปุ่มไปสุดขวา */
@@ -361,14 +352,12 @@
     <div class="mybooking">
       <button class="new-booking-btn" onclick="openNewBookingModal()">+ New Booking</button>
 <div class="mybooking-header">
-  <h3 id="myBookingTitle" style="color:#007bff; margin:0;">My Bookings (Today)</h3>
-<div class="nav-buttons">
-  <button class="nav-btn active" onclick="loadBookingsByRange('today', event)">Today</button>
-  <button class="nav-btn" onclick="loadBookingsByRange('thisMonth', event)">This Month</button>
-  <button class="nav-btn" onclick="loadBookingsByRange('nextMonth', event)">Next Month</button>
-</div>
-
-
+  <h3 id="myBookingTitle" style="color:#007bff; margin:0;">My Bookings (<span id="currentDate"></span>)</h3>
+  <div class="nav-buttons">
+    <button onclick="prevDate()" class="nav-btn">&lt;</button>
+    <button onclick="goToday()" class="nav-btn">Today</button>
+    <button onclick="nextDate()" class="nav-btn">&gt;</button>
+  </div>
 </div>
 
 
@@ -658,7 +647,7 @@ function renderMyBookings(list){
   const c = document.getElementById("myBookingList");
   c.innerHTML = "";
   if (list.length === 0) {
-    c.innerHTML = "<p>No bookings</p>";
+    c.innerHTML = "<p>No bookings today</p>";
     return;
   }
   list.forEach(b => {
@@ -757,83 +746,6 @@ async function loadMyBookingsForDate(dateObj){
 }
 updateBookingHeader(); // ✅ เรียกตอนโหลด
 
-
-async function loadBookingsByRange(rangeType, event) {
-  const user = JSON.parse(localStorage.getItem("loggedInUser"));
-  if (!user) return;
-
-  // ✅ เปลี่ยนสีปุ่ม Active เฉพาะกลุ่ม nav-buttons
-  document.querySelectorAll(".nav-btn").forEach(btn => {
-    btn.classList.remove("active");
-    btn.style.background = "#b0b0b0";  // สีเทาปุ่มปกติ
-  });
-  if (event && event.target && event.target.classList.contains("nav-btn")) {
-    event.target.classList.add("active");
-    event.target.style.background = "#007bff"; // สีน้ำเงินสำหรับ active
-  }
-
-  showLoader();
-  try {
-    const res = await fetch(API_URL + "?page=listBookings");
-    const bookings = await res.json();
-    hideLoader();
-
-    const today = new Date();
-    let filtered = [];
-
-    if (rangeType === "today") {
-      const todayStr = today.toISOString().split("T")[0];
-      filtered = bookings.filter(b =>
-        b.userId === user.id && b.date === todayStr && b.status !== "CANCELED"
-      );
-      document.getElementById("myBookingTitle").innerText = `My Bookings (Today)`;
-    }
-
-    else if (rangeType === "thisMonth") {
-      const thisMonth = today.getMonth();
-      const thisYear = today.getFullYear();
-      filtered = bookings.filter(b => {
-        const d = new Date(b.date);
-        return (
-          b.userId === user.id &&
-          d.getMonth() === thisMonth &&
-          d.getFullYear() === thisYear &&
-          b.status !== "CANCELED"
-        );
-      });
-      document.getElementById("myBookingTitle").innerText = `My Bookings (This Month)`;
-    }
-
-    else if (rangeType === "nextMonth") {
-      const nextMonth = (today.getMonth() + 1) % 12;
-      const nextYear = today.getMonth() === 11 ? today.getFullYear() + 1 : today.getFullYear();
-      filtered = bookings.filter(b => {
-        const d = new Date(b.date);
-        return (
-          b.userId === user.id &&
-          d.getMonth() === nextMonth &&
-          d.getFullYear() === nextYear &&
-          b.status !== "CANCELED"
-        );
-      });
-      document.getElementById("myBookingTitle").innerText = `My Bookings (Next Month)`;
-    }
-
-    filtered.sort((a, b) => {
-      const [ah, am] = a.startTime.split(":").map(Number);
-      const [bh, bm] = b.startTime.split(":").map(Number);
-      return ah * 60 + am - (bh * 60 + bm);
-    });
-
-    renderMyBookings(filtered);
-
-  } catch (err) {
-    hideLoader();
-    Swal.fire("Error", err.message, "error");
-  }
-}
-
-  
 function openEditBooking(id){
   const data = window.allMyBookings.find(x => x.bookingId === id);
   if(!data) return;
