@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel - Interpreter Booking</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+body { font-family: "Segoe UI",sans-serif; background:#f8fafc; margin:0; }
+.wrapper { display:flex; height:100vh; }
+.sidebar {
+  width:230px; background:#1e293b; color:white; padding:20px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.sidebar h3 { color:#60a5fa; font-size:18px; text-align:center; margin-bottom:15px; }
+.sidebar button {
+  background:none; border:none; color:#e2e8f0; text-align:left;
+  padding:10px; border-radius:6px; cursor:pointer;
+}
+.sidebar button.active, .sidebar button:hover { background:#334155; color:white; }
+.main { flex:1; padding:25px; overflow:auto; }
+.table th { background:#e2e8f0; }
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <div class="sidebar">
+    <h3>Admin Menu</h3>
+    <button id="btnReset" class="active" onclick="showSection('reset')">🔐 Reset Password</button>
+    <button id="btnExport" onclick="showSection('export')">📤 Export Data</button>
+  </div>
+
+  <div class="main">
+    <!-- 🔹 Reset Password Section -->
+    <section id="resetSection">
+      <h4>🔐 Reset Password</h4>
+      <table class="table table-bordered mt-3" id="userTable">
+        <thead><tr>
+          <th>Username</th><th>Email</th><th>Role</th><th>Action</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- 🔹 Export Data Section -->
+    <section id="exportSection" style="display:none;">
+      <h4>📤 Export Booking Data</h4>
+      <div class="row g-2 mb-3 mt-2">
+        <div class="col-md-4">
+          <input id="searchInterpreter" class="form-control" placeholder="ชื่อล่าม (Interpreter)">
+        </div>
+        <div class="col-md-3">
+          <input id="startDate" type="date" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <input id="endDate" type="date" class="form-control">
+        </div>
+        <div class="col-md-2 d-grid">
+          <button class="btn btn-primary" onclick="searchBookings()">ค้นหา</button>
+        </div>
+      </div>
+
+      <table class="table table-bordered" id="bookingTable">
+        <thead>
+          <tr><th>Booking ID</th><th>Date</th><th>Start</th><th>End</th>
+              <th>Interpreter</th><th>User</th><th>Location</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button class="btn btn-success mt-2" onclick="exportExcel()">Export Excel</button>
+    </section>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2DCRMiQMNDh7gFZL1o3zMyKwDQNopAFOTCWlkp0CD8ID3vm146j4wwhTlVeL-cDc/exec"; // ← เปลี่ยนตรงนี้
+
+function showSection(section){
+  document.getElementById('resetSection').style.display = (section==='reset')?'block':'none';
+  document.getElementById('exportSection').style.display = (section==='export')?'block':'none';
+  document.getElementById('btnReset').classList.toggle('active', section==='reset');
+  document.getElementById('btnExport').classList.toggle('active', section==='export');
+}
+
+// ================= Reset Password =================
+async function loadUsers(){
+  const res = await fetch(`${SCRIPT_URL}?action=getUsers`);
+  const data = await res.json();
+  const tbody = document.querySelector("#userTable tbody");
+  tbody.innerHTML = "";
+  data.users.forEach(u=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${u.username}</td>
+      <td>${u.email}</td>
+      <td>${u.role}</td>
+      <td><button class="btn btn-sm btn-warning" onclick="editPassword('${u.username}')">Edit</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+async function editPassword(username){
+  const { value: newPass } = await Swal.fire({
+    title:`เปลี่ยนรหัสผ่าน`,
+    input:'password',
+    inputLabel:`กรอกรหัสผ่านใหม่สำหรับ ${username}`,
+    inputPlaceholder:'New Password',
+    showCancelButton:true
+  });
+  if(!newPass) return;
+
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest("SHA-256", enc.encode(newPass));
+  const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  const res = await fetch(SCRIPT_URL, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ action:"updatePassword", username, passwordHash:hash })
+  });
+  const d = await res.json();
+  Swal.fire(d.success?"สำเร็จ":"ไม่พบผู้ใช้", d.success?"อัปเดตรหัสผ่านแล้ว":"เกิดข้อผิดพลาด", d.success?"success":"error");
+}
+
+// ================= Export Data =================
+async function searchBookings(){
+  const interp = document.getElementById("searchInterpreter").value.trim();
+  const start = document.getElementById("startDate").value;
+  const end   = document.getElementById("endDate").value;
+  const res = await fetch(`${SCRIPT_URL}?action=getBookings&interpreter=${interp}&start=${start}&end=${end}`);
+  const data = await res.json();
+  const tbody = document.querySelector("#bookingTable tbody");
+  tbody.innerHTML="";
+  data.bookings.forEach(b=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${b.bookingId}</td><td>${b.date}</td><td>${b.startTime}</td>
+      <td>${b.endTime}</td><td>${b.interpreterEmail}</td><td>${b.userEmail}</td>
+      <td>${b.location}</td><td>${b.status}</td>`;
+    tbody.appendChild(tr);
+  });
+  Swal.fire("ค้นหาเสร็จ",`พบ ${data.bookings.length} รายการ`,"info");
+}
+
+function exportExcel(){
+  const table = document.getElementById("bookingTable");
+  const wb = XLSX.utils.table_to_book(table,{sheet:"Bookings"});
+  XLSX.writeFile(wb,`Bookings_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+window.onload = loadUsers;
+</script>
+</body>
+</html>
