@@ -658,7 +658,7 @@ function renderMyBookings(list){
   const c = document.getElementById("myBookingList");
   c.innerHTML = "";
   if (list.length === 0) {
-    c.innerHTML = "<p>No bookings today</p>";
+    c.innerHTML = "<p>No bookings</p>";
     return;
   }
   list.forEach(b => {
