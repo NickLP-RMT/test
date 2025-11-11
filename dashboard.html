@@ -298,16 +298,13 @@
   display: flex;
   gap: 5px;
 }
-.nav-buttons .nav-btn.active {
-  background: #0056b3;
-  transform: scale(1.05);
-}
 
+/* ปุ่มทั้งหมดเริ่มต้นเป็นสีเทา */
 .nav-btn {
-  background: #007bff;
+  background: #b0b0b0;
   color: #fff;
   border: none;
-  padding: 3px 10px;
+  padding: 5px 12px;
   border-radius: 5px;
   font-size: 13px;
   cursor: pointer;
@@ -315,8 +312,16 @@
 }
 
 .nav-btn:hover {
-  background: #0056b3;
+  background: #8d8d8d;
 }
+
+/* ปุ่ม active = สีน้ำเงิน */
+.nav-buttons .nav-btn.active {
+  background: #007bff;
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
 .mybooking-header {
   display: flex;
   justify-content: space-between;  /* แยก My Bookings กับปุ่มไปสุดขวา */
@@ -358,10 +363,11 @@
 <div class="mybooking-header">
   <h3 id="myBookingTitle" style="color:#007bff; margin:0;">My Bookings (Today)</h3>
 <div class="nav-buttons">
-  <button class="nav-btn" onclick="loadBookingsByRange('today')">Today</button>
-  <button class="nav-btn" onclick="loadBookingsByRange('thisMonth')">This Month</button>
-  <button class="nav-btn" onclick="loadBookingsByRange('nextMonth')">Next Month</button>
+  <button class="nav-btn active" onclick="loadBookingsByRange('today', event)">Today</button>
+  <button class="nav-btn" onclick="loadBookingsByRange('thisMonth', event)">This Month</button>
+  <button class="nav-btn" onclick="loadBookingsByRange('nextMonth', event)">Next Month</button>
 </div>
+
 
 </div>
 
@@ -752,9 +758,19 @@ async function loadMyBookingsForDate(dateObj){
 updateBookingHeader(); // ✅ เรียกตอนโหลด
 
 
-async function loadBookingsByRange(rangeType) {
+async function loadBookingsByRange(rangeType, event) {
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
   if (!user) return;
+
+  // ✅ เปลี่ยนสีปุ่ม Active เฉพาะกลุ่ม nav-buttons
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.classList.remove("active");
+    btn.style.background = "#b0b0b0";  // สีเทาปุ่มปกติ
+  });
+  if (event && event.target && event.target.classList.contains("nav-btn")) {
+    event.target.classList.add("active");
+    event.target.style.background = "#007bff"; // สีน้ำเงินสำหรับ active
+  }
 
   showLoader();
   try {
@@ -816,9 +832,6 @@ async function loadBookingsByRange(rangeType) {
     Swal.fire("Error", err.message, "error");
   }
 }
-
-
-
 
   
 function openEditBooking(id){
