@@ -1,157 +1,229 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<title>Admin Panel - Interpreter Booking</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<style>
-body { font-family: "Segoe UI",sans-serif; background:#f8fafc; margin:0; }
-.wrapper { display:flex; height:100vh; }
-.sidebar {
-  width:230px; background:#1e293b; color:white; padding:20px;
-  display:flex; flex-direction:column; gap:10px;
-}
-.sidebar h3 { color:#60a5fa; font-size:18px; text-align:center; margin-bottom:15px; }
-.sidebar button {
-  background:none; border:none; color:#e2e8f0; text-align:left;
-  padding:10px; border-radius:6px; cursor:pointer;
-}
-.sidebar button.active, .sidebar button:hover { background:#334155; color:white; }
-.main { flex:1; padding:25px; overflow:auto; }
-.table th { background:#e2e8f0; }
-</style>
+  <meta charset="UTF-8">
+  <title>👩‍💼 Admin Panel - Interpreter Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8fafc;
+      margin: 0;
+      padding: 0;
+      color: #1e293b;
+    }
+    .navbar {
+      background: linear-gradient(90deg, #007bff, #0056b3);
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+    .container {
+      max-width: 850px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    th, td {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+    }
+    button {
+      background: #007bff;
+      border: none;
+      color: white;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.25s;
+    }
+    button:hover { background: #0056b3; }
+    .actions { display: flex; gap: 8px; }
+    input, select {
+      padding: 7px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      width: 100%;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .form-actions { margin-top: 15px; text-align: right; }
+    .btn-secondary {
+      background: #6b7280;
+    }
+    .btn-secondary:hover { background: #4b5563; }
+  </style>
 </head>
-
 <body>
-<div class="wrapper">
-  <div class="sidebar">
-    <h3>Admin Menu</h3>
-    <button id="btnReset" class="active" onclick="showSection('reset')">🔐 Reset Password</button>
-    <button id="btnExport" onclick="showSection('export')">📤 Export Data</button>
+
+  <div class="navbar">
+    <h1>Interpreter Booking - Admin</h1>
+    <button onclick="loadUsers()">🔄 Refresh</button>
   </div>
 
-  <div class="main">
-    <!-- 🔹 Reset Password Section -->
-    <section id="resetSection">
-      <h4>🔐 Reset Password</h4>
-      <table class="table table-bordered mt-3" id="userTable">
-        <thead><tr>
-          <th>Username</th><th>Email</th><th>Role</th><th>Action</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
-    </section>
+  <div class="container">
+    <h2>👤 User Management</h2>
 
-    <!-- 🔹 Export Data Section -->
-    <section id="exportSection" style="display:none;">
-      <h4>📤 Export Booking Data</h4>
-      <div class="row g-2 mb-3 mt-2">
-        <div class="col-md-4">
-          <input id="searchInterpreter" class="form-control" placeholder="ชื่อล่าม (Interpreter)">
-        </div>
-        <div class="col-md-3">
-          <input id="startDate" type="date" class="form-control">
-        </div>
-        <div class="col-md-3">
-          <input id="endDate" type="date" class="form-control">
-        </div>
-        <div class="col-md-2 d-grid">
-          <button class="btn btn-primary" onclick="searchBookings()">ค้นหา</button>
-        </div>
+    <div class="form-row">
+      <div>
+        <label>Username</label>
+        <input id="username" placeholder="Enter username">
       </div>
+      <div>
+        <label>Email</label>
+        <input id="email" placeholder="Enter email">
+      </div>
+      <div>
+        <label>Password</label>
+        <input id="password" placeholder="Enter password" type="password">
+      </div>
+      <div>
+        <label>Role</label>
+        <select id="role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button onclick="addUser()">➕ Add User</button>
+    </div>
 
-      <table class="table table-bordered" id="bookingTable">
-        <thead>
-          <tr><th>Booking ID</th><th>Date</th><th>Start</th><th>End</th>
-              <th>Interpreter</th><th>User</th><th>Location</th><th>Status</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button class="btn btn-success mt-2" onclick="exportExcel()">Export Excel</button>
-    </section>
+    <hr style="margin: 25px 0;">
+
+    <h3>🔑 Change Password</h3>
+    <div class="form-row">
+      <div>
+        <label>Username</label>
+        <input id="targetUsername" placeholder="Username to update">
+      </div>
+      <div>
+        <label>New Password</label>
+        <input id="newPassword" type="password" placeholder="Enter new password">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button onclick="updatePassword()">📝 Update Password</button>
+    </div>
+
+    <hr style="margin: 25px 0;">
+
+    <h3>📋 User List</h3>
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Active</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
-</div>
 
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkhT_aK6ChtrOvGM1RjivqdxcXG3a6_TBHIZwsHYNo9byd6_FudZrAKc0p6VYEdQ/exec"; // ← เปลี่ยนตรงนี้
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzs7NdZGjjZTivIBIqR0OKRciTADISJGxQ9pGuriuwzmjaUaBng9HZfYSiqxFBQnUk/exec"; // ⚠️ ใส่ URL จาก Deploy as Web App
 
-function showSection(section){
-  document.getElementById('resetSection').style.display = (section==='reset')?'block':'none';
-  document.getElementById('exportSection').style.display = (section==='export')?'block':'none';
-  document.getElementById('btnReset').classList.toggle('active', section==='reset');
-  document.getElementById('btnExport').classList.toggle('active', section==='export');
-}
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${scriptURL}?page=listUsers`);
+        const data = await res.json();
+        const tbody = document.querySelector("#userTable tbody");
+        tbody.innerHTML = "";
+        data.forEach(u => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${u.id}</td>
+            <td>${u.username}</td>
+            <td>${u.email}</td>
+            <td>${u.role}</td>
+            <td>${u.active}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        Swal.fire("❌ Error", "Cannot load user list", "error");
+      }
+    }
 
-// ================= Reset Password =================
-async function loadUsers(){
-  const res = await fetch(`${SCRIPT_URL}?action=getUsers`);
-  const data = await res.json();
-  const tbody = document.querySelector("#userTable tbody");
-  tbody.innerHTML = "";
-  data.users.forEach(u=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${u.username}</td>
-      <td>${u.email}</td>
-      <td>${u.role}</td>
-      <td><button class="btn btn-sm btn-warning" onclick="editPassword('${u.username}')">Edit</button></td>`;
-    tbody.appendChild(tr);
-  });
-}
+    async function addUser() {
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const role = document.getElementById("role").value;
+      if (!username || !email || !password) {
+        Swal.fire("⚠️ Missing info", "Please fill all fields", "warning");
+        return;
+      }
 
-async function editPassword(username){
-  const { value: newPass } = await Swal.fire({
-    title:`เปลี่ยนรหัสผ่าน`,
-    input:'password',
-    inputLabel:`กรอกรหัสผ่านใหม่สำหรับ ${username}`,
-    inputPlaceholder:'New Password',
-    showCancelButton:true
-  });
-  if(!newPass) return;
+      const passwordHash = await sha256(password);
+      const formData = new URLSearchParams();
+      formData.append("page", "registerUser");
+      formData.append("username", username);
+      formData.append("email", email);
+      formData.append("passwordHash", passwordHash);
+      formData.append("role", role);
 
-  const enc = new TextEncoder();
-  const buf = await crypto.subtle.digest("SHA-256", enc.encode(newPass));
-  const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
-  const res = await fetch(SCRIPT_URL, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ action:"updatePassword", username, passwordHash:hash })
-  });
-  const d = await res.json();
-  Swal.fire(d.success?"สำเร็จ":"ไม่พบผู้ใช้", d.success?"อัปเดตรหัสผ่านแล้ว":"เกิดข้อผิดพลาด", d.success?"success":"error");
-}
+      const res = await fetch(scriptURL, { method: "POST", body: formData });
+      const json = await res.json();
+      Swal.fire(json.success ? "✅ Success" : "❌ Error", json.message, json.success ? "success" : "error");
+      if (json.success) loadUsers();
+    }
 
-// ================= Export Data =================
-async function searchBookings(){
-  const interp = document.getElementById("searchInterpreter").value.trim();
-  const start = document.getElementById("startDate").value;
-  const end   = document.getElementById("endDate").value;
-  const res = await fetch(`${SCRIPT_URL}?action=getBookings&interpreter=${interp}&start=${start}&end=${end}`);
-  const data = await res.json();
-  const tbody = document.querySelector("#bookingTable tbody");
-  tbody.innerHTML="";
-  data.bookings.forEach(b=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${b.bookingId}</td><td>${b.date}</td><td>${b.startTime}</td>
-      <td>${b.endTime}</td><td>${b.interpreterEmail}</td><td>${b.userEmail}</td>
-      <td>${b.location}</td><td>${b.status}</td>`;
-    tbody.appendChild(tr);
-  });
-  Swal.fire("ค้นหาเสร็จ",`พบ ${data.bookings.length} รายการ`,"info");
-}
+    async function updatePassword() {
+      const username = document.getElementById("targetUsername").value.trim();
+      const newPassword = document.getElementById("newPassword").value.trim();
+      if (!username || !newPassword) {
+        Swal.fire("⚠️ Missing info", "Please enter username and new password", "warning");
+        return;
+      }
 
-function exportExcel(){
-  const table = document.getElementById("bookingTable");
-  const wb = XLSX.utils.table_to_book(table,{sheet:"Bookings"});
-  XLSX.writeFile(wb,`Bookings_${new Date().toISOString().slice(0,10)}.xlsx`);
-}
+      const passwordHash = await sha256(newPassword);
+      const formData = new URLSearchParams();
+      formData.append("page", "updatePassword");
+      formData.append("username", username);
+      formData.append("passwordHash", passwordHash);
 
-window.onload = loadUsers;
-</script>
+      const res = await fetch(scriptURL, { method: "POST", body: formData });
+      const json = await res.json();
+      Swal.fire(json.success ? "✅ Success" : "❌ Error", json.message, json.success ? "success" : "error");
+    }
+
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    window.onload = loadUsers;
+  </script>
 </body>
 </html>
