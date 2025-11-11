@@ -12,9 +12,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-
-      /* 🖼️ พื้นหลัง */
-      background-image: url("images/login-bg2.png"); /* ✅ เปลี่ยน path ตามจริง */
+      background-image: url("images/login-bg2.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -30,6 +28,27 @@
       z-index: 0;
     }
 
+    /* 🔹 Header Zone (Logo + Title) */
+    .top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+      z-index: 2;
+    }
+    .top-bar img {
+      height: 45px;
+      width: auto;
+    }
+    .top-bar .system-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #ffffff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    }
+
     .login-box {
       position: relative;
       z-index: 1;
@@ -39,7 +58,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       width: 350px;
       backdrop-filter: blur(5px);
-      transition: transform 0.2s ease; /* ✅ ป้องกันกระตุก */
+      transition: transform 0.2s ease;
     }
 
     h2 { margin-top: 0; text-align: center; color: #333; }
@@ -73,18 +92,25 @@
     }
     @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 
-    /* ✅ ป้องกันหน้า flex ขยับเวลา Swal แสดง */
-    .swal2-container {
-      position: fixed !important;
-    }
+    .swal2-container { position: fixed !important; }
+    body.swal2-shown { overflow-y: auto !important; height: 100vh !important; }
 
-    body.swal2-shown {
-      overflow-y: auto !important;
-      height: 100vh !important;
+    /* 📱 Responsive */
+    @media (max-width: 480px) {
+      .top-bar { padding: 10px 15px; }
+      .top-bar .system-title { font-size: 16px; }
+      .login-box { width: 85%; padding: 25px; }
     }
   </style>
 </head>
 <body>
+  <!-- 🔹 Header -->
+  <div class="top-bar">
+    <img src="images/company-logo.png" alt="Company Logo">
+    <div class="system-title">Interpreter Booking System</div>
+  </div>
+
+  <!-- 🔸 Login Box -->
   <div class="login-box">
     <h2>Login</h2>
     <form id="loginForm">
@@ -130,11 +156,7 @@
         hideLoader();
 
         if (data.success) {
-          document.body.style.overflow = "hidden"; // 🔒 ล็อกไม่ให้ body ขยับ
-
           Swal.fire("Success", data.message, "success").then(()=>{
-            document.body.style.overflow = ""; // 🔓 คืนค่าปกติ
-
             localStorage.setItem("loggedInUser", JSON.stringify(data.user));
             const role = (data.user.role || "").toLowerCase();
             if (role === "admin") window.location.href = "dashboard_admin.html";
