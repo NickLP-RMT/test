@@ -317,10 +317,10 @@ if (!interpreterId) {
 
   const payload = new URLSearchParams();
   payload.append("page", "newBooking");
-  payload.append("userId", user.id); // ✅ เปลี่ยนจาก user.email → user.id
+  payload.append("userId", user.id); // ✅ ใช้ id ของ user
   payload.append("userEmail", user.email);
   payload.append("interpreterId", interpreterId);
-  payload.append("interpreterEmail", getInterpreterEmail(interpreterId));
+  payload.append("interpreterEmail", user.email); // ✅ ใช้ userEmail เป็น interpreterEmail
   payload.append("date", form.date);
   payload.append("startTime", form.start);
   payload.append("endTime", form.end);
@@ -328,6 +328,7 @@ if (!interpreterId) {
   payload.append("location", "-");
   payload.append("status", "BOOKED");
   payload.append("createdAt", new Date().toISOString());
+
 
   const res = await fetch(API_URL, { method: "POST", body: payload });
   const result = await res.json();
