@@ -335,7 +335,7 @@
   transform: scale(1.03);
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
-
+#loader { display: none; align-items: center; justify-content: center; }
   </style>
 </head>
 <body>
@@ -353,11 +353,14 @@
       <button class="new-booking-btn" onclick="openNewBookingModal()">+ New Booking</button>
 <div class="mybooking-header">
   <h3 id="myBookingTitle" style="color:#007bff; margin:0;">My Bookings (<span id="currentDate"></span>)</h3>
-  <div class="nav-buttons">
-    <button onclick="prevDate()" class="nav-btn">&lt;</button>
-    <button onclick="goToday()" class="nav-btn">Today</button>
-    <button onclick="nextDate()" class="nav-btn">&gt;</button>
-  </div>
+ <div class="nav-buttons">
+  <button onclick="prevDate()" class="nav-btn">&lt;</button>
+  <select id="viewMode" class="nav-btn" onchange="changeViewMode()">
+    <option value="today" selected>Today</option>
+    <option value="monthly">Monthly</option>
+  </select>
+  <button onclick="nextDate()" class="nav-btn">&gt;</button>
+</div>
 </div>
 
 
@@ -596,7 +599,16 @@ async function loadMyBookings(){
     Swal.fire("Error",err.message,"error");
   }
 }
+  
+let viewMode = "today"; // "today" หรือ "monthly"
 
+function changeViewMode() {
+  const select = document.getElementById("viewMode");
+  viewMode = select.value;
+  goToday(); // รีเฟรชข้อมูลตามโหมดใหม่
+}
+
+  
 // ================= TIME FORMAT =================
 function parseDatePart(dateVal){
   if (!dateVal) return null;
@@ -646,10 +658,13 @@ function getInterpreterName(id){ return (INTERPRETERS[id] && INTERPRETERS[id].na
 function renderMyBookings(list){
   const c = document.getElementById("myBookingList");
   c.innerHTML = "";
-  if (list.length === 0) {
-    c.innerHTML = "<p>No bookings today</p>";
-    return;
-  }
+if (list.length === 0) {
+  c.innerHTML = viewMode === "monthly" 
+    ? "<p>No bookings this month</p>" 
+    : "<p>No bookings today</p>";
+  return;
+}
+
   list.forEach(b => {
     const badgeClass = b.status === "BOOKED" ? "booked" : "canceled";
     c.innerHTML += `
@@ -697,18 +712,34 @@ function renderAllMyBookings(){
 let currentViewDate = new Date();
 
 function updateBookingHeader() {
-  const dateStr = currentViewDate.toISOString().split("T")[0];
-  document.getElementById("currentDate").innerText = dateStr;
+  const h = document.getElementById("myBookingTitle");
+  if (viewMode === "today") {
+    const dateStr = currentViewDate.toISOString().split("T")[0];
+    h.innerHTML = `My Bookings (<span id="currentDate">${dateStr}</span>)`;
+  } else {
+    const monthStr = currentViewDate.toLocaleDateString("en-GB", {
+      month: "long", year: "numeric"
+    });
+    h.innerHTML = `My Bookings (<span id="currentDate">${monthStr}</span>)`;
+  }
 }
 
 function prevDate() {
-  currentViewDate.setDate(currentViewDate.getDate() - 1);
+  if (viewMode === "today") {
+    currentViewDate.setDate(currentViewDate.getDate() - 1);
+  } else {
+    currentViewDate.setMonth(currentViewDate.getMonth() - 1);
+  }
   updateBookingHeader();
   loadMyBookingsForDate(currentViewDate);
 }
 
 function nextDate() {
-  currentViewDate.setDate(currentViewDate.getDate() + 1);
+  if (viewMode === "today") {
+    currentViewDate.setDate(currentViewDate.getDate() + 1);
+  } else {
+    currentViewDate.setMonth(currentViewDate.getMonth() + 1);
+  }
   updateBookingHeader();
   loadMyBookingsForDate(currentViewDate);
 }
@@ -718,6 +749,7 @@ function goToday() {
   updateBookingHeader();
   loadMyBookingsForDate(currentViewDate);
 }
+
 
 async function loadMyBookingsForDate(dateObj){
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -729,21 +761,36 @@ async function loadMyBookingsForDate(dateObj){
     const bookings = await res.json();
     hideLoader();
 
-    const dateStr = dateObj.toISOString().split("T")[0];
-    const myBookings = bookings
-      .filter(b => b.userId === user.id && b.date === dateStr && b.status !== "CANCELED")
-      .sort((a,b) => {
-        const [ah,am]=a.startTime.split(":").map(Number);
-        const [bh,bm]=b.startTime.split(":").map(Number);
-        return ah*60+am - (bh*60+bm);
+    let filtered = [];
+    if (viewMode === "today") {
+      const dateStr = dateObj.toISOString().split("T")[0];
+      filtered = bookings.filter(
+        b => b.userId === user.id && b.date === dateStr && b.status !== "CANCELED"
+      );
+    } else if (viewMode === "monthly") {
+      const year = dateObj.getFullYear();
+      const month = dateObj.getMonth() + 1;
+      filtered = bookings.filter(b => {
+        if (b.userId !== user.id || b.status === "CANCELED") return false;
+        const [y,m] = b.date.split("-").map(Number);
+        return y === year && m === month;
       });
+    }
 
-    renderMyBookings(myBookings);
+    // เรียงเวลา
+    filtered.sort((a,b)=>{
+      const [ah,am]=a.startTime.split(":").map(Number);
+      const [bh,bm]=b.startTime.split(":").map(Number);
+      return ah*60+am - (bh*60+bm);
+    });
+
+    renderMyBookings(filtered);
   } catch (err) {
     hideLoader();
     Swal.fire("Error", err.message, "error");
   }
 }
+
 updateBookingHeader(); // ✅ เรียกตอนโหลด
 
 function openEditBooking(id){
