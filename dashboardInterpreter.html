@@ -310,19 +310,20 @@
         const myInterpreter = Object.entries(INTERPRETERS).find(([id, obj]) => obj.email === user.email);
         const interpreterId = myInterpreter ? myInterpreter[0] : "";
 
-        const payload = new URLSearchParams();
-        payload.append("page", "newBooking");
-        payload.append("userId", user.id);
-        payload.append("userEmail", user.email);
-        payload.append("interpreterId", interpreterId);
-        payload.append("interpreterEmail", getInterpreterEmail(interpreterId));
-        payload.append("date", form.date);
-        payload.append("startTime", form.start);
-        payload.append("endTime", form.end);
-        payload.append("title", "Take leave");
-        payload.append("location", "-");
-        payload.append("status", "BOOKED");
-        payload.append("createdAt", new Date().toISOString());
+const payload = new URLSearchParams();
+payload.append("page", "newBooking");
+payload.append("userId", user.email); // ✅ แก้ตรงนี้
+payload.append("userEmail", user.email);
+payload.append("interpreterId", interpreterId);
+payload.append("interpreterEmail", getInterpreterEmail(interpreterId));
+payload.append("date", form.date);
+payload.append("startTime", form.start);
+payload.append("endTime", form.end);
+payload.append("title", "Take leave");
+payload.append("location", "-");
+payload.append("status", "BOOKED");
+payload.append("createdAt", new Date().toISOString());
+
 
         const res = await fetch(API_URL, { method: "POST", body: payload });
         const result = await res.json();
