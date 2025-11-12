@@ -16,13 +16,14 @@
     .navbar button {
       background:#dc3545; color:#fff; border:none;
       padding:6px 12px; border-radius:4px; cursor:pointer;
-    font-weight: 500; transition: all 0.25s ease-in-out;
+      font-weight:500; transition:all 0.25s ease-in-out;
     }
-.navbar button:hover {
-  background: #c82333;
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
+    .navbar button:hover {
+      background:#c82333;
+      transform:scale(1.05);
+      box-shadow:0 4px 8px rgba(0,0,0,0.15);
+    }
+
     .main { display:grid; grid-template-columns:1fr 2fr; gap:20px; padding:20px; }
 
     .mybooking {
@@ -31,7 +32,6 @@
       display:flex; flex-direction:column;
     }
 
-    /* ✅ Job Summary Cards */
     .job-summary {
       display:flex; justify-content:space-between; margin-bottom:12px; gap:10px;
     }
@@ -39,23 +39,16 @@
       flex:1; text-align:center; padding:10px 0; border-radius:8px;
       font-weight:bold; box-shadow:0 1px 4px rgba(0,0,0,0.1);
     }
-    .job-today {
-      background:#e9f2ff; color:#007bff;
-    }
-    .job-month {
-      background:#e9fbe9; color:#198754;
-    }
+    .job-today { background:#e9f2ff; color:#007bff; }
+    .job-month { background:#e9fbe9; color:#198754; }
 
-    /* ✅ scroll bar */
     #myBookingList {
       max-height:480px;
       overflow-y:auto;
       padding-right:8px;
     }
     #myBookingList::-webkit-scrollbar { width:8px; }
-    #myBookingList::-webkit-scrollbar-thumb {
-      background:#ccc; border-radius:4px;
-    }
+    #myBookingList::-webkit-scrollbar-thumb { background:#ccc; border-radius:4px; }
     #myBookingList::-webkit-scrollbar-thumb:hover { background:#999; }
 
     .booking-item {
@@ -69,9 +62,7 @@
     .status-bar {
       width:6px; border-radius:4px; margin-right:10px; flex-shrink:0;
     }
-
     .booking-content { flex:1; }
-
     .booking-item .title {
       color:#007bff; font-size:14px; font-weight:bold; margin-bottom:4px;
     }
@@ -81,20 +72,14 @@
       box-shadow:0 2px 6px rgba(0,0,0,0.1);
     }
 
-    /* ✅ Status badges */
     .badge {
-      display:inline-block;
-      padding:2px 8px;
-      border-radius:6px;
-      color:#fff;
-      font-weight:bold;
-      font-size:12px;
+      display:inline-block; padding:2px 8px; border-radius:6px;
+      color:#fff; font-weight:bold; font-size:12px;
     }
     .badge.booked { background:#28a745; }
     .badge.unavailable { background:#ffc107; color:#000; }
     .badge.canceled { background:#dc3545; }
 
-    /* Header */
     .mybooking-header {
       display:flex; justify-content:space-between; align-items:center;
       color:#007bff; margin-bottom:8px;
@@ -102,6 +87,7 @@
     .date-nav-btn {
       background:#007bff; color:#fff; border:none;
       border-radius:5px; padding:4px 8px; font-size:12px; cursor:pointer;
+      transition:background 0.2s ease;
     }
     .date-nav-btn:hover { background:#0056b3; }
 
@@ -130,9 +116,7 @@
   </div>
 
   <div class="main">
-    <!-- My Bookings -->
     <div class="mybooking">
-      <!-- ✅ Job Summary Cards -->
       <div class="job-summary">
         <div class="job-card job-today" id="todayCard">🗓️ Today: 0</div>
         <div class="job-card job-month" id="monthCard">📆 Total This Month: 0</div>
@@ -141,6 +125,7 @@
       <div class="mybooking-header">
         <h3 id="jobHeader">My Job (—)</h3>
         <div>
+          <button class="date-nav-btn" onclick="openTakeLeave()">🏖️ Take Leave</button>
           <button class="date-nav-btn" onclick="changeDate(-1)">&lt;</button>
           <button class="date-nav-btn" onclick="goToday()">Today</button>
           <button class="date-nav-btn" onclick="changeDate(1)">&gt;</button>
@@ -150,38 +135,28 @@
       <div id="myBookingList"></div>
     </div>
 
-    <!-- Calendar -->
     <div class="calendar-box">
-      <iframe
-        id="calendarFrame"
-        src="calendar.html"
-        style="width:100%; height:600px; border:none; border-radius:10px;">
-      </iframe>
+      <iframe id="calendarFrame" src="calendar.html"
+        style="width:100%; height:600px; border:none; border-radius:10px;"></iframe>
     </div>
   </div>
 
-  <!-- Loader -->
   <div id="loader"><div></div></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbw2DCRMiQMNDh7gFZL1o3zMyKwDQNopAFOTCWlkp0CD8ID3vm146j4wwhTlVeL-cDc/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzs7NdZGjjZTivIBIqR0OKRciTADISJGxQ9pGuriuwzmjaUaBng9HZfYSiqxFBQnUk/exec";
     let currentDate = new Date();
 
     function showLoader(){ document.getElementById("loader").style.display="flex"; }
     function hideLoader(){ document.getElementById("loader").style.display="none"; }
     function logout(){ localStorage.removeItem("loggedInUser"); window.location.href="login.html"; }
-
     function formatDate(d){ return d.toISOString().split("T")[0]; }
 
     function changeDate(offset){
       currentDate.setDate(currentDate.getDate()+offset);
       loadMyBookings();
     }
-
-    function goToday(){
-      currentDate = new Date();
-      loadMyBookings();
-    }
+    function goToday(){ currentDate = new Date(); loadMyBookings(); }
 
     async function loadMyBookings(){
       const user = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -235,7 +210,10 @@
     function renderMyBookings(list){
       const container = document.getElementById("myBookingList");
       container.innerHTML="";
-      if(list.length===0){ container.innerHTML="<p>No jobs found</p>"; return; }
+      if(list.length===0){
+        container.innerHTML="<p style='text-align:center;color:#777;'>No jobs found</p>";
+        return;
+      }
 
       list.forEach(b=>{
         let [eh, em] = b.endTime.split(":").map(Number);
@@ -266,6 +244,92 @@
         container.appendChild(div);
       });
     }
+
+    // ✅ Take Leave Function
+    async function openTakeLeave(){
+      const user = JSON.parse(localStorage.getItem("loggedInUser"));
+      if(!user){ 
+        Swal.fire("Please login first","","warning");
+        return;
+      }
+
+      const { value: formValues } = await Swal.fire({
+        title: "🗓️ Take Leave",
+        html: `
+          <div style="display:flex;flex-direction:column;gap:8px;text-align:left">
+            <label>Date:</label>
+            <input id="leaveDate" type="date" class="swal2-input" style="width:80%">
+            <label>Start Time:</label>
+            <input id="leaveStart" type="time" class="swal2-input" style="width:80%">
+            <label>End Time:</label>
+            <input id="leaveEnd" type="time" class="swal2-input" style="width:80%">
+            <label>Location (optional):</label>
+            <input id="leaveLocation" type="text" class="swal2-input" style="width:80%">
+          </div>
+        `,
+        focusConfirm:false,
+        confirmButtonText:"Save",
+        showCancelButton:true,
+        preConfirm:()=>{
+          const date=document.getElementById("leaveDate").value;
+          const start=document.getElementById("leaveStart").value;
+          const end=document.getElementById("leaveEnd").value;
+          if(!date||!start||!end){
+            Swal.showValidationMessage("Please fill in date and time");
+            return false;
+          }
+          return { date, start, end, location: document.getElementById("leaveLocation").value };
+        }
+      });
+
+      if(!formValues) return;
+
+      // ตรวจสอบเวลาซ้ำ
+      const existing=(window.allMyBookings||[]).filter(b=> 
+        b.date===formValues.date && b.status!=="CANCELED"
+      );
+      const newStart=parseTime(formValues.start);
+      const newEnd=parseTime(formValues.end);
+      const overlap=existing.some(b=>{
+        const bStart=parseTime(b.startTime);
+        const bEnd=parseTime(b.endTime);
+        return (newStart<bEnd && newEnd>bStart);
+      });
+      if(overlap){
+        Swal.fire("⚠️ Duplicate Time","You already have a booking during this period.","warning");
+        return;
+      }
+
+      try{
+        showLoader();
+        const payload={
+          page:"createBooking",
+          title:"Take leave",
+          userEmail:user.email,
+          interpreterEmail:user.email,
+          date:formValues.date,
+          startTime:formValues.start,
+          endTime:formValues.end,
+          location:formValues.location||"-",
+          status:"BOOKED"
+        };
+        const res=await fetch(API_URL,{method:"POST",body:new URLSearchParams(payload)});
+        const result=await res.json();
+        hideLoader();
+
+        if(result.status==="success"){
+          Swal.fire("Saved!","Your leave has been recorded.","success");
+          loadMyBookings();
+        }else{
+          Swal.fire("Error",result.message||"Cannot save leave","error");
+        }
+      }catch(err){
+        hideLoader();
+        Swal.fire("Error",err.message,"error");
+      }
+    }
+
+    function parseTime(t){ const [h,m]=t.split(":").map(Number); return h*60+m; }
 
     loadMyBookings();
   </script>
