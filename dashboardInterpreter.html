@@ -296,16 +296,20 @@
 
       try {
         showLoader();
-        const payload = new URLSearchParams();
-        payload.append("page", "newBooking");
-        payload.append("title", "Take leave");
-        payload.append("userEmail", user.email);
-        payload.append("interpreterEmail", user.email);
-        payload.append("date", form.date);
-        payload.append("startTime", form.start);
-        payload.append("endTime", form.end);
-        payload.append("status", "BOOKED");
-        payload.append("createdAt", new Date().toISOString());
+const payload = new URLSearchParams();
+payload.append("page", "newBooking");
+payload.append("userId", user.id);
+payload.append("userEmail", user.email);
+payload.append("interpreterId", user.id);
+payload.append("interpreterEmail", user.email);
+payload.append("date", form.date);
+payload.append("startTime", form.start);
+payload.append("endTime", form.end);
+payload.append("title", "Take leave");
+payload.append("location", "-");
+payload.append("status", "BOOKED");
+payload.append("createdAt", new Date().toISOString());
+
 
         const res = await fetch(API_URL, { method: "POST", body: payload });
         const result = await res.json();
