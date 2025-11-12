@@ -307,9 +307,13 @@ try {
   showLoader();
 
   // ✅ ใช้ข้อมูล user.id และ email เหมือน dashboard.html
-  const interpreterId = Object.keys(INTERPRETERS).find(
-    id => INTERPRETERS[id].email === user.email
-  ) || "";
+  let interpreterId = Object.keys(INTERPRETERS)
+  .find(id => INTERPRETERS[id].email.toLowerCase().trim() === user.email.toLowerCase().trim());
+if (!interpreterId) {
+  // ✅ fallback: ใช้ id จริงของผู้ใช้ใน sheet แทน
+  interpreterId = user.id || "unknown";
+}
+
 
   const payload = new URLSearchParams();
   payload.append("page", "newBooking");
