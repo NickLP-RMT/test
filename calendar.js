@@ -89,8 +89,25 @@ function renderCalendar(month, year) {
       return b.date === dateStr && (status === "BOOKED" || status === "UNAVAILABLE");
     });
 
-    if (events.length > 0) {
-      dayCell.classList.add('has-event');
+// แสดงจุดในปฏิทินสำหรับแต่ละ booking
+events.forEach(ev => {
+  let dotClass = "blue-dot";  // ค่า default สำหรับ Booked
+
+  // 🟠 ถ้า Title เป็น Take leave → เปลี่ยนเป็น orange-dot
+  if (ev.title && ev.title.trim().toLowerCase() === "take leave") {
+    dotClass = "orange-dot";
+  }
+
+  // 🟠 ถ้าเป็น UNAVAILABLE ก็ใช้ orange-dot เหมือนเดิม
+  const status = (ev.status || '').toUpperCase();
+  if (status === "UNAVAILABLE") {
+    dotClass = "orange-dot";
+  }
+
+  // เพิ่มจุดลงใน calendar
+  dayCell.innerHTML += `<span class="${dotClass}"></span>`;
+});
+
 
       // นับจำนวนงานต่อ interpreter
       const count = { somSan: 0, gookSan: 0, pookySan: 0, lSan: 0 };
