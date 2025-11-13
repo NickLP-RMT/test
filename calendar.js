@@ -91,22 +91,29 @@ function renderCalendar(month, year) {
 
 // แสดงจุดในปฏิทินสำหรับแต่ละ booking
 events.forEach(ev => {
-  let dotClass = "blue-dot";  // ค่า default สำหรับ Booked
+  let dotClass = "blue-dot"; // default color
 
-  // 🟠 ถ้า Title เป็น Take leave → เปลี่ยนเป็น orange-dot
-  if (ev.title && ev.title.trim().toLowerCase() === "take leave") {
-    dotClass = "orange-dot";
+  if (ev.title) {
+    const cleanTitle = ev.title
+      .replace(/[^a-zA-Z ]/g, "")  // ตัด ' และตัวอื่นๆ
+      .replace(/\s+/g, " ")        // แก้ space ซ้ำ
+      .trim()
+      .toLowerCase();
+
+    if (cleanTitle.includes("take leave") || 
+        (cleanTitle.includes("take") && cleanTitle.includes("leave"))) {
+      dotClass = "orange-dot";
+    }
   }
 
-  // 🟠 ถ้าเป็น UNAVAILABLE ก็ใช้ orange-dot เหมือนเดิม
   const status = (ev.status || '').toUpperCase();
   if (status === "UNAVAILABLE") {
     dotClass = "orange-dot";
   }
 
-  // เพิ่มจุดลงใน calendar
   dayCell.innerHTML += `<span class="${dotClass}"></span>`;
 });
+
 
 
       // นับจำนวนงานต่อ interpreter
