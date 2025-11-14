@@ -5,6 +5,8 @@
   <title>📈 Dashboard - Interpreter Booking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- ✅ Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     body {
@@ -52,6 +54,28 @@
       color: #007bff;
     }
 
+    /* Charts layout */
+    .charts {
+      display: grid;
+      grid-template-columns: 2fr 1.5fr;
+      gap: 20px;
+      margin-top: 30px;
+      align-items: flex-start;
+    }
+
+    .chart-card {
+      background: #f9fafb;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .chart-card h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: #111827;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -87,10 +111,20 @@
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 900px) {
+      .card-box {
+        grid-template-columns: 1fr;
+      }
+      .charts {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
 
+<!-- โหลด Layout -->
 <div id="layout"></div>
 
 <script>
@@ -130,6 +164,18 @@ fetch("layout.html")
     </div>
   </div>
 
+  <!-- Charts -->
+  <div class="charts">
+    <div class="chart-card">
+      <h3>📊 Bookings per Day (This Month)</h3>
+      <canvas id="dailyChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>👥 Bookings per Interpreter (This Month)</h3>
+      <canvas id="interpreterChart"></canvas>
+    </div>
+  </div>
+
   <h3 style="margin-top: 40px;">📋 Latest Bookings</h3>
   <table>
     <thead>
@@ -159,13 +205,17 @@ const interpreterNames = {
   i003: "POOKY SAN",
   i004: "L SAN"
 };
+
+let dailyChart = null;
+let interpreterChart = null;
+
 // ➕ เพิ่มฟังก์ชันเพิ่ม 1 นาทีให้เวลาสิ้นสุด
 function addOneMinute(t) {
   if (!t || t.indexOf(":") === -1) return t;
   let [h, m] = t.split(":").map(Number);
   m++;
   if (m >= 60) { m = 0; h++; }
-  if (h >= 24) h = 0; // เผื่อไว้
+  if (h >= 24) h = 0;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
@@ -175,30 +225,61 @@ async function loadDashboard() {
     const res = await fetch(`${scriptURL}?page=listBookings`);
     const data = await res.json();
 
-    const today = new Date().toISOString().split("T")[0];
-    const month = today.substring(0,7); 
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const month = today.substring(0,7); // YYYY-MM
 
     let countToday = 0;
     let countMonth = 0;
 
+    // สำหรับกราฟ
+    const dailyCount = {};              // { '2025-11-01': 3, ... }
+    const interpreterCount = {          // เฉพาะเดือนนี้
+      i001: 0,
+      i002: 0,
+      i003: 0,
+      i004: 0,
+      other: 0
+    };
+
     data.forEach(row => {
-      if (row.date.startsWith(month)) countMonth++;
-      if (row.date === today) countToday++;
+      const rowDate = String(row.date || "").replace(/^'/, "");
+      const status = String(row.status || "").toUpperCase();
+
+      if (!rowDate) return;
+
+      // นับเดือน / วันนี้ (ดูทุกสถานะ หรือจะจำกัดเฉพาะ BOOKED ก็ได้)
+      if (rowDate.startsWith(month)) countMonth++;
+      if (rowDate === today) countToday++;
+
+      // สำหรับกราฟ: ใช้เฉพาะ BOOKED
+      if (status === "BOOKED") {
+        // daily
+        if (rowDate.startsWith(month)) {
+          dailyCount[rowDate] = (dailyCount[rowDate] || 0) + 1;
+        }
+
+        // per interpreter
+        const iid = row.interpreterId;
+        if (iid && interpreterCount.hasOwnProperty(iid)) {
+          interpreterCount[iid]++;
+        } else if (iid) {
+          interpreterCount.other++;
+        }
+      }
     });
 
     document.getElementById("totalMonth").innerText = countMonth;
     document.getElementById("totalToday").innerText = countToday;
 
-    // latest 10 bookings sorted by date desc
+    // === Latest Bookings: sort by createdAt (ล่าสุดก่อน) ===
     const sorted = data
-  .filter(r => r.createdAt)   // เผื่อบางแถวไม่มีค่า
-  .sort((a, b) => {
-    const da = new Date(a.createdAt.replace(/^'/, ''));
-    const db = new Date(b.createdAt.replace(/^'/, ''));
-    return db - da; // ล่าสุดก่อน
-  })
-  .slice(0, 10);
-
+      .filter(r => r.createdAt)
+      .sort((a, b) => {
+        const da = new Date(String(a.createdAt).replace(/^'/, ''));
+        const db = new Date(String(b.createdAt).replace(/^'/, ''));
+        return db - da;
+      })
+      .slice(0, 10);
 
     const tbody = document.getElementById("latestTable");
     tbody.innerHTML = "";
@@ -206,22 +287,106 @@ async function loadDashboard() {
     sorted.forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${r.date.replace(/^'/,'')}</td>
-        <td>${r.startTime}</td>
-        <td>${addOneMinute(r.endTime)}</td>
-        <td>${r.title}</td>
-        <td>${r.location}</td>
-        <td>${r.userEmail}</td>
-        <td>${interpreterNames[r.interpreterId] || r.interpreterId}</td>
+        <td>${String(r.date || "").replace(/^'/,'')}</td>
+        <td>${r.startTime || ""}</td>
+        <td>${addOneMinute(r.endTime || "")}</td>
+        <td>${r.title || ""}</td>
+        <td>${r.location || ""}</td>
+        <td>${r.userEmail || ""}</td>
+        <td>${interpreterNames[r.interpreterId] || r.interpreterId || ""}</td>
       `;
       tbody.appendChild(tr);
     });
 
+    // === สร้างกราฟ ===
+    buildDailyChart(dailyCount);
+    buildInterpreterChart(interpreterCount);
+
   } catch (err) {
+    console.log(err);
     Swal.fire("❌ Error", "Cannot load dashboard data", "error");
   } finally {
     hide();
   }
+}
+
+function buildDailyChart(dailyCount) {
+  const ctx = document.getElementById("dailyChart").getContext("2d");
+
+  // ลำดับวันที่
+  const labels = Object.keys(dailyCount).sort((a,b) => a.localeCompare(b));
+  const values = labels.map(d => dailyCount[d]);
+
+  if (dailyChart) dailyChart.destroy();
+
+  dailyChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Bookings per Day",
+        data: values,
+        tension: 0.3,
+        fill: false,
+        borderWidth: 2,
+        pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: {
+          ticks: { autoSkip: true, maxTicksLimit: 10 }
+        },
+        y: {
+          beginAtZero: true,
+          precision: 0
+        }
+      }
+    }
+  });
+}
+
+function buildInterpreterChart(interpreterCount) {
+  const ctx = document.getElementById("interpreterChart").getContext("2d");
+
+  const labels = ["SOM SAN", "GOOK SAN", "POOKY SAN", "L SAN", "Other"];
+  const values = [
+    interpreterCount.i001,
+    interpreterCount.i002,
+    interpreterCount.i003,
+    interpreterCount.i004,
+    interpreterCount.other
+  ];
+
+  if (interpreterChart) interpreterChart.destroy();
+
+  interpreterChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Bookings",
+        data: values,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          precision: 0
+        }
+      }
+    }
+  });
 }
 
 window.onload = loadDashboard;
