@@ -47,12 +47,19 @@
 <div id="layout"></div>
 
 <script>
-  fetch("layout.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("layout").innerHTML = html;
-      document.getElementById("tab-report").classList.add("active");
-    });
+fetch("layout.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("layout").innerHTML = html;
+
+    // ตั้งค่า Active Tab
+    document.getElementById("tab-report").classList.add("active");
+
+    // ทำให้ TAB คลิกได้
+    document.getElementById("tab-user").onclick = () => location.href = "admin.html";
+    document.getElementById("tab-report").onclick = () => location.href = "report.html";
+  });
+
 </script>
 
 <div class="container">
