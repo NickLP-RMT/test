@@ -159,6 +159,15 @@ const interpreterNames = {
   i003: "POOKY SAN",
   i004: "L SAN"
 };
+// ➕ เพิ่มฟังก์ชันเพิ่ม 1 นาทีให้เวลาสิ้นสุด
+function addOneMinute(t) {
+  if (!t || t.indexOf(":") === -1) return t;
+  let [h, m] = t.split(":").map(Number);
+  m++;
+  if (m >= 60) { m = 0; h++; }
+  if (h >= 24) h = 0; // เผื่อไว้
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
 
 async function loadDashboard() {
   show();
@@ -199,7 +208,7 @@ async function loadDashboard() {
       tr.innerHTML = `
         <td>${r.date.replace(/^'/,'')}</td>
         <td>${r.startTime}</td>
-        <td>${r.endTime}</td>
+        <td>${addOneMinute(r.endTime)}</td>
         <td>${r.title}</td>
         <td>${r.location}</td>
         <td>${r.userEmail}</td>
