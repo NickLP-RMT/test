@@ -105,6 +105,28 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+  .tab {
+    background: #e2e8f0;
+    color: #1e293b;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s;
+    font-size: 14px;
+  }
+  .tab:hover {
+    background: #cbd5e1;
+  }
+  .tab.active {
+    background: #007bff;
+    color: white;
+  }
   </style>
 </head>
 <body>
@@ -116,7 +138,11 @@
 
   <div class="container">
     <div id="loading"><div class="spinner"></div></div>
-
+<!-- 🔵 Navigation Tabs -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab('user')">👤 User Management</button>
+  <button class="tab" onclick="openReport()">📊 Report Summary</button>
+</div>
     <h2>👤 User Management</h2>
 
     <!-- ✅ บรรทัด 1 -->
@@ -266,6 +292,24 @@
     }
 
     window.onload = loadUsers;
+
+function showTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+
+  if (tab === 'user') {
+    // ปุ่มแรกเป็น User Management
+    document.querySelectorAll(".tab")[0].classList.add("active");
+  }
+}
+
+function openReport() {
+  // ปุ่มที่สองเป็น Report Summary
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab")[1].classList.add("active");
+
+  window.location.href = "report.html";
+}
+
   </script>
 </body>
 </html>
