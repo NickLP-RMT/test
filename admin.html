@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>👩‍💼 Admin Panel - Interpreter Booking</title>
+  <title>Admin Panel - Interpreter Booking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
@@ -11,28 +11,16 @@
       background: #f8fafc;
       margin: 0;
       padding: 0;
-      color: #1e293b;
     }
-    .navbar {
-      background: linear-gradient(90deg, #007bff, #0056b3);
-      color: white;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .navbar h1 { font-size: 18px; margin: 0; }
-
     .container {
       max-width: 1100px;
-      margin: 30px auto;
+      margin: 20px auto;
       background: #fff;
-      padding: 30px 50px;
+      padding: 30px 40px;
       border-radius: 10px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       position: relative;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -42,56 +30,32 @@
     th, td {
       border-bottom: 1px solid #e2e8f0;
       padding: 10px;
-      text-align: left;
     }
-    th { background: #f1f5f9; }
-
     button {
       background: #007bff;
-      border: none;
       color: white;
+      border: none;
       padding: 7px 12px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 13px;
-      transition: 0.25s;
     }
     button:hover { background: #0056b3; }
 
-    input, select {
-      padding: 10px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      font-size: 14px;
-      width: 100%;
-    }
-
-    /* ✅ ปรับ form layout ให้ห่างกันมากขึ้น */
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 40px; /* ระยะห่างแนวนอนเพิ่มขึ้น */
+      gap: 40px;
       margin-top: 20px;
     }
-    .form-row + .form-row {
-      margin-top: 25px; /* ระยะห่างระหว่างแถว */
-    }
 
-    .form-actions {
-      margin-top: 25px;
-      text-align: right;
-    }
-
-    /* 🌀 Loading Spinner */
+    /* Loading */
     #loading {
       display: none;
       position: absolute;
       inset: 0;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(2px);
+      background: rgba(255,255,255,0.7);
       justify-content: center;
       align-items: center;
-      border-radius: 10px;
     }
     .spinner {
       width: 50px;
@@ -101,215 +65,157 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 25px;
-  }
-  .tab {
-    background: #e2e8f0;
-    color: #1e293b;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: 0.25s;
-    font-size: 14px;
-  }
-  .tab:hover {
-    background: #cbd5e1;
-  }
-  .tab.active {
-    background: #007bff;
-    color: white;
-  }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <div class="navbar">
-    <h1>Interpreter Booking - Admin</h1>
-    <button onclick="loadUsers()">🔄 Refresh</button>
+<!-- โหลด Layout -->
+<div id="layout"></div>
+
+<script>
+  fetch("layout.html")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("layout").innerHTML = html;
+      document.getElementById("tab-user").classList.add("active");
+    });
+</script>
+
+<div class="container">
+  <div id="loading"><div class="spinner"></div></div>
+
+  <h2>👤 User Management</h2>
+
+  <div class="form-row">
+    <div>
+      <label>Username</label>
+      <input id="username" placeholder="Enter username">
+    </div>
+    <div>
+      <label>Email</label>
+      <input id="email" placeholder="Enter email">
+    </div>
   </div>
 
-  <div class="container">
-    <div id="loading"><div class="spinner"></div></div>
-<!-- 🔵 Navigation Tabs -->
-<div class="tabs">
-  <button class="tab active" onclick="showTab('user')">👤 User Management</button>
-  <button class="tab" onclick="openReport()">📊 Report Summary</button>
+  <div class="form-row">
+    <div>
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Enter password">
+    </div>
+    <div>
+      <label>Role</label>
+      <select id="role">
+        <option value="user">User</option>
+        <option value="interpreter">Interpreter</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="text-align:right;margin-top:20px;">
+    <button onclick="addUser()">➕ Add User</button>
+  </div>
+
+  <hr style="margin:30px 0;">
+
+  <h3>📋 User List</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Username</th><th>Email</th>
+        <th>Role</th><th>Active</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+  </table>
 </div>
-    <h2>👤 User Management</h2>
 
-    <!-- ✅ บรรทัด 1 -->
-    <div class="form-row">
-      <div>
-        <label>Username</label>
-        <input id="username" placeholder="Enter username">
-      </div>
-      <div>
-        <label>Email</label>
-        <input id="email" placeholder="Enter email">
-      </div>
-    </div>
+<script>
+const scriptURL = "YOUR_SCRIPT_URL";
+const loading = document.getElementById("loading");
+const show = () => loading.style.display = "flex";
+const hide = () => loading.style.display = "none";
 
-    <!-- ✅ บรรทัด 2 -->
-    <div class="form-row">
-      <div>
-        <label>Password</label>
-        <input id="password" placeholder="Enter password" type="password">
-      </div>
-      <div>
-        <label>Role</label>
-        <select id="role">
-          <option value="user">User</option>
-          <option value="interpreter">Interpreter</option>
-        </select>
-      </div>
-    </div>
+async function loadUsers() {
+  show();
+  try {
+    const res = await fetch(`${scriptURL}?page=listUsers`);
+    const data = await res.json();
+    const tbody = document.getElementById("userTable");
+    tbody.innerHTML = "";
 
-    <div class="form-actions">
-      <button onclick="addUser()">➕ Add User</button>
-    </div>
-
-    <hr style="margin: 30px 0;">
-
-    <h3>📋 User List</h3>
-    <table id="userTable">
-      <thead>
+    data.forEach(u => {
+      tbody.innerHTML += `
         <tr>
-          <th style="width: 12%;">ID</th>
-          <th style="width: 20%;">Username</th>
-          <th style="width: 25%;">Email</th>
-          <th style="width: 10%;">Role</th>
-          <th style="width: 10%;">Active</th>
-          <th style="width: 20%;">Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzs7NdZGjjZTivIBIqR0OKRciTADISJGxQ9pGuriuwzmjaUaBng9HZfYSiqxFBQnUk/exec"; // ⚠️ เปลี่ยนเป็น URL ของคุณ
-
-    const loadingEl = document.getElementById("loading");
-    const showLoading = () => loadingEl.style.display = "flex";
-    const hideLoading = () => loadingEl.style.display = "none";
-
-    async function loadUsers() {
-      showLoading();
-      try {
-        const res = await fetch(`${scriptURL}?page=listUsers`);
-        const data = await res.json();
-        const tbody = document.querySelector("#userTable tbody");
-        tbody.innerHTML = "";
-        data.forEach(u => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${u.id}</td>
-            <td>${u.username}</td>
-            <td>${u.email}</td>
-            <td>${u.role}</td>
-            <td>${u.active}</td>
-            <td class="actions">
-              <button onclick="changePasswordPrompt('${u.username}')">🔑 Change Password</button>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      } catch (err) {
-        Swal.fire("❌ Error", "Cannot load user list", "error");
-      } finally {
-        hideLoading();
-      }
-    }
-
-    async function addUser() {
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const role = document.getElementById("role").value;
-      if (!username || !email || !password) {
-        Swal.fire("⚠️ Missing info", "Please fill all fields", "warning");
-        return;
-      }
-
-      const passwordHash = await sha256(password);
-      const formData = new URLSearchParams();
-      formData.append("page", "registerUser");
-      formData.append("username", username);
-      formData.append("email", email);
-      formData.append("passwordHash", passwordHash);
-      formData.append("role", role);
-
-      showLoading();
-      const res = await fetch(scriptURL, { method: "POST", body: formData });
-      const json = await res.json();
-      hideLoading();
-
-      Swal.fire(json.success ? "✅ Success" : "❌ Error", json.message, json.success ? "success" : "error");
-      if (json.success) loadUsers();
-    }
-
-    async function changePasswordPrompt(username) {
-      const { value: newPassword } = await Swal.fire({
-        title: `🔑 Change Password for ${username}`,
-        input: "password",
-        inputPlaceholder: "Enter new password",
-        inputAttributes: { autocapitalize: "off" },
-        showCancelButton: true,
-        confirmButtonText: "Update",
-        cancelButtonText: "Cancel",
-        confirmButtonColor: "#007bff"
-      });
-
-      if (!newPassword) return;
-
-      const passwordHash = await sha256(newPassword);
-      const formData = new URLSearchParams();
-      formData.append("page", "updatePassword");
-      formData.append("username", username);
-      formData.append("passwordHash", passwordHash);
-
-      showLoading();
-      const res = await fetch(scriptURL, { method: "POST", body: formData });
-      const json = await res.json();
-      hideLoading();
-
-      Swal.fire(json.success ? "✅ Success" : "❌ Error", json.message, json.success ? "success" : "error");
-    }
-
-    async function sha256(message) {
-      const msgBuffer = new TextEncoder().encode(message);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    window.onload = loadUsers;
-
-function showTab(tab) {
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-
-  if (tab === 'user') {
-    // ปุ่มแรกเป็น User Management
-    document.querySelectorAll(".tab")[0].classList.add("active");
-  }
+          <td>${u.id}</td>
+          <td>${u.username}</td>
+          <td>${u.email}</td>
+          <td>${u.role}</td>
+          <td>${u.active}</td>
+          <td><button onclick="changePassword('${u.username}')">🔑 Change</button></td>
+        </tr>`;
+    });
+  } finally { hide(); }
 }
 
-function openReport() {
-  // ปุ่มที่สองเป็น Report Summary
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".tab")[1].classList.add("active");
+async function addUser() {
+  const username = username.value.trim();
+  const email = email.value.trim();
+  const password = password.value.trim();
+  const role = role.value;
 
-  window.location.href = "report.html";
+  if (!username || !email || !password)
+    return Swal.fire("⚠️ Please fill all fields");
+
+  const passwordHash = await sha256(password);
+  const form = new URLSearchParams({
+    page: "registerUser",
+    username, email,
+    passwordHash, role
+  });
+
+  show();
+  const res = await fetch(scriptURL, { method: "POST", body: form });
+  const json = await res.json();
+  hide();
+
+  Swal.fire(json.success ? "Success" : "Error", json.message, json.success?"success":"error");
+
+  if (json.success) loadUsers();
 }
 
-  </script>
+async function changePassword(username) {
+  const { value: newPass } = await Swal.fire({
+    title:`🔑 Change Password: ${username}`,
+    input:"password",
+    showCancelButton:true
+  });
+
+  if (!newPass) return;
+
+  const hash = await sha256(newPass);
+  const form = new URLSearchParams({
+    page:"updatePassword",
+    username,
+    passwordHash:hash
+  });
+
+  show();
+  const res = await fetch(scriptURL,{method:"POST",body:form});
+  const json = await res.json();
+  hide();
+
+  Swal.fire(json.success ? "Success" : "Error", json.message, json.success?"success":"error");
+}
+
+async function sha256(msg) {
+  const buf = new TextEncoder().encode(msg);
+  const hash = await crypto.subtle.digest("SHA-256", buf);
+  return [...new Uint8Array(hash)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+
+window.onload = loadUsers;
+</script>
+
 </body>
 </html>
