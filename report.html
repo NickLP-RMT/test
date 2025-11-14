@@ -108,10 +108,15 @@ fetch("layout.html")
   .then(html => {
     document.getElementById("layout").innerHTML = html;
 
+    // Active tab = Report
     document.getElementById("tab-report").classList.add("active");
-    document.getElementById("tab-user").onclick = () => location.href = "admin.html";
+
+    // menu actions
+    document.getElementById("tab-dashboard").onclick = () => location.href = "dashboardadmin.html";
     document.getElementById("tab-report").onclick = () => location.href = "report.html";
+    document.getElementById("tab-admin").onclick = () => location.href = "admin.html";
   });
+
 
 const loadingEl = document.getElementById("loading");
 const showLoading = () => loadingEl.style.display = "flex";
