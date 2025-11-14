@@ -79,13 +79,15 @@ fetch("layout.html")
   .then(html => {
     document.getElementById("layout").innerHTML = html;
 
-    // ตั้งค่า Active Tab
-    document.getElementById("tab-user").classList.add("active");
+    // ให้แท็บ Admin เป็น active
+    document.getElementById("tab-admin").classList.add("active");
 
-    // ทำให้ TAB คลิกได้
-    document.getElementById("tab-user").onclick = () => location.href = "admin.html";
+    // เชื่อมปุ่มใน layout
+    document.getElementById("tab-dashboard").onclick = () => location.href = "dashboardadmin.html";
     document.getElementById("tab-report").onclick = () => location.href = "report.html";
+    document.getElementById("tab-admin").onclick = () => location.href = "admin.html";
   });
+
 </script>
 
 <div class="container">
