@@ -84,16 +84,18 @@
   <button onclick="searchReport()">🔍 Search</button>
 
   <table id="resultTable">
-    <thead>
-      <tr>
-        <th style="width: 15%;">Date</th>
-        <th style="width: 10%;">Start</th>
-        <th style="width: 10%;">End</th>
-        <th style="width: 25%;">Title</th>
-        <th style="width: 20%;">Location</th>
-        <th style="width: 20%;">User Request</th>
-      </tr>
-    </thead>
+<thead>
+  <tr>
+    <th style="width: 12%;">Date</th>
+    <th style="width: 8%;">Start</th>
+    <th style="width: 8%;">End</th>
+    <th style="width: 25%;">Title</th>
+    <th style="width: 15%;">Location</th>
+    <th style="width: 15%;">Interpreter</th>
+    <th style="width: 15%;">User Request</th>
+  </tr>
+</thead>
+
     <tbody></tbody>
   </table>
 </div>
@@ -128,26 +130,44 @@ async function searchReport() {
 
     let filtered = data;
 
-    // 🔍 Filter by interpreter (optional)
+    // Filter by interpreter (optional)
     if (interpreter) {
       filtered = filtered.filter(r => r.interpreterId === interpreter);
     }
 
-    // 🔍 Filter by date range (optional)
+    // Filter by date range (optional)
     if (start) filtered = filtered.filter(r => r.date >= start);
     if (end)   filtered = filtered.filter(r => r.date <= end);
+
+    // 🟦 Sort by Date ASC then StartTime ASC
+    filtered.sort((a, b) => {
+      const dateA = a.date.replace(/^'/, '');
+      const dateB = b.date.replace(/^'/, '');
+      if (dateA !== dateB) return dateA.localeCompare(dateB);
+
+      // compare start time if date is same
+      return a.startTime.localeCompare(b.startTime);
+    });
 
     const tbody = document.querySelector("#resultTable tbody");
     tbody.innerHTML = "";
 
+    const interpreterNames = {
+      i001: "SOM SAN",
+      i002: "GOOK SAN",
+      i003: "POOKY SAN",
+      i004: "L SAN"
+    };
+
     filtered.forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${r.date.replace(/^'/,'')}</td>
+        <td>${r.date.replace(/^'/, '')}</td>
         <td>${r.startTime}</td>
         <td>${r.endTime}</td>
         <td>${r.title}</td>
         <td>${r.location}</td>
+        <td>${interpreterNames[r.interpreterId] || r.interpreterId}</td>
         <td>${r.userEmail}</td>
       `;
       tbody.appendChild(tr);
@@ -159,6 +179,7 @@ async function searchReport() {
     hideLoading();
   }
 }
+
 </script>
 
 </body>
