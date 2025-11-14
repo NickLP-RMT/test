@@ -1,0 +1,50 @@
+<div id="shared-layout">
+
+  <div class="navbar">
+    <h1>Interpreter Booking - Admin</h1>
+  </div>
+
+  <div class="tabs">
+    <button id="tab-user" class="tab">👤 User Management</button>
+    <button id="tab-report" class="tab">📊 Report Summary</button>
+  </div>
+
+</div>
+
+<style>
+  .navbar {
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+  }
+  .navbar h1 { margin: 0; font-size: 18px; }
+
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0 10px;
+  }
+  .tab {
+    background: #e2e8f0;
+    color: #1e293b;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s;
+    font-size: 14px;
+  }
+  .tab:hover { background: #cbd5e1; }
+  .tab.active {
+    background: #007bff;
+    color: white;
+  }
+</style>
+
+<script>
+  // ฟังก์ชันเปลี่ยนหน้า
+  document.getElementById("tab-user").onclick = () => location.href = "admin.html";
+  document.getElementById("tab-report").onclick = () => location.href = "report.html";
+</script>
