@@ -159,19 +159,33 @@ async function searchReport() {
       i004: "L SAN"
     };
 
-    filtered.forEach(r => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${r.date.replace(/^'/, '')}</td>
-        <td>${r.startTime}</td>
-        <td>${r.endTime}</td>
-        <td>${r.title}</td>
-        <td>${r.location}</td>
-        <td>${interpreterNames[r.interpreterId] || r.interpreterId}</td>
-        <td>${r.userEmail}</td>
-      `;
-      tbody.appendChild(tr);
-    });
+filtered.forEach(r => {
+
+  // ➕ เพิ่มฟังก์ชันเพิ่ม 1 นาที
+  function addOneMinute(t) {
+    if (!t || t.indexOf(":") === -1) return t;
+    let [h, m] = t.split(":").map(Number);
+    m++;
+    if (m >= 60) { m = 0; h++; }
+    if (h >= 24) h = 0; // เผื่อไว้ แต่ไม่น่ามีงานเลยถึงเที่ยงคืน
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  }
+
+  const endPlus1 = addOneMinute(r.endTime);
+
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${r.date.replace(/^'/, '')}</td>
+    <td>${r.startTime}</td>
+    <td>${endPlus1}</td>   <!-- ✅ ใช้ end +1 -->
+    <td>${r.title}</td>
+    <td>${r.location}</td>
+    <td>${interpreterNames[r.interpreterId] || r.interpreterId}</td>
+    <td>${r.userEmail}</td>
+  `;
+  tbody.appendChild(tr);
+});
+
 
   } catch (err) {
     Swal.fire("❌ Error", "Cannot load booking data", "error");
