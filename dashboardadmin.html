@@ -181,7 +181,15 @@ async function loadDashboard() {
     document.getElementById("totalToday").innerText = countToday;
 
     // latest 10 bookings sorted by date desc
-    const sorted = data.sort((a,b) => b.date.localeCompare(a.date)).slice(0,10);
+    const sorted = data
+  .filter(r => r.createdAt)   // เผื่อบางแถวไม่มีค่า
+  .sort((a, b) => {
+    const da = new Date(a.createdAt.replace(/^'/, ''));
+    const db = new Date(b.createdAt.replace(/^'/, ''));
+    return db - da; // ล่าสุดก่อน
+  })
+  .slice(0, 10);
+
 
     const tbody = document.getElementById("latestTable");
     tbody.innerHTML = "";
