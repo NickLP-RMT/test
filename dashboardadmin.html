@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <title>📈 Dashboard - Interpreter Booking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <!-- ✅ Chart.js -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -14,109 +16,193 @@
       background: #f8fafc;
       margin: 0;
       padding: 0;
+      color: #0f172a;
     }
 
     .container {
       max-width: 1100px;
       margin: 25px auto;
-      background: #fff;
+      background: #ffffff;
       padding: 25px 40px;
       border-radius: 12px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 10px rgba(15,23,42,0.12);
       position: relative;
+    }
+
+    h2 {
+      margin: 0;
+      color: #0f172a;
     }
 
     .card-box {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: 18px;
       margin-top: 20px;
     }
 
     .card {
-      background: #e7f1ff;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      background: linear-gradient(135deg, #e0f2fe, #eff6ff);
+      padding: 18px 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(15,23,42,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      right: -30px;
+      top: -30px;
+      width: 80px;
+      height: 80px;
+      border-radius: 999px;
+      background: rgba(59,130,246,0.12);
     }
 
     .card h3 {
       margin: 0;
-      font-size: 16px;
+      font-size: 14px;
       color: #1e293b;
+      font-weight: 600;
     }
 
     .card p {
-      font-size: 28px;
-      margin-top: 10px;
-      font-weight: bold;
-      color: #007bff;
+      font-size: 26px;
+      margin-top: 8px;
+      font-weight: 700;
+      color: #0f172a;
     }
 
-    /* Charts layout */
-    .charts {
-      display: grid;
-      grid-template-columns: 2fr 1.5fr;
-      gap: 20px;
+    .card span.sub {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    /* Chart area */
+    .chart-section {
       margin-top: 30px;
-      align-items: flex-start;
     }
 
     .chart-card {
       background: #f9fafb;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      padding: 16px 18px 14px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(15,23,42,0.05);
+      margin-bottom: 20px;
     }
 
     .chart-card h3 {
-      margin: 0 0 10px;
+      margin: 0 0 8px;
       font-size: 15px;
-      color: #111827;
+      color: #0f172a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-subtitle {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+
+    .chart-actions {
+      text-align: right;
+      margin-top: 6px;
+    }
+
+    .chart-actions button {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #e0f2fe;
+      color: #0369a1;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .chart-actions button:hover {
+      background: #bfdbfe;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 280px;
+    }
+    .chart-wrapper canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Interpreter bar chart wrapper */
+    .chart-wrapper-small {
+      position: relative;
+      width: 100%;
+      height: 230px;
+    }
+    .chart-wrapper-small canvas {
+      width: 100% !important;
+      height: 100% !important;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 30px;
-      font-size: 14px;
+      margin-top: 24px;
+      font-size: 13px;
     }
 
     th, td {
-      padding: 10px;
+      padding: 9px 8px;
       border-bottom: 1px solid #e2e8f0;
     }
 
     th {
       background: #f1f5f9;
       text-align: left;
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 12px;
+      text-transform: uppercase;
     }
 
-    /* Loading */
+    tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+
+    /* Loading overlay */
     #loading {
       display: none;
       position: absolute;
       inset: 0;
       background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(2px);
       justify-content: center;
       align-items: center;
-      border-radius: 10px;
+      border-radius: 12px;
+      z-index: 5;
     }
     .spinner {
-      width: 50px; height: 50px;
-      border: 5px solid #cbd5e1;
-      border-top-color: #007bff;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
+      border: 4px solid #e5e7eb;
+      border-top-color: #0ea5e9;
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 900px) {
-      .card-box {
-        grid-template-columns: 1fr;
+      .container {
+        padding: 18px 16px;
+        margin: 15px auto;
       }
-      .charts {
+      .card-box {
         grid-template-columns: 1fr;
       }
     }
@@ -124,7 +210,7 @@
 </head>
 <body>
 
-<!-- โหลด Layout -->
+<!-- โหลด Layout (Navbar + Tabs) -->
 <div id="layout"></div>
 
 <script>
@@ -153,36 +239,61 @@ fetch("layout.html")
     <div class="card">
       <h3>Total Bookings (This Month)</h3>
       <p id="totalMonth">0</p>
+      <span class="sub" id="monthLabel"></span>
     </div>
     <div class="card">
       <h3>Total Bookings (Today)</h3>
       <p id="totalToday">0</p>
+      <span class="sub" id="todayLabel"></span>
     </div>
     <div class="card">
       <h3>Active Interpreters</h3>
       <p id="totalInterpreter">4</p>
+      <span class="sub">i001–i004</span>
     </div>
   </div>
 
   <!-- Charts -->
-  <div class="charts">
+  <div class="chart-section">
+
+    <!-- Bookings per Day (line chart, full width) -->
     <div class="chart-card">
-      <h3>📊 Bookings per Day (This Month)</h3>
-      <canvas id="dailyChart"></canvas>
+      <h3>
+        📊 Bookings per Day (This Month)
+      </h3>
+      <div class="chart-subtitle">
+        One line per interpreter • Click legend to hide/show each interpreter • Gray dashed line = daily average
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="dailyChart"></canvas>
+      </div>
+      <div class="chart-actions">
+        <button type="button" onclick="downloadDailyChart()">
+          ⬇️ Download PNG
+        </button>
+      </div>
     </div>
+
+    <!-- Bookings per Interpreter (bar chart) -->
     <div class="chart-card">
       <h3>👥 Bookings per Interpreter (This Month)</h3>
-      <canvas id="interpreterChart"></canvas>
+      <div class="chart-subtitle">
+        Total confirmed bookings (BOOKED) grouped by interpreter
+      </div>
+      <div class="chart-wrapper-small">
+        <canvas id="interpreterChart"></canvas>
+      </div>
     </div>
+
   </div>
 
-  <h3 style="margin-top: 40px;">📋 Latest Bookings</h3>
+  <h3 style="margin-top: 26px;">📋 Latest Bookings (by Created Time)</h3>
   <table>
     <thead>
       <tr>
         <th>Date</th>
         <th>Start</th>
-        <th>End</th>
+        <th>End (+1)</th>
         <th>Title</th>
         <th>Location</th>
         <th>User</th>
@@ -195,9 +306,9 @@ fetch("layout.html")
 
 <script>
 const scriptURL = "https://script.google.com/macros/s/AKfycbxnQJvTRZ_v0o61cuolA9rGR7bFRZugexZ4sYseibwL3dcjUbOb2yzPakC9I2nssw/exec";
-const loading = document.getElementById("loading");
-const show = () => loading.style.display = "flex";
-const hide = () => loading.style.display = "none";
+const loading  = document.getElementById("loading");
+const show  = () => loading.style.display = "flex";
+const hide  = () => loading.style.display = "none";
 
 const interpreterNames = {
   i001: "SOM SAN",
@@ -206,10 +317,11 @@ const interpreterNames = {
   i004: "L SAN"
 };
 
+// Chart instances
 let dailyChart = null;
 let interpreterChart = null;
 
-// ➕ เพิ่มฟังก์ชันเพิ่ม 1 นาทีให้เวลาสิ้นสุด
+// เพิ่ม 1 นาทีให้เวลา
 function addOneMinute(t) {
   if (!t || t.indexOf(":") === -1) return t;
   let [h, m] = t.split(":").map(Number);
@@ -222,18 +334,26 @@ function addOneMinute(t) {
 async function loadDashboard() {
   show();
   try {
-    const res = await fetch(`${scriptURL}?page=listBookings`);
+    const res  = await fetch(`${scriptURL}?page=listBookings`);
     const data = await res.json();
 
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    const month = today.substring(0,7); // YYYY-MM
+    const today   = new Date().toISOString().split("T")[0];  // YYYY-MM-DD
+    const month   = today.substring(0, 7);                   // YYYY-MM
+    const yearStr = month.split("-")[0];
+    const monthStr= month.split("-")[1];
+
+    document.getElementById("todayLabel").innerText = today;
+    document.getElementById("monthLabel").innerText = `Month: ${month}`;
 
     let countToday = 0;
     let countMonth = 0;
 
-    // สำหรับกราฟ
-    const dailyCount = {};              // { '2025-11-01': 3, ... }
-    const interpreterCount = {          // เฉพาะเดือนนี้
+    // สำหรับกราฟ Bookings per day per interpreter
+    const perDay = {};  // { 'YYYY-MM-DD': { i001: n, i002: n, ... } }
+    const interpreters = ["i001","i002","i003","i004"];
+
+    // สำหรับ bar chart ต่อ interpreter
+    const interpreterCount = {
       i001: 0,
       i002: 0,
       i003: 0,
@@ -242,24 +362,30 @@ async function loadDashboard() {
     };
 
     data.forEach(row => {
-      const rowDate = String(row.date || "").replace(/^'/, "");
-      const status = String(row.status || "").toUpperCase();
-
+      const rawDate = row.date || "";
+      const rowDate = String(rawDate).replace(/^'/, ""); // ตัด ' ด้านหน้า
       if (!rowDate) return;
 
-      // นับเดือน / วันนี้ (ดูทุกสถานะ หรือจะจำกัดเฉพาะ BOOKED ก็ได้)
+      const status = String(row.status || "").toUpperCase();
+      const iid    = row.interpreterId;
+
+      // นับทั้งหมดของเดือน + วันนี้ (ทุกสถานะก็ได้ ถ้าจะนับเฉพาะ BOOKED ให้เพิ่มเงื่อนไข status)
       if (rowDate.startsWith(month)) countMonth++;
       if (rowDate === today) countToday++;
 
-      // สำหรับกราฟ: ใช้เฉพาะ BOOKED
+      // ใช้เฉพาะ BOOKED สำหรับกราฟ
       if (status === "BOOKED") {
-        // daily
+        // per day per interpreter (ใช้เฉพาะเดือนนี้)
         if (rowDate.startsWith(month)) {
-          dailyCount[rowDate] = (dailyCount[rowDate] || 0) + 1;
+          if (!perDay[rowDate]) {
+            perDay[rowDate] = { i001:0, i002:0, i003:0, i004:0 };
+          }
+          if (iid && perDay[rowDate].hasOwnProperty(iid)) {
+            perDay[rowDate][iid]++;
+          }
         }
 
-        // per interpreter
-        const iid = row.interpreterId;
+        // per interpreter summary (ทั้งเดือน)
         if (iid && interpreterCount.hasOwnProperty(iid)) {
           interpreterCount[iid]++;
         } else if (iid) {
@@ -268,23 +394,24 @@ async function loadDashboard() {
       }
     });
 
-    document.getElementById("totalMonth").innerText = countMonth;
-    document.getElementById("totalToday").innerText = countToday;
+    document.getElementById("totalMonth").innerText      = countMonth;
+    document.getElementById("totalToday").innerText      = countToday;
+    document.getElementById("totalInterpreter").innerText= 4;
 
-    // === Latest Bookings: sort by createdAt (ล่าสุดก่อน) ===
-    const sorted = data
+    // ====== Latest Bookings (ใช้ createdAt) ======
+    const latest = data
       .filter(r => r.createdAt)
       .sort((a, b) => {
-        const da = new Date(String(a.createdAt).replace(/^'/, ''));
-        const db = new Date(String(b.createdAt).replace(/^'/, ''));
-        return db - da;
+        const da = new Date(String(a.createdAt).replace(/^'/,''));
+        const db = new Date(String(b.createdAt).replace(/^'/,''));
+        return db - da;  // ล่าสุดก่อน
       })
       .slice(0, 10);
 
     const tbody = document.getElementById("latestTable");
     tbody.innerHTML = "";
 
-    sorted.forEach(r => {
+    latest.forEach(r => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${String(r.date || "").replace(/^'/,'')}</td>
@@ -298,68 +425,197 @@ async function loadDashboard() {
       tbody.appendChild(tr);
     });
 
-    // === สร้างกราฟ ===
-    buildDailyChart(dailyCount);
+    // ====== Build Charts ======
+    buildDailyChart(perDay, interpreters, yearStr, monthStr);
     buildInterpreterChart(interpreterCount);
 
   } catch (err) {
-    console.log(err);
+    console.error(err);
     Swal.fire("❌ Error", "Cannot load dashboard data", "error");
   } finally {
     hide();
   }
 }
 
-function buildDailyChart(dailyCount) {
+/**
+ * Create line chart: Bookings per Day (This Month)
+ * - One line per interpreter
+ * - Custom tooltip
+ * - Average line
+ * - Corporate theme colors
+ */
+function buildDailyChart(perDay, interpreters, yearStr, monthStr) {
   const ctx = document.getElementById("dailyChart").getContext("2d");
 
-  // ลำดับวันที่
-  const labels = Object.keys(dailyCount).sort((a,b) => a.localeCompare(b));
-  const values = labels.map(d => dailyCount[d]);
+  // เตรียมวันที่ในเดือนนี้ให้ครบทุกวัน (1..lastDay)
+  const year  = parseInt(yearStr, 10) || new Date().getFullYear();
+  const month = parseInt(monthStr, 10) || (new Date().getMonth()+1);
+  const lastDay = new Date(year, month, 0).getDate();
+
+  const labels = [];
+  for (let d = 1; d <= lastDay; d++) {
+    const dd = String(d).padStart(2,"0");
+    labels.push(`${yearStr}-${monthStr}-${dd}`); // YYYY-MM-DD
+  }
+
+  // theme colors สำหรับแต่ละล่าม
+  const colorMap = {
+    i001: "#007bff", // blue
+    i002: "#28a745", // green
+    i003: "#fd7e14", // orange
+    i004: "#e83e8c"  // pink
+  };
+
+  // เตรียม dataset สำหรับแต่ละล่าม
+  const datasets = interpreters.map(iid => {
+    const label = interpreterNames[iid] || iid;
+    const color = colorMap[iid] || "#64748b";
+
+    const data = labels.map(day => {
+      const obj = perDay[day] || {};
+      return obj[iid] || 0;
+    });
+
+    return {
+      label,
+      data,
+      borderColor: color,
+      backgroundColor: color,
+      tension: 0.35,
+      fill: false,
+      borderWidth: 2,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      pointHitRadius: 12
+    };
+  });
+
+  // คำนวณค่าเฉลี่ยต่อวัน (จากยอดรวมต่อวันของทุกล่าม)
+  const totalsPerDay = labels.map(day => {
+    const obj = perDay[day] || {};
+    return interpreters.reduce((sum, iid) => sum + (obj[iid] || 0), 0);
+  });
+  const totalAll = totalsPerDay.reduce((a,b)=>a+b,0);
+  const avg = labels.length > 0 ? (totalAll / labels.length) : 0;
+
+  // dataset เส้นค่าเฉลี่ย
+  datasets.push({
+    label: "AVG per Day",
+    data: labels.map(()=> avg),
+    borderColor: "#6c757d",
+    borderWidth: 2,
+    borderDash: [5,5],
+    pointRadius: 0,
+    tension: 0,
+    fill: false
+  });
 
   if (dailyChart) dailyChart.destroy();
 
   dailyChart = new Chart(ctx, {
     type: "line",
     data: {
-      labels,
-      datasets: [{
-        label: "Bookings per Day",
-        data: values,
-        tension: 0.3,
-        fill: false,
-        borderWidth: 2,
-        pointRadius: 3
-      }]
+      labels: labels.map(d => d.substring(8)), // แสดงแค่วันที่ (01..31)
+      datasets
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: "nearest",
+        intersect: false
+      },
       plugins: {
-        legend: { display: false }
+        legend: {
+          display: true,
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+            padding: 16,
+            font: {
+              size: 12
+            }
+          }
+        },
+        tooltip: {
+          backgroundColor: "rgba(15,23,42,0.94)",
+          borderColor: "#1d4ed8",
+          borderWidth: 1,
+          padding: 10,
+          displayColors: true,
+          callbacks: {
+            title: (items) => {
+              if (!items.length) return "";
+              const idx = items[0].dataIndex;
+              const day = labels[idx]; // YYYY-MM-DD
+              return `Date: ${day}`;
+            },
+            label: (ctx) => {
+              const label = ctx.dataset.label || "";
+              const value = ctx.parsed.y ?? 0;
+              if (label === "AVG per Day") {
+                return ` ${label}: ${value.toFixed(2)} bookings/day`;
+              }
+              const unit = value === 1 ? "booking" : "bookings";
+              return ` ${label}: ${value} ${unit}`;
+            }
+          }
+        }
       },
       scales: {
         x: {
-          ticks: { autoSkip: true, maxTicksLimit: 10 }
+          grid: {
+            color: "rgba(148,163,184,0.25)",
+            drawBorder: false
+          },
+          ticks: {
+            color: "#4b5563",
+            maxTicksLimit: 15
+          }
         },
         y: {
           beginAtZero: true,
-          precision: 0
+          grid: {
+            color: "rgba(148,163,184,0.2)",
+            drawBorder: false
+          },
+          ticks: {
+            color: "#4b5563",
+            precision: 0
+          }
         }
       }
     }
   });
 }
 
+/**
+ * Bar chart: Bookings per Interpreter (This Month)
+ */
 function buildInterpreterChart(interpreterCount) {
   const ctx = document.getElementById("interpreterChart").getContext("2d");
 
-  const labels = ["SOM SAN", "GOOK SAN", "POOKY SAN", "L SAN", "Other"];
+  const labels = [
+    "SOM SAN",
+    "GOOK SAN",
+    "POOKY SAN",
+    "L SAN",
+    "Other"
+  ];
   const values = [
     interpreterCount.i001,
     interpreterCount.i002,
     interpreterCount.i003,
     interpreterCount.i004,
     interpreterCount.other
+  ];
+
+  const colors = [
+    "#007bff",
+    "#28a745",
+    "#fd7e14",
+    "#e83e8c",
+    "#6c757d"
   ];
 
   if (interpreterChart) interpreterChart.destroy();
@@ -371,22 +627,58 @@ function buildInterpreterChart(interpreterCount) {
       datasets: [{
         label: "Bookings",
         data: values,
-        borderWidth: 1
+        backgroundColor: colors.map(c => c + "cc"),
+        borderColor: colors,
+        borderWidth: 1,
+        borderRadius: 6,
+        maxBarThickness: 40
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
-        legend: { display: false }
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "rgba(15,23,42,0.94)",
+          borderColor: "#0f172a",
+          borderWidth: 1,
+          callbacks: {
+            label: (ctx) => {
+              const v = ctx.parsed.y ?? 0;
+              const unit = v === 1 ? "booking" : "bookings";
+              return ` ${v} ${unit}`;
+            }
+          }
+        }
       },
       scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: "#4b5563" }
+        },
         y: {
           beginAtZero: true,
-          precision: 0
+          grid: {
+            color: "rgba(148,163,184,0.25)"
+          },
+          ticks: {
+            color: "#4b5563",
+            precision: 0
+          }
         }
       }
     }
   });
+}
+
+/** Download line chart as PNG */
+function downloadDailyChart() {
+  if (!dailyChart) return;
+  const link = document.createElement("a");
+  link.href = dailyChart.toBase64Image("image/png", 1);
+  link.download = "bookings_per_day.png";
+  link.click();
 }
 
 window.onload = loadDashboard;
