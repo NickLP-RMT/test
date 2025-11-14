@@ -249,7 +249,7 @@ fetch("layout.html")
     <div class="card">
       <h3>Active Interpreters</h3>
       <p id="totalInterpreter">4</p>
-      <span class="sub">i001–i004</span>
+      <span class="sub">SOM SAN • GOOK SAN • POOKY SAN • L SAN</span>
     </div>
   </div>
 
@@ -595,28 +595,28 @@ function buildDailyChart(perDay, interpreters, yearStr, monthStr) {
 function buildInterpreterChart(interpreterCount) {
   const ctx = document.getElementById("interpreterChart").getContext("2d");
 
-  const labels = [
-    "SOM SAN",
-    "GOOK SAN",
-    "POOKY SAN",
-    "L SAN",
-    "Other"
-  ];
-  const values = [
-    interpreterCount.i001,
-    interpreterCount.i002,
-    interpreterCount.i003,
-    interpreterCount.i004,
-    interpreterCount.other
-  ];
+const labels = [
+  "SOM SAN",
+  "GOOK SAN",
+  "POOKY SAN",
+  "L SAN"
+];
 
-  const colors = [
-    "#007bff",
-    "#28a745",
-    "#fd7e14",
-    "#e83e8c",
-    "#6c757d"
-  ];
+const values = [
+  interpreterCount.i001,
+  interpreterCount.i002,
+  interpreterCount.i003,
+  interpreterCount.i004
+];
+
+
+const colors = [
+  "#007bff",
+  "#28a745",
+  "#fd7e14",
+  "#e83e8c"
+];
+
 
   if (interpreterChart) interpreterChart.destroy();
 
