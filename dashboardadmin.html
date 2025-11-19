@@ -437,69 +437,61 @@ async function loadDashboard() {
       other: 0
     };
 
-    data.forEach(row => {
-      const rawDate = row.date || "";
-      const rowDate = String(rawDate).replace(/^'/, ""); // ตัด ' ด้านหน้า
-      if (!rowDate) return;
+data.forEach(row => {
+  const rawDate = row.date || "";
+  const rowDate = String(rawDate).replace(/^'/, "");
+  if (!rowDate) return;
 
-      const status = String(row.status || "").toUpperCase();
-      const iid    = row.interpreterId;
+  const status = String(row.status || "").toUpperCase();
+  const iid    = row.interpreterId;
 
-      // นับทั้งหมดของเดือน + วันนี้ (ทุกสถานะ)
-      if (rowDate.startsWith(month)) countMonth++;
-      if (rowDate === today) countToday++;
+  if (rowDate.startsWith(month)) countMonth++;
+  if (rowDate === today) countToday++;
 
-      // ใช้เฉพาะ BOOKED สำหรับกราฟ
-      if (status === "BOOKED") {
-        // เตรียมโครงสร้างต่อวันถ้ายังไม่มี
-        if (rowDate.startsWith(month)) {
-          if (!perDayCounts[rowDate]) {
-            perDayCounts[rowDate]  = { i001:0, i002:0, i003:0, i004:0 };
-          }
-          if (!perDayMinutes[rowDate]) {
-            perDayMinutes[rowDate] = { i001:0, i002:0, i003:0, i004:0 };
-          }
+  if (status === "BOOKED") {
 
-          // นับจำนวน booking ต่อวัน ต่อ interpreter
-          if (iid && perDayCounts[rowDate].hasOwnProperty(iid)) {
-            perDayCounts[rowDate][iid]++;
-          }
+    if (rowDate.startsWith(month)) {
 
-          // คำนวณจำนวน "นาที" ต่อวัน ต่อ interpreter
-          // endTime +1 นาที และคำนวณ diffMinutes
-          const start = row.startTime || "";
-          const end   = row.endTime   || "";
-          if (start && end && perDayMinutes[rowDate].hasOwnProperty(iid)) {
-// คำนวณนาทีจริง
-const startM = timeToMinutes(start);
-const endPlus1 = addOneMinute(end);
-const endM = timeToMinutes(endPlus1);
+      if (!perDayCounts[rowDate])
+        perDayCounts[rowDate] = { i001:0, i002:0, i003:0, i004:0 };
 
-let diff = Math.max(0, endM - startM);
+      if (!perDayMinutes[rowDate])
+        perDayMinutes[rowDate] = { i001:0, i002:0, i003:0, i004:0 };
 
-// ช่วงพักเที่ยง 12:00–13:00 (720–780 นาที)
-const noonStart = 12 * 60;
-const noonEnd   = 13 * 60;
+      if (iid && perDayCounts[rowDate].hasOwnProperty(iid))
+        perDayCounts[rowDate][iid]++;
 
-// หาก booking คร่อมช่วงพักเที่ยง หัก 60 นาที
-if (startM < noonEnd && endM > noonStart) {
-  diff -= 60;
-  if (diff < 0) diff = 0; // กันค่าติดลบ
-}
+      const start = row.startTime || "";
+      const end   = row.endTime   || "";
 
-perDayMinutes[rowDate][iid] += diff;
+      const isLeave =
+        String(row.title || "").toLowerCase().includes("take leave") ||
+        String(row.title || "").toLowerCase().includes("leave") ||
+        String(row.title || "").toLowerCase().includes("ลา");
 
-          }
+      if (!isLeave && start && end && perDayMinutes[rowDate].hasOwnProperty(iid)) {
+        
+        const startM = timeToMinutes(start);
+        const endM = timeToMinutes(addOneMinute(end));
+
+        let diff = Math.max(0, endM - startM);
+
+        if (startM < 780 && endM > 720) {
+          diff -= 60;
+          if (diff < 0) diff = 0;
         }
 
-        // per interpreter summary (Count for entire month)
-        if (iid && interpreterCount.hasOwnProperty(iid)) {
-          interpreterCount[iid]++;
-        } else if (iid) {
-          interpreterCount.other++;
-        }
+        perDayMinutes[rowDate][iid] += diff;
       }
-    });
+    }
+
+    if (iid && interpreterCount.hasOwnProperty(iid))
+      interpreterCount[iid]++;
+    else if (iid)
+      interpreterCount.other++;
+  }
+});
+
 
     document.getElementById("totalMonth").innerText      = countMonth;
     document.getElementById("totalToday").innerText      = countToday;
