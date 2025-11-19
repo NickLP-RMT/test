@@ -449,60 +449,59 @@ data.forEach(row => {
     titleStr.includes("leave") ||
     titleStr.includes("ลา");
 
-  // ❌ Leave → ไม่ใช่ Booking → ไม่ต้องนับใด ๆ ทั้งหมด
+  // ❌ (1) ตัด Leave ออก
   if (isLeave) return;
 
   const status = String(row.status || "").toUpperCase();
   const iid    = row.interpreterId;
 
+  // ❌ (2) ต้องเป็น BOOKED เท่านั้น
+  if (status !== "BOOKED") return;
 
+  // ✔ (3) BOOKED → ใช้ใน countMonth / countToday
   if (rowDate.startsWith(month)) countMonth++;
   if (rowDate === today) countToday++;
 
-  if (status === "BOOKED") {
+  // ✔ build perDayCounts
+  if (rowDate.startsWith(month)) {
 
-    if (rowDate.startsWith(month)) {
+    if (!perDayCounts[rowDate])
+      perDayCounts[rowDate] = { i001:0, i002:0, i003:0, i004:0 };
 
-      if (!perDayCounts[rowDate])
-        perDayCounts[rowDate] = { i001:0, i002:0, i003:0, i004:0 };
+    if (!perDayMinutes[rowDate])
+      perDayMinutes[rowDate] = { i001:0, i002:0, i003:0, i004:0 };
 
-      if (!perDayMinutes[rowDate])
-        perDayMinutes[rowDate] = { i001:0, i002:0, i003:0, i004:0 };
+    if (iid && perDayCounts[rowDate].hasOwnProperty(iid))
+      perDayCounts[rowDate][iid]++;
 
-      if (iid && perDayCounts[rowDate].hasOwnProperty(iid))
-        perDayCounts[rowDate][iid]++;
+    // ✔ คำนวณชั่วโมง
+    const start = row.startTime || "";
+    const end   = row.endTime   || "";
 
-      const start = row.startTime || "";
-      const end   = row.endTime   || "";
+    if (start && end && perDayMinutes[rowDate].hasOwnProperty(iid)) {
 
-      const isLeave =
-        String(row.title || "").toLowerCase().includes("take leave") ||
-        String(row.title || "").toLowerCase().includes("leave") ||
-        String(row.title || "").toLowerCase().includes("ลา");
+      const startM = timeToMinutes(start);
+      const endM = timeToMinutes(addOneMinute(end));
 
-      if (!isLeave && start && end && perDayMinutes[rowDate].hasOwnProperty(iid)) {
-        
-        const startM = timeToMinutes(start);
-        const endM = timeToMinutes(addOneMinute(end));
+      let diff = Math.max(0, endM - startM);
 
-        let diff = Math.max(0, endM - startM);
-
-        if (startM < 780 && endM > 720) {
-          diff -= 60;
-          if (diff < 0) diff = 0;
-        }
-
-        perDayMinutes[rowDate][iid] += diff;
+      // ตัดพักเที่ยง
+      if (startM < 780 && endM > 720) {
+        diff -= 60;
+        if (diff < 0) diff = 0;
       }
+
+      perDayMinutes[rowDate][iid] += diff;
     }
-
-    if (iid && interpreterCount.hasOwnProperty(iid))
-      interpreterCount[iid]++;
-    else if (iid)
-      interpreterCount.other++;
   }
-});
 
+  // ✔ Bookings per interpreter chart
+  if (iid && interpreterCount.hasOwnProperty(iid))
+    interpreterCount[iid]++;
+  else if (iid)
+    interpreterCount.other++;
+
+});
 
     document.getElementById("totalMonth").innerText      = countMonth;
     document.getElementById("totalToday").innerText      = countToday;
