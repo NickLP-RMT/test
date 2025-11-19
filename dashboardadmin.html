@@ -470,11 +470,25 @@ async function loadDashboard() {
           const start = row.startTime || "";
           const end   = row.endTime   || "";
           if (start && end && perDayMinutes[rowDate].hasOwnProperty(iid)) {
-            const startM = timeToMinutes(start);
-            const endPlus1 = addOneMinute(end);
-            const endM   = timeToMinutes(endPlus1);
-            const diff   = Math.max(0, endM - startM); // กันค่าติดลบ
-            perDayMinutes[rowDate][iid] += diff;
+// คำนวณนาทีจริง
+const startM = timeToMinutes(start);
+const endPlus1 = addOneMinute(end);
+const endM = timeToMinutes(endPlus1);
+
+let diff = Math.max(0, endM - startM);
+
+// ช่วงพักเที่ยง 12:00–13:00 (720–780 นาที)
+const noonStart = 12 * 60;
+const noonEnd   = 13 * 60;
+
+// หาก booking คร่อมช่วงพักเที่ยง หัก 60 นาที
+if (startM < noonEnd && endM > noonStart) {
+  diff -= 60;
+  if (diff < 0) diff = 0; // กันค่าติดลบ
+}
+
+perDayMinutes[rowDate][iid] += diff;
+
           }
         }
 
