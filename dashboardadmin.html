@@ -238,6 +238,28 @@
         grid-template-columns: 1fr;
       }
     }
+    .status-badge {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: uppercase;
+  color: white;
+}
+
+.status-booked {
+  background: #22c55e; /* green */
+}
+
+.status-canceled {
+  background: #ef4444; /* red */
+}
+
+.status-other {
+  background: #6b7280; /* gray */
+}
+
   </style>
 </head>
 <body>
@@ -353,6 +375,7 @@ fetch("layout.html")
         <th>Location</th>
         <th>User</th>
         <th>Interpreter</th>
+        <th>Status</th>  
       </tr>
     </thead>
     <tbody id="latestTable"></tbody>
@@ -551,6 +574,7 @@ async function loadDashboard() {
         <td>${r.location || ""}</td>
         <td>${r.userEmail || ""}</td>
         <td>${interpreterNames[r.interpreterId] || r.interpreterId || ""}</td>
+        <td>${r.status || ""}</td>
       `;
       tbody.appendChild(tr);
     });
