@@ -438,12 +438,23 @@ async function loadDashboard() {
     };
 
 data.forEach(row => {
+
   const rawDate = row.date || "";
   const rowDate = String(rawDate).replace(/^'/, "");
   if (!rowDate) return;
 
+  const titleStr = String(row.title || "").toLowerCase();
+  const isLeave =
+    titleStr.includes("take leave") ||
+    titleStr.includes("leave") ||
+    titleStr.includes("ลา");
+
+  // ❌ Leave → ไม่ใช่ Booking → ไม่ต้องนับใด ๆ ทั้งหมด
+  if (isLeave) return;
+
   const status = String(row.status || "").toUpperCase();
   const iid    = row.interpreterId;
+
 
   if (rowDate.startsWith(month)) countMonth++;
   if (rowDate === today) countToday++;
