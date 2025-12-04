@@ -46,6 +46,8 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 </head>
 
 <body>
@@ -81,7 +83,11 @@
     </div>
   </div>
 
+  <div style="display:flex; gap:10px; margin-top:15px;">
   <button onclick="searchReport()">🔍 Search</button>
+  <button onclick="exportExcel()" style="background:#059669;">📤 Export Excel</button>
+</div>
+
 
   <table id="resultTable">
 <thead>
@@ -197,6 +203,31 @@ filtered.forEach(r => {
   } finally {
     hideLoading();
   }
+}
+function exportExcel() {
+  const table = document.getElementById("resultTable");
+  const tbody = table.querySelector("tbody");
+
+  // ถ้าไม่มีข้อมูล
+  if (tbody.rows.length === 0) {
+    Swal.fire("No Data", "Please search before exporting.", "warning");
+    return;
+  }
+
+  // แปลงตาราง → Worksheet
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.table_to_sheet(table);
+
+  // เพิ่ม Worksheet เข้าไปในไฟล์ Excel
+  XLSX.utils.book_append_sheet(wb, ws, "Report");
+
+  // ตั้งชื่อไฟล์พร้อมวันที่
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+
+  XLSX.writeFile(wb, `Interpreter_Report_${y}${m}${d}.xlsx`);
 }
 
 </script>
